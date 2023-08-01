@@ -1,21 +1,24 @@
 package com.example.modiraa.dto;
 
+import com.example.modiraa.model.oauth.OAuthProvider;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Builder
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SocialResponseDto {
     private Long id;
-    private String username;
     private String nickname;
-    private String profileImage;
     private String age;
-    private String address;
     private String gender;
+    private String address;
+    private Long oAuthId;
+    private String profileImage;
+    private OAuthProvider oAuthProvider;
 }
