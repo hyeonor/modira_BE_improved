@@ -4,7 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.example.modiraa.auth.UserDetailsImpl;
 import com.example.modiraa.model.Member;
-import com.example.modiraa.repository.UserRepository;
+import com.example.modiraa.repository.MemberRepository;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,11 +27,11 @@ import java.io.IOException;
 @Component
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
-    private UserRepository userRepository;
+    private MemberRepository memberRepository;
 
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, UserRepository userRepository) {
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, MemberRepository memberRepository) {
         super(authenticationManager);
-        this.userRepository = userRepository;
+        this.memberRepository = memberRepository;
     }
 
     @Override
@@ -55,7 +55,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
         //서명이 정상적으로 됨.
         if(username != null) {
-            Member memberEntity = userRepository.findByUsername(username).orElseThrow(
+            Member memberEntity = memberRepository.findByUsername(username).orElseThrow(
                     ()-> new IllegalArgumentException("username이 없습니다.")
             );
 
@@ -80,7 +80,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                 JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token).getClaim("username").asString();
 
         if(username != null) {
-            Member memberEntity = userRepository.findByUsername(username).orElseThrow(
+            Member memberEntity = memberRepository.findByUsername(username).orElseThrow(
                     () -> new IllegalArgumentException("username이 없습니다.")
             );
             UserDetailsImpl userDetails = new UserDetailsImpl(memberEntity);
@@ -97,7 +97,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                 JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token).getClaim("username").asString();
 
         if(username != null) {
-            Member memberEntity = userRepository.findByUsername(username).orElseThrow(
+            Member memberEntity = memberRepository.findByUsername(username).orElseThrow(
                     () -> new IllegalArgumentException("username이 없습니다.")
             );
             UserDetailsImpl userDetails = new UserDetailsImpl(memberEntity);

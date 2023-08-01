@@ -28,7 +28,7 @@ public class MemberRoomService {
     private final MemberRoomQueryRepository memberRoomQueryRepository;
     private final MemberRoomRepository memberRoomRepository;
     private final ChatRoomRepository chatRoomRepository;
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
     private final PostRepository postRepository;
 
     //채팅참여하기
@@ -88,11 +88,11 @@ public class MemberRoomService {
         if(postGender.equals("모든성별")){
             //참가자 state 값 변화.
             member.setPostState(postRoom.getTitle());
-            userRepository.save(member);
+            memberRepository.save(member);
             return new ResponseEntity<>("모임에 참여하셨습니다.", HttpStatus.valueOf(200));
         }else if (postGender.equals(memberGender)) {
             member.setPostState(postRoom.getTitle());
-            userRepository.save(member);
+            memberRepository.save(member);
             return new ResponseEntity<>("모임에 참여하셨습니다.", HttpStatus.valueOf(200));
         }else {
             throw new CustomException(ErrorCode.JOIN_GENDER_CHECK_CODE);
@@ -140,7 +140,7 @@ public class MemberRoomService {
 
         //참가자 state 값 변화.
         member.setPostState(null);
-        userRepository.save(member);
+        memberRepository.save(member);
         chatroom.get().minusCurrentPeople();
     }
 
@@ -170,7 +170,7 @@ public class MemberRoomService {
 
             //참가자 state 값 변화.
             member.setPostState(postRoom.getTitle());
-            userRepository.save(member);
+            memberRepository.save(member);
         } else {
             throw new CustomException(ErrorCode.JOIN_CHATROOM_CHECK_CODE);
         }

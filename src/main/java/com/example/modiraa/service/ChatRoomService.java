@@ -1,7 +1,7 @@
 package com.example.modiraa.service;
 
 import com.example.modiraa.model.Member;
-import com.example.modiraa.repository.UserRepository;
+import com.example.modiraa.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.ValueOperations;
@@ -26,7 +26,7 @@ public class ChatRoomService {
     @Resource(name = "redisTemplate")
     private ValueOperations<String, String> valueOps;
 
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
 
 
     // redis 에 입장정보로 sessionId 와 roomId를 저장하고 해단 sessionId 와 토큰에서 받아온 userId를 저장함
@@ -43,7 +43,7 @@ public class ChatRoomService {
     // redis 에 저장했던 sessionId 로 userId 를 얻어오고 해당 userId 로 Member 객체를 찾아 리턴함
     public Member checkSessionUser(String sessionId) {
         Long memberId = Long.parseLong(Objects.requireNonNull(hashOpsUserInfo.get(USER_INFO, sessionId)));
-        return userRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자"));
+        return memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자"));
     }
 
     // 유저가 나갈때 redis 에 저장했던 해당 세션 / 유저의 정보를 삭제함

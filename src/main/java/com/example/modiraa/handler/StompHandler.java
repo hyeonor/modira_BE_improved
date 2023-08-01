@@ -3,7 +3,7 @@ package com.example.modiraa.handler;
 import com.example.modiraa.config.jwt.JwtAuthorizationFilter;
 import com.example.modiraa.model.ChatMessage;
 import com.example.modiraa.model.Member;
-import com.example.modiraa.repository.UserRepository;
+import com.example.modiraa.repository.MemberRepository;
 import com.example.modiraa.service.ChatMessageService;
 import com.example.modiraa.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,6 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
 
-import java.util.Objects;
 import java.util.Optional;
 
 
@@ -26,7 +25,7 @@ public class StompHandler implements ChannelInterceptor {
 
     private final JwtAuthorizationFilter jwtAuthorizationFilter;
     private final ChatRoomService chatRoomService;
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
     private final ChatMessageService chatMessageService;
 
 
@@ -55,7 +54,7 @@ public class StompHandler implements ChannelInterceptor {
 
             Member member;
             if (jwtToken != null) {
-                member = userRepository.findByNickname(jwtAuthorizationFilter.getUserNameFromJwt(jwtToken), Member.class)
+                member = memberRepository.findByNickname(jwtAuthorizationFilter.getUserNameFromJwt(jwtToken), Member.class)
                         .orElseThrow(()->new IllegalArgumentException("member 가 존재하지 않습니다."));
             }else {
                 throw new IllegalArgumentException("유효하지 않은 token 입니다.");

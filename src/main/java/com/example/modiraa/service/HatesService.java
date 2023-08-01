@@ -6,7 +6,7 @@ import com.example.modiraa.repository.HatesRepository;
 import com.example.modiraa.repository.LikesRepository;
 import com.example.modiraa.auth.UserDetailsImpl;
 import com.example.modiraa.model.Member;
-import com.example.modiraa.repository.UserRepository;
+import com.example.modiraa.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,12 +20,12 @@ import java.util.Optional;
 public class HatesService {
     private  final HatesRepository hatesRepository;
     private  final LikesRepository likesRepository;
-    private  final UserRepository userRepository;
+    private  final MemberRepository memberRepository;
 
     //유저의 평가 점수 -1점 부여하고 싶을때
     public ResponseEntity<?> userHates(UserDetailsImpl userDetails, Long userId) {
         //USERID 아이디로 USER 를 찾아서 저장
-        Member receiver = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("유저가 없습니다"));
+        Member receiver = memberRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("유저가 없습니다"));
         Member giver = userDetails.getMember();
         Optional<Hates> hatesFound = hatesRepository.findByGiverAndReceiver(giver, receiver);
         Optional<Likes> likesFound = likesRepository.findByGiverAndReceiver(giver, receiver);
@@ -51,7 +51,7 @@ public class HatesService {
     //유저의 평가를 잘못 눌렀을 취소 기능
     public ResponseEntity<?> deleteHates(UserDetailsImpl userDetails, Long userId) {
         // USERID 로 싫어요 한 게시물들을 리스트에 담아서
-        Member receiver = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("유저가 없습니다"));
+        Member receiver = memberRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("유저가 없습니다"));
         Member giver = userDetails.getMember();
         Optional<Hates> hatesFound = hatesRepository.findByGiverAndReceiver(giver, receiver);
         if(hatesFound.isEmpty()){

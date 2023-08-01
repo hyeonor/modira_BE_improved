@@ -8,7 +8,7 @@ import com.example.modiraa.model.MemberRoom;
 import com.example.modiraa.repository.HatesRepository;
 import com.example.modiraa.repository.LikesRepository;
 import com.example.modiraa.repository.MemberRoomQueryRepository;
-import com.example.modiraa.repository.UserRepository;
+import com.example.modiraa.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +18,7 @@ import java.util.Optional;
 @Service
 public class MyPageService {
 
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
     private final LikesRepository likesRepository;
     private final HatesRepository hatesRepository;
     private final MemberRoomQueryRepository memberRoomQueryRepository;
@@ -26,7 +26,7 @@ public class MyPageService {
     // 유저 프로필 조회
     public UserProfileResponseDto getProfile(Long id) throws IllegalAccessException {
 
-        Member member = userRepository.findById(id)
+        Member member = memberRepository.findById(id)
                 .orElseThrow(()-> new IllegalAccessException("유저의 정보가 없습니다."));
 
         Long score = likesRepository.likesCount(member) - hatesRepository.hatesCount(member);

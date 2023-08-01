@@ -1,29 +1,25 @@
 package com.example.modiraa.service;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.example.modiraa.auth.UserDetailsImpl;
-import com.example.modiraa.config.jwt.JwtProperties;
 import com.example.modiraa.dto.LoginIdCheckDto;
 import com.example.modiraa.dto.SocialSignupRequestDto;
 import com.example.modiraa.exception.CustomException;
 import com.example.modiraa.exception.ErrorCode;
 import com.example.modiraa.model.Member;
-import com.example.modiraa.repository.UserRepository;
+import com.example.modiraa.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final PasswordEncoder passwordEncoder;
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
     private final S3Uploader s3Uploader;
 
 
@@ -47,13 +43,13 @@ public class UserService {
         System.out.println(address);
 
 
-        Optional<Member> found = userRepository.findByUsername(username);
+        Optional<Member> found = memberRepository.findByUsername(username);
         if (found.isPresent()) {
             throw new CustomException(ErrorCode.ID_DUPLICATION_CODE);
         }
 
         //닉네임 중복 체크
-        Optional<Member> founds = userRepository.findByNickname(nickname);
+        Optional<Member> founds = memberRepository.findByNickname(nickname);
         if (founds.isPresent()) {
             throw new CustomException(ErrorCode.NICKNAME_DUPLICATION_CODE);
         }
@@ -68,7 +64,7 @@ public class UserService {
         requestDto.setPassword(password);
 
         // 유저 정보 저장
-        Member member = new Member(username, password, profileImage, nickname, age, gender, address);
+        Member member = new Member(profileImage, nickname, age, gender, address , null, null);
 
         // 프로필 이미지 추가
         if (setProfileImage != null) {
@@ -79,7 +75,7 @@ public class UserService {
             member.setProfileImage(profileUrl);
         }
 
-        userRepository.save(member);
+        memberRepository.save(member);
 
         return error;
     }
@@ -93,19 +89,8 @@ public class UserService {
         return userinfo;
     }
 
-    //토큰 발급
-    public String JwtTokenCreate(String username){
-        String jwtToken = JWT.create()
-                .withSubject("cos토큰")
-                .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.EXPIRATION_TIME))
-                .withClaim("username", username)
-                .sign(Algorithm.HMAC512(JwtProperties.SECRET));
-        return jwtToken;
-    }
-
     // 유저의 닉네임으로 유저 조회
     public Member getMember(String nickname) {
-        return userRepository.findByNickname(nickname).orElseThrow(() -> new IllegalArgumentException("회원이 아닙니다."));
+        return memberRepository.findByNickname(nickname).orElseThrow(() -> new IllegalArgumentException("회원이 아닙니다."));
     }
-
 }

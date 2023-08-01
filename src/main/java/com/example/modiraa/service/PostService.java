@@ -21,7 +21,7 @@ import java.util.List;
 @Transactional
 public class PostService {
 
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
     private final PostRepository postRepository;
     private final PostImageRepository postImageRepository;
     private final ChatRoomRepository chatRoomRepository;
@@ -30,7 +30,7 @@ public class PostService {
 
     // 모임 생성
     public void createPost(String username, PostRequestDto postRequestDto, UserDetailsImpl userDetails) {
-        Member member = userRepository.findByUsername(username)
+        Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("다시 로그인해 주세요."));
 
         PostImage postImage = postImageRepository.findByMenu(postRequestDto.getMenu());
@@ -56,7 +56,7 @@ public class PostService {
             postRepository.save(post);
 
             member.setPostState(postRequestDto.getTitle());
-            userRepository.save(member);
+            memberRepository.save(member);
 
             ChatRoom chatRoom = new ChatRoom(userDetails.getMember(),post,post.getNumberofpeople());
             chatRoomRepository.save(chatRoom);
@@ -80,10 +80,10 @@ public class PostService {
         for (MemberRoom memberRoom : memberRoomList){
             memberRoomRepository.deleteById(memberRoom.getId());
 
-            Member member = userRepository.findAllById(memberRoom.getMember().getId());
+            Member member = memberRepository.findAllById(memberRoom.getMember().getId());
 
             member.setPostState(null);
-            userRepository.save(member);
+            memberRepository.save(member);
         }
 
         Long memberId = userDetails.getMember().getId();
