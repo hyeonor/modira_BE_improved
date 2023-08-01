@@ -2,7 +2,7 @@ package com.example.modiraa.controller;
 
 
 import com.example.modiraa.auth.UserDetailsImpl;
-import com.example.modiraa.dto.JoinUserListResponseDto;
+import com.example.modiraa.dto.response.JoinUserListResponseDto;
 import com.example.modiraa.service.MemberRoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

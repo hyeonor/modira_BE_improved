@@ -3,7 +3,7 @@ package com.example.modiraa.config.jwt;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.example.modiraa.auth.UserDetailsImpl;
-import com.example.modiraa.dto.LoginRequestDto;
+import com.example.modiraa.dto.request.LoginRequestDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

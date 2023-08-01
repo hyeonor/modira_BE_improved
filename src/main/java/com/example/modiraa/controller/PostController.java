@@ -1,8 +1,7 @@
 package com.example.modiraa.controller;
 
 import com.example.modiraa.auth.UserDetailsImpl;
-import com.example.modiraa.dto.PostRequestDto;
-import com.example.modiraa.model.ChatRoom;
+import com.example.modiraa.dto.response.PostRequestDto;
 import com.example.modiraa.service.ChatRoomService;
 import com.example.modiraa.service.PostService;
 import lombok.RequiredArgsConstructor;
