@@ -1,8 +1,8 @@
 package com.example.modiraa.client;
 
-import com.example.modiraa.dto.KakaoInfoResponse;
-import com.example.modiraa.dto.KakaoTokens;
-import com.example.modiraa.dto.OAuthInfoResponse;
+import com.example.modiraa.dto.response.KakaoInfoResponse;
+import com.example.modiraa.dto.response.KakaoTokens;
+import com.example.modiraa.dto.response.OAuthInfoResponse;
 import com.example.modiraa.model.oauth.OAuthLoginParams;
 import com.example.modiraa.model.oauth.OAuthProvider;
 import lombok.RequiredArgsConstructor;

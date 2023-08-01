@@ -1,7 +1,7 @@
 package com.example.modiraa.controller;
 
 import com.example.modiraa.config.jwt.JwtAuthorizationFilter;
-import com.example.modiraa.dto.ChatMessageRequestDto;
+import com.example.modiraa.dto.request.ChatMessageRequestDto;
 import com.example.modiraa.model.ChatMessage;
 import com.example.modiraa.model.Member;
 import com.example.modiraa.service.ChatMessageService;

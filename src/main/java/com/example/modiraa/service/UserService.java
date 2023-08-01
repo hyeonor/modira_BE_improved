@@ -1,7 +1,7 @@
 package com.example.modiraa.service;
 
 import com.example.modiraa.auth.UserDetailsImpl;
-import com.example.modiraa.dto.LoginIdCheckDto;
+import com.example.modiraa.dto.response.LoginIdCheckDto;
 import com.example.modiraa.model.Member;
 import com.example.modiraa.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;

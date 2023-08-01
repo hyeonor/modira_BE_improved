@@ -1,4 +1,4 @@
-package com.example.modiraa.dto;
+package com.example.modiraa.dto.request;
 
 
 import lombok.Data;

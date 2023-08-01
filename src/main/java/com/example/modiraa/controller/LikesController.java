@@ -1,6 +1,6 @@
 package com.example.modiraa.controller;
 
-import com.example.modiraa.dto.LikesAndHatesUserIdDto;
+import com.example.modiraa.dto.request.LikesAndHatesUserIdDto;
 import com.example.modiraa.service.LikesService;
 import com.example.modiraa.auth.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;

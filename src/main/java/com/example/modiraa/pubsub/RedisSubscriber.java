@@ -1,6 +1,6 @@
 package com.example.modiraa.pubsub;
 
-import com.example.modiraa.dto.ChatMessageResponseDto;
+import com.example.modiraa.dto.response.ChatMessageResponseDto;
 import com.example.modiraa.model.ChatMessage;
 import com.example.modiraa.repository.ChatMessageRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;

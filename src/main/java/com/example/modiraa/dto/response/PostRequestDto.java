@@ -1,4 +1,4 @@
-package com.example.modiraa.dto;
+package com.example.modiraa.dto.response;
 
 import lombok.*;
 

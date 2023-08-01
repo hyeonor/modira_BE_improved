@@ -1,8 +1,8 @@
 package com.example.modiraa.service;
 
 import com.example.modiraa.auth.UserDetailsImpl;
-import com.example.modiraa.dto.MyUserProfileResponseDto;
-import com.example.modiraa.dto.UserProfileResponseDto;
+import com.example.modiraa.dto.response.MyUserProfileResponseDto;
+import com.example.modiraa.dto.response.UserProfileResponseDto;
 import com.example.modiraa.model.Member;
 import com.example.modiraa.model.MemberRoom;
 import com.example.modiraa.repository.HatesRepository;

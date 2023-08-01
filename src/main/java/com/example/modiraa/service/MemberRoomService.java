@@ -1,7 +1,7 @@
 package com.example.modiraa.service;
 
 import com.example.modiraa.auth.UserDetailsImpl;
-import com.example.modiraa.dto.JoinUserListResponseDto;
+import com.example.modiraa.dto.response.JoinUserListResponseDto;
 import com.example.modiraa.exception.CustomException;
 import com.example.modiraa.exception.ErrorCode;
 import com.example.modiraa.model.ChatRoom;

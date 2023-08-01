@@ -1,6 +1,6 @@
 package com.example.modiraa.controller;
 
-import com.example.modiraa.dto.SocialResponseDto;
+import com.example.modiraa.dto.response.SocialResponseDto;
 import com.example.modiraa.model.KakaoLoginParams;
 import com.example.modiraa.model.NaverLoginParams;
 import com.example.modiraa.service.OAuthLoginService;

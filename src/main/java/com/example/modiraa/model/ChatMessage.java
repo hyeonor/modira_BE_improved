@@ -1,6 +1,6 @@
 package com.example.modiraa.model;
 
-import com.example.modiraa.dto.ChatMessageRequestDto;
+import com.example.modiraa.dto.request.ChatMessageRequestDto;
 import lombok.*;
 
 import javax.persistence.*;

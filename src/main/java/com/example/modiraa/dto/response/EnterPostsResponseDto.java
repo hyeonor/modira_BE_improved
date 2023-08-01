@@ -1,5 +1,4 @@
-package com.example.modiraa.dto;
-
+package com.example.modiraa.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,10 +10,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 
-public class myPostsResponseDto {
+public class EnterPostsResponseDto {
 
     private Long postId;
     private String title;
     private String menuForImage;
     private String menu;
 }
+

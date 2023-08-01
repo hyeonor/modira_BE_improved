@@ -1,6 +1,6 @@
 package com.example.modiraa.controller;
 
-import com.example.modiraa.dto.ChatMessageResponseDto;
+import com.example.modiraa.dto.response.ChatMessageResponseDto;
 import com.example.modiraa.service.ChatMessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

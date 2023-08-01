@@ -1,6 +1,6 @@
 package com.example.modiraa.repository;
 
-import com.example.modiraa.dto.myPostsResponseDto;
+import com.example.modiraa.dto.response.myPostsResponseDto;
 import com.example.modiraa.model.Member;
 import com.example.modiraa.model.Post;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +16,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
 
     // 내가 작성한 모임 조회
-   @Query("SELECT new com.example.modiraa.dto.myPostsResponseDto(p.id, p.title, PI.imageurl, p.menu)" +
+   @Query("SELECT new com.example.modiraa.dto.response.myPostsResponseDto(p.id, p.title, PI.imageurl, p.menu)" +
             "from Post p left outer join PostImage PI on PI.menu=p.menu " +
             "where p .member =:member " +
             "order by p.id desc")

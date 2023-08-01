@@ -1,8 +1,8 @@
 package com.example.modiraa.controller;
 
 import com.example.modiraa.auth.UserDetailsImpl;
-import com.example.modiraa.dto.AdditionalInfoRequest;
-import com.example.modiraa.dto.LoginIdCheckDto;
+import com.example.modiraa.dto.request.AdditionalInfoRequest;
+import com.example.modiraa.dto.response.LoginIdCheckDto;
 import com.example.modiraa.service.OAuthLoginService;
 import com.example.modiraa.service.S3Uploader;
 import com.example.modiraa.service.UserService;
