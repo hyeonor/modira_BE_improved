@@ -17,7 +17,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class HatesService {
+public class DislikeService {
     private final DislikeRepository dislikeRepository;
     private final LikesRepository likesRepository;
     private final MemberRepository memberRepository;
