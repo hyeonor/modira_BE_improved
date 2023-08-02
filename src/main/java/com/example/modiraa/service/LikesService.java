@@ -5,7 +5,7 @@ import com.example.modiraa.model.Dislike;
 import com.example.modiraa.model.Like;
 import com.example.modiraa.model.Member;
 import com.example.modiraa.repository.DislikeRepository;
-import com.example.modiraa.repository.LikesRepository;
+import com.example.modiraa.repository.LikeRepository;
 import com.example.modiraa.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,9 +18,8 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class LikesService {
-    private final LikesRepository likesRepository;
+    private final LikeRepository likeRepository;
     private final MemberRepository memberRepository;
-
     private final DislikeRepository dislikeRepository;
 
     //유저의 평가 점수 +1점 부여하고 싶을때
@@ -29,7 +28,7 @@ public class LikesService {
         //USERID 아이디로 USER 를 찾아서 저장
         Member receiver = memberRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("유저가 없습니다"));
         Member giver = userDetails.getMember();
-        Optional<Like> likesFound = likesRepository.findByGiverAndReceiver(giver, receiver);
+        Optional<Like> likesFound = likeRepository.findByGiverAndReceiver(giver, receiver);
         Optional<Dislike> HatesFound = dislikeRepository.findByGiverAndReceiver(giver, receiver);
         if (likesFound.isPresent()) {
             return new ResponseEntity<>("중복된 좋아요는 불가능합니다.", HttpStatus.BAD_REQUEST);
@@ -43,7 +42,7 @@ public class LikesService {
         }
 
         Like like = new Like(giver, receiver);
-        likesRepository.save(like);
+        likeRepository.save(like);
 
 
         return new ResponseEntity<>("좋아요 성공! ", HttpStatus.valueOf(201));
@@ -54,11 +53,11 @@ public class LikesService {
         // USERID 로 좋아요 한 게시물들을 리스트에 담아서
         Member receiver = memberRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("유저가 없습니다"));
         Member giver = userDetails.getMember();
-        Optional<Like> likesFound = likesRepository.findByGiverAndReceiver(giver, receiver);
+        Optional<Like> likesFound = likeRepository.findByGiverAndReceiver(giver, receiver);
         if (likesFound.isEmpty()) {
             return new ResponseEntity<>("좋아요 한 기록이 없습니다.", HttpStatus.BAD_REQUEST);
         }
-        likesRepository.delete(likesFound.get());
+        likeRepository.delete(likesFound.get());
         return new ResponseEntity<>("좋아요 취소 성공 .", HttpStatus.valueOf(200));
     }
 }

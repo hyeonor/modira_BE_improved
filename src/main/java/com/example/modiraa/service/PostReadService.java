@@ -20,7 +20,7 @@ import java.util.List;
 @Service
 public class PostReadService {
     private final PostRepository postRepository;
-    private final LikesRepository likesRepository;
+    private final LikeRepository likeRepository;
     private final DislikeRepository dislikeRepository;
     private final PostQueryRepository postQueryRepository;
     private final MemberRoomRepository memberRoomRepository;
@@ -117,7 +117,7 @@ public class PostReadService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 없습니다."));
 
-        Long score = likesRepository.likesCount(post.getMember()) - dislikeRepository.hatesCount(post.getMember());
+        Long score = likeRepository.likesCount(post.getMember()) - dislikeRepository.hatesCount(post.getMember());
 
         return PostDetailResponseDto.builder()
                 .category(post.getCategory())

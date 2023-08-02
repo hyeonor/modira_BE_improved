@@ -5,7 +5,7 @@ import com.example.modiraa.model.Dislike;
 import com.example.modiraa.model.Like;
 import com.example.modiraa.model.Member;
 import com.example.modiraa.repository.DislikeRepository;
-import com.example.modiraa.repository.LikesRepository;
+import com.example.modiraa.repository.LikeRepository;
 import com.example.modiraa.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,8 +18,8 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class DislikeService {
+    private final LikeRepository likeRepository;
     private final DislikeRepository dislikeRepository;
-    private final LikesRepository likesRepository;
     private final MemberRepository memberRepository;
 
     //유저의 평가 점수 -1점 부여하고 싶을때
@@ -28,7 +28,7 @@ public class DislikeService {
         Member receiver = memberRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("유저가 없습니다"));
         Member giver = userDetails.getMember();
         Optional<Dislike> hatesFound = dislikeRepository.findByGiverAndReceiver(giver, receiver);
-        Optional<Like> likesFound = likesRepository.findByGiverAndReceiver(giver, receiver);
+        Optional<Like> likesFound = likeRepository.findByGiverAndReceiver(giver, receiver);
         if (hatesFound.isPresent()) {
             return new ResponseEntity<>("중복된 싫어요는 불가능합니다.", HttpStatus.BAD_REQUEST);
         }

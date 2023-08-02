@@ -6,7 +6,7 @@ import com.example.modiraa.dto.response.UserProfileResponseDto;
 import com.example.modiraa.model.Member;
 import com.example.modiraa.model.MemberRoom;
 import com.example.modiraa.repository.DislikeRepository;
-import com.example.modiraa.repository.LikesRepository;
+import com.example.modiraa.repository.LikeRepository;
 import com.example.modiraa.repository.MemberRepository;
 import com.example.modiraa.repository.MemberRoomQueryRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,10 +17,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class MyPageService {
-
-    private final MemberRepository memberRepository;
-    private final LikesRepository likesRepository;
+    private final LikeRepository likeRepository;
     private final DislikeRepository dislikeRepository;
+    private final MemberRepository memberRepository;
     private final MemberRoomQueryRepository memberRoomQueryRepository;
 
     // 유저 프로필 조회
@@ -29,7 +28,7 @@ public class MyPageService {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new IllegalAccessException("유저의 정보가 없습니다."));
 
-        Long score = likesRepository.likesCount(member) - dislikeRepository.hatesCount(member);
+        Long score = likeRepository.likesCount(member) - dislikeRepository.hatesCount(member);
 
         return UserProfileResponseDto.builder()
                 .address(member.getAddress())
@@ -45,7 +44,7 @@ public class MyPageService {
     public MyUserProfileResponseDto getMyProfileRead(UserDetailsImpl userDetails) {
 
         Member member = userDetails.getMember();
-        Long score = likesRepository.likesCount(member) - dislikeRepository.hatesCount(member);
+        Long score = likeRepository.likesCount(member) - dislikeRepository.hatesCount(member);
 
         String roomId = null;
 
