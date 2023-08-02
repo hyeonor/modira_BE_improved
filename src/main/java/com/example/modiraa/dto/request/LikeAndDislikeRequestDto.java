@@ -1,6 +1,5 @@
 package com.example.modiraa.dto.request;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,9 +7,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LikesAndHatesUserIdDto {
-
+public class LikeAndDislikeRequestDto {
     private Long userId;
-
-
 }
