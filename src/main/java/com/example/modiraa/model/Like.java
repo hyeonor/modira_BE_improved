@@ -6,10 +6,11 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+@Getter
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
+@Table(name = "tb_like")
 public class Like {
 
     @Id

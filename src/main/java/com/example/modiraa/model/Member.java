@@ -38,7 +38,7 @@ public class Member {
     private String postState;
 
     @Column
-    private Long oAuthId;
+    private String oAuthId;
 
     @Column
     private OAuthProvider oAuthProvider;
@@ -48,12 +48,8 @@ public class Member {
         this.postState = postState;
     }
 
-    public void setProfileImage(String postState) {
-        this.postState = postState;
-    }
-
     @Builder
-    public Member(String profileImage, String nickname, String age, String gender, String address, Long oAuthId, OAuthProvider oAuthProvider) {
+    public Member(String profileImage, String nickname, String age, String gender, String address, String oAuthId, OAuthProvider oAuthProvider) {
         this.profileImage = profileImage;
         this.nickname = nickname;
         this.age = age;

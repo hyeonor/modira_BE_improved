@@ -15,5 +15,5 @@ public class AdditionalInfoRequest {
     @JsonProperty("oAuthProvider")
     private String oAuthProvider;
     @JsonProperty("oAuthId")
-    private Long oAuthId;
+    private String oAuthId;
 }

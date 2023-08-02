@@ -52,7 +52,7 @@ public class OAuthLoginService {
         return ResponseEntity.ok().body(responseDto);
     }
 
-    private Member findMemberByOAuthId(Long oAuthId) {
+    private Member findMemberByOAuthId(String oAuthId) {
         return memberRepository.findByOAuthId(oAuthId)
                 .orElseThrow(() -> new IllegalArgumentException("oAuth Id가 없습니다."));
     }
