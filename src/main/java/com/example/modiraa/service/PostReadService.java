@@ -21,9 +21,8 @@ import java.util.List;
 public class PostReadService {
     private final PostRepository postRepository;
     private final LikesRepository likesRepository;
-    private final HatesRepository hatesRepository;
+    private final DislikeRepository dislikeRepository;
     private final PostQueryRepository postQueryRepository;
-
     private final MemberRoomRepository memberRoomRepository;
 
     // 모임 검색
@@ -118,7 +117,7 @@ public class PostReadService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 없습니다."));
 
-        Long score = likesRepository.likesCount(post.getMember()) - hatesRepository.hatesCount(post.getMember());
+        Long score = likesRepository.likesCount(post.getMember()) - dislikeRepository.hatesCount(post.getMember());
 
         return PostDetailResponseDto.builder()
                 .category(post.getCategory())
