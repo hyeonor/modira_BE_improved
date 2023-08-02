@@ -1,6 +1,6 @@
 package com.example.modiraa.service;
 
-import com.example.modiraa.model.Hates;
+import com.example.modiraa.model.Dislike;
 import com.example.modiraa.model.Likes;
 import com.example.modiraa.repository.HatesRepository;
 import com.example.modiraa.repository.LikesRepository;
@@ -27,7 +27,7 @@ public class HatesService {
         //USERID 아이디로 USER 를 찾아서 저장
         Member receiver = memberRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("유저가 없습니다"));
         Member giver = userDetails.getMember();
-        Optional<Hates> hatesFound = hatesRepository.findByGiverAndReceiver(giver, receiver);
+        Optional<Dislike> hatesFound = hatesRepository.findByGiverAndReceiver(giver, receiver);
         Optional<Likes> likesFound = likesRepository.findByGiverAndReceiver(giver, receiver);
         if(hatesFound.isPresent()){
             return new ResponseEntity<>("중복된 싫어요는 불가능합니다.", HttpStatus.BAD_REQUEST);
@@ -40,8 +40,8 @@ public class HatesService {
             return new ResponseEntity<>("자기 자신을 평가할 수 없습니다.  ", HttpStatus.BAD_REQUEST);
         }
 
-        Hates hates = new Hates(giver, receiver);
-        hatesRepository.save(hates);
+        Dislike dislike = new Dislike(giver, receiver);
+        hatesRepository.save(dislike);
 
         return new ResponseEntity<>("싫어요 성공! ", HttpStatus.valueOf(201));
     }
@@ -53,7 +53,7 @@ public class HatesService {
         // USERID 로 싫어요 한 게시물들을 리스트에 담아서
         Member receiver = memberRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("유저가 없습니다"));
         Member giver = userDetails.getMember();
-        Optional<Hates> hatesFound = hatesRepository.findByGiverAndReceiver(giver, receiver);
+        Optional<Dislike> hatesFound = hatesRepository.findByGiverAndReceiver(giver, receiver);
         if(hatesFound.isEmpty()){
             return new ResponseEntity<>("싫어요 한 기록이 없습니다.", HttpStatus.BAD_REQUEST);
         }
