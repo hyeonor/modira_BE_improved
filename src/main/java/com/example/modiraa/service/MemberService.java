@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class MemberService {
     private final MemberRepository memberRepository;
 
     //로그인 유저 정보 반환
