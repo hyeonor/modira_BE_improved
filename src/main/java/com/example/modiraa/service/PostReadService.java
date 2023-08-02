@@ -20,10 +20,9 @@ import java.util.List;
 @Service
 public class PostReadService {
     private final PostRepository postRepository;
-    private final LikesRepository likesRepository;
-    private final HatesRepository hatesRepository;
+    private final LikeRepository likeRepository;
+    private final DislikeRepository dislikeRepository;
     private final PostQueryRepository postQueryRepository;
-
     private final MemberRoomRepository memberRoomRepository;
 
     // 모임 검색
@@ -84,7 +83,7 @@ public class PostReadService {
 
         Page<Post> postAll = postQueryRepository.findAllByAddress(memberAddress, pageable);
         Page<Post> postGoldenBell = postQueryRepository.findByAddressAndCategory(memberAddress, "방장이 쏜다! 골든벨", pageable);
-        Page<Post> postDutchPay = postQueryRepository.findByAddressAndCategory(memberAddress,"다같이 내자! N빵", pageable);
+        Page<Post> postDutchPay = postQueryRepository.findByAddressAndCategory(memberAddress, "다같이 내자! N빵", pageable);
 
         PostListDto postListDto = new PostListDto();
 
@@ -116,9 +115,9 @@ public class PostReadService {
     // 모임 상세페이지
     public PostDetailResponseDto getPostDetail(Long postId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(()-> new IllegalArgumentException("게시글이 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("게시글이 없습니다."));
 
-        Long score = likesRepository.likesCount(post.getMember()) - hatesRepository.hatesCount(post.getMember());
+        Long score = likeRepository.likesCount(post.getMember()) - dislikeRepository.hatesCount(post.getMember());
 
         return PostDetailResponseDto.builder()
                 .category(post.getCategory())
@@ -145,7 +144,7 @@ public class PostReadService {
 
 
     //내가 쓴 참석 모임 조회
-    public List<myPostsResponseDto> getMyReadPost(UserDetailsImpl userDetails) {
+    public List<MyPostsResponseDto> getMyReadPost(UserDetailsImpl userDetails) {
         Member member = userDetails.getMember();
         Pageable pageable = PageRequest.ofSize(1);
         return postRepository.MyPostRead(member, pageable);

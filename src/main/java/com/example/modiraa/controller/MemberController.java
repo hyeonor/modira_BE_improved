@@ -5,7 +5,7 @@ import com.example.modiraa.dto.request.AdditionalInfoRequest;
 import com.example.modiraa.dto.response.LoginIdCheckDto;
 import com.example.modiraa.service.OAuthLoginService;
 import com.example.modiraa.service.S3Uploader;
-import com.example.modiraa.service.UserService;
+import com.example.modiraa.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,10 +17,9 @@ import java.io.IOException;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
-public class UserController {
-
+public class MemberController {
     private final S3Uploader s3Uploader;
-    private final UserService userService;
+    private final MemberService memberService;
     private final OAuthLoginService oAuthLoginService;
 
     //S3 Test controller
@@ -40,6 +39,6 @@ public class UserController {
     //로그인 유저 정보
     @GetMapping("/login/auth")
     public LoginIdCheckDto userDetails(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return userService.userInfo(userDetails);
+        return memberService.userInfo(userDetails);
     }
 }

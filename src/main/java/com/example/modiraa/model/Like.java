@@ -10,23 +10,24 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class Hates {
+public class Like {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "HATES_ID", nullable = false)
+    @Column(name = "like_id", nullable = false)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "GIVER_USER_ID", nullable = false)
+    @JoinColumn(name = "giver_user_id", nullable = false)
     private Member giver;
 
     @ManyToOne
-    @JoinColumn(name = "RECEIVER_USER_ID", nullable = false)
+    @JoinColumn(name = "receiver_user_id", nullable = false)
     private Member receiver;
 
-    public Hates(Member giver, Member receiver) {
+
+    public Like(Member giver, Member receiver) {
         this.giver = giver;
         this.receiver = receiver;
-
     }
 }
