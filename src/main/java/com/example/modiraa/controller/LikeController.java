@@ -10,8 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-public class LikesController {
-
+public class LikeController {
     private final LikeService likeService;
 
     // 좋아요 기능
