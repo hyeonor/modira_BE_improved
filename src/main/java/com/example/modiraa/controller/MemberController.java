@@ -17,7 +17,7 @@ import java.io.IOException;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
-public class UserController {
+public class MemberController {
 
     private final S3Uploader s3Uploader;
     private final UserService userService;
