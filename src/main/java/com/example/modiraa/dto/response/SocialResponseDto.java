@@ -18,7 +18,7 @@ public class SocialResponseDto {
     private String age;
     private String gender;
     private String address;
-    private Long oAuthId;
+    private String oAuthId;
     private String profileImage;
     private OAuthProvider oAuthProvider;
 }

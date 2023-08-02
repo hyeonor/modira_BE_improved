@@ -6,14 +6,14 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
-public interface MemberRepository extends JpaRepository<Member, Long>{
+public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findByUsername(String username);
     Optional<Member> findByNickname(String nickname);
 
-    <T> Optional<T> findByNickname(String nickname, Class <T>type);
+    <T> Optional<T> findByNickname(String nickname, Class<T> type);
 
     Member findAllById(Long Id);
 
     @Query("SELECT m FROM Member m WHERE m.oAuthId =:oAuthId")
-    Optional<Member> findByOAuthId(Long oAuthId);
+    Optional<Member> findByOAuthId(String oAuthId);
 }
