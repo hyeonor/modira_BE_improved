@@ -2,7 +2,7 @@ package com.example.modiraa.service;
 
 import com.example.modiraa.auth.UserDetailsImpl;
 import com.example.modiraa.model.Dislike;
-import com.example.modiraa.model.Likes;
+import com.example.modiraa.model.Like;
 import com.example.modiraa.model.Member;
 import com.example.modiraa.repository.DislikeRepository;
 import com.example.modiraa.repository.LikesRepository;
@@ -29,7 +29,7 @@ public class LikesService {
         //USERID 아이디로 USER 를 찾아서 저장
         Member receiver = memberRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("유저가 없습니다"));
         Member giver = userDetails.getMember();
-        Optional<Likes> likesFound = likesRepository.findByGiverAndReceiver(giver, receiver);
+        Optional<Like> likesFound = likesRepository.findByGiverAndReceiver(giver, receiver);
         Optional<Dislike> HatesFound = dislikeRepository.findByGiverAndReceiver(giver, receiver);
         if (likesFound.isPresent()) {
             return new ResponseEntity<>("중복된 좋아요는 불가능합니다.", HttpStatus.BAD_REQUEST);
@@ -42,8 +42,8 @@ public class LikesService {
             return new ResponseEntity<>("자기 자신을 평가할 수 없습니다.  ", HttpStatus.BAD_REQUEST);
         }
 
-        Likes likes = new Likes(giver, receiver);
-        likesRepository.save(likes);
+        Like like = new Like(giver, receiver);
+        likesRepository.save(like);
 
 
         return new ResponseEntity<>("좋아요 성공! ", HttpStatus.valueOf(201));
@@ -54,7 +54,7 @@ public class LikesService {
         // USERID 로 좋아요 한 게시물들을 리스트에 담아서
         Member receiver = memberRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("유저가 없습니다"));
         Member giver = userDetails.getMember();
-        Optional<Likes> likesFound = likesRepository.findByGiverAndReceiver(giver, receiver);
+        Optional<Like> likesFound = likesRepository.findByGiverAndReceiver(giver, receiver);
         if (likesFound.isEmpty()) {
             return new ResponseEntity<>("좋아요 한 기록이 없습니다.", HttpStatus.BAD_REQUEST);
         }

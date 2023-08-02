@@ -2,7 +2,7 @@ package com.example.modiraa.service;
 
 import com.example.modiraa.auth.UserDetailsImpl;
 import com.example.modiraa.model.Dislike;
-import com.example.modiraa.model.Likes;
+import com.example.modiraa.model.Like;
 import com.example.modiraa.model.Member;
 import com.example.modiraa.repository.DislikeRepository;
 import com.example.modiraa.repository.LikesRepository;
@@ -28,7 +28,7 @@ public class DislikeService {
         Member receiver = memberRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("유저가 없습니다"));
         Member giver = userDetails.getMember();
         Optional<Dislike> hatesFound = dislikeRepository.findByGiverAndReceiver(giver, receiver);
-        Optional<Likes> likesFound = likesRepository.findByGiverAndReceiver(giver, receiver);
+        Optional<Like> likesFound = likesRepository.findByGiverAndReceiver(giver, receiver);
         if (hatesFound.isPresent()) {
             return new ResponseEntity<>("중복된 싫어요는 불가능합니다.", HttpStatus.BAD_REQUEST);
         }
