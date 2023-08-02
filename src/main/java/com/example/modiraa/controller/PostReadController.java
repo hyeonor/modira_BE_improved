@@ -30,7 +30,7 @@ public class PostReadController {
     public ResponseEntity<Slice<PostsResponseDto>> searchPosts(@RequestParam(value = "keyword", defaultValue = "") String keyword,
                                                                @RequestParam(value = "address", defaultValue = "") String address,
                                                                @PageableDefault(sort = "id", direction = Sort.Direction.DESC, size = 8) Pageable pageable,
-                                                               @RequestParam(value = "lastId", defaultValue = "" + Long.MAX_VALUE) Long lastId){
+                                                               @RequestParam(value = "lastId", defaultValue = "" + Long.MAX_VALUE) Long lastId) {
         Page<PostsResponseDto> posts = postReadService.searchPosts(keyword, address, pageable, lastId);
         return ResponseEntity.status(HttpStatus.OK).body(posts);
     }
@@ -39,14 +39,14 @@ public class PostReadController {
     @GetMapping("/api/post")
     public ResponseEntity<Slice<PostsResponseDto>> getPosts(@RequestParam(value = "category", defaultValue = "") String category,
                                                             @PageableDefault(sort = "id", direction = Sort.Direction.DESC, size = 8) Pageable pageable,
-                                                            @RequestParam(value = "lastId", defaultValue = "" + Long.MAX_VALUE) Long lastId){
+                                                            @RequestParam(value = "lastId", defaultValue = "" + Long.MAX_VALUE) Long lastId) {
         Page<PostsResponseDto> posts = postReadService.showPosts(category, pageable, lastId);
         return ResponseEntity.status(HttpStatus.OK).body(posts);
     }
 
     // 메인 페이지 카테고리별 모임
     @GetMapping("/api/post/list")
-    public ResponseEntity<PostListDto> getPostList(@AuthenticationPrincipal UserDetailsImpl userDetails){
+    public ResponseEntity<PostListDto> getPostList(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         PostListDto postList;
         if (userDetails == null) {
             postList = postReadService.showPostList();
@@ -58,14 +58,14 @@ public class PostReadController {
 
     // 모임 상세페이지
     @GetMapping("/api/post/detail/{postId}")
-    public ResponseEntity<PostDetailResponseDto> postDetail(@PathVariable Long postId){
+    public ResponseEntity<PostDetailResponseDto> postDetail(@PathVariable Long postId) {
         PostDetailResponseDto postDetail = postReadService.getPostDetail(postId);
         return ResponseEntity.status(HttpStatus.OK).body(postDetail);
     }
 
     // 내가 작성한 모임 조회
     @GetMapping("/api/myposts")
-    public ResponseEntity<List<myPostsResponseDto>> getMyReadPost(@AuthenticationPrincipal UserDetailsImpl userDetails) throws IllegalAccessException {
+    public ResponseEntity<List<MyPostsResponseDto>> getMyReadPost(@AuthenticationPrincipal UserDetailsImpl userDetails) throws IllegalAccessException {
 
         return ResponseEntity.status(HttpStatus.OK).body(postReadService.getMyReadPost(userDetails));
     }
