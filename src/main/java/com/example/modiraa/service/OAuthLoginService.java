@@ -30,8 +30,8 @@ public class OAuthLoginService {
     private final MemberRepository memberRepository;
     private final AuthTokensGenerator authTokensGenerator;
     private final RequestOAuthInfoService requestOAuthInfoService;
-    private final String TOKEN_PREFIX = "Bearer ";
-    private final String HEADER_STRING = "Authorization";
+    private static final String TOKEN_PREFIX = "Bearer ";
+    private static final String HEADER_STRING = "Authorization";
 
 
     public ResponseEntity<SocialResponseDto> login(OAuthLoginParams params) {
@@ -65,7 +65,7 @@ public class OAuthLoginService {
 
     private HttpHeaders createJwtTokenHeaders(UserDetailsImpl userDetails) {
         //JWT 토큰 발급
-        AuthTokens authTokens = authTokensGenerator.generate(userDetails.getMember().getUsername());
+        AuthTokens authTokens = authTokensGenerator.generate(userDetails.getMember().getNickname());
 
         // 응답 헤더에 JWT 토큰 추가
         HttpHeaders headers = new HttpHeaders();

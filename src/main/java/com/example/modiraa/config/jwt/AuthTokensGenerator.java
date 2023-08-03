@@ -14,11 +14,11 @@ public class AuthTokensGenerator {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    public AuthTokens generate(String username) {
+    public AuthTokens generate(String nickname) {
         long now = (new Date()).getTime();
         Date accessTokenExpiredAt = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
 
-        String accessToken = jwtTokenProvider.generate(username, accessTokenExpiredAt);
+        String accessToken = jwtTokenProvider.generate(nickname, accessTokenExpiredAt);
 
         return AuthTokens.of(accessToken, BEARER_TYPE, ACCESS_TOKEN_EXPIRE_TIME / 1000L);
     }

@@ -24,11 +24,11 @@ public class JwtTokenProvider {
     }
 
     //토큰 발급
-    public String generate(String username, Date expiredAt){
+    public String generate(String nickname, Date expiredAt) {
         return JWT.create()
                 .withSubject("cos토큰")
                 .withExpiresAt(expiredAt)
-                .withClaim("username", username)
+                .withClaim("nickname", nickname)
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
     }
 

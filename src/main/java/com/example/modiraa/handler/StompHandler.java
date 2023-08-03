@@ -54,9 +54,9 @@ public class StompHandler implements ChannelInterceptor {
 
             Member member;
             if (jwtToken != null) {
-                member = memberRepository.findByNickname(jwtAuthorizationFilter.getUserNameFromJwt(jwtToken), Member.class)
-                        .orElseThrow(()->new IllegalArgumentException("member 가 존재하지 않습니다."));
-            }else {
+                member = memberRepository.findByNickname(jwtAuthorizationFilter.getNicknameFromJwt(jwtToken), Member.class)
+                        .orElseThrow(() -> new IllegalArgumentException("member 가 존재하지 않습니다."));
+            } else {
                 throw new IllegalArgumentException("유효하지 않은 token 입니다.");
             }
 

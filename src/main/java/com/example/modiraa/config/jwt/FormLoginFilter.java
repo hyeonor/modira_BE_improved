@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.Date;
 
 //스프링 시큐리티에서 UsernamePasswordAuthenticationFilter 가 있음.
-// /login 요청해서 username, password 전송하면 (psot)
+// /login 요청해서 nickname, password 전송하면 (psot)
 //UsernamePasswordAuthenticationFilter 동작을 함.
 public class FormLoginFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -31,11 +31,11 @@ public class FormLoginFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         System.out.println("JwtAuthenticationFilter : 로그인 시도중");
-        // 1.username, password 받아서
+        // 1.nickname, password 받아서
         // 2. 정상인지 로그인 시도를 해보는 것. authenticationManager로 로그인 시도를 하면!!
         // PrincipalDetailsService가 호출 loadUserByUsername() 함수 실행됨.
         // PrincipalDetailsService의 loadUserByUsername()함수가 실행된 후 정상이면 authentication이 리턴됨.
-        // DB에 있는 username과 password가 일치한다.
+        // DB에 있는 nickname과 password가 일치한다.
         try {
             ObjectMapper om = new ObjectMapper();
             LoginRequestDto loginRequestDto = om.readValue(request.getInputStream(), LoginRequestDto.class); //유저정보 담기
@@ -44,7 +44,6 @@ public class FormLoginFilter extends UsernamePasswordAuthenticationFilter {
 
             UsernamePasswordAuthenticationToken authenticationToken =
                     new UsernamePasswordAuthenticationToken(loginRequestDto.getUsername(), loginRequestDto.getPassword());
-
 
             Authentication authentication =
                     getAuthenticationManager().authenticate(authenticationToken);
@@ -69,7 +68,7 @@ public class FormLoginFilter extends UsernamePasswordAuthenticationFilter {
         String jwtToken = JWT.create()
                 .withSubject("cos토큰")
                 .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.EXPIRATION_TIME))
-                .withClaim("username", userDetails.getMember().getUsername())
+                .withClaim("nickname", userDetails.getMember().getNickname())
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
 
         response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + jwtToken);
@@ -79,7 +78,7 @@ public class FormLoginFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         System.out.println(failed.getMessage());
-        response.setStatus(400);
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(failed.getMessage());
     }

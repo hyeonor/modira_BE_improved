@@ -27,7 +27,7 @@ import java.io.IOException;
 @Component
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
-    private MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
 
     public JwtAuthorizationFilter(AuthenticationManager authenticationManager, MemberRepository memberRepository) {
         super(authenticationManager);
@@ -39,7 +39,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             throws IOException, ServletException {
         //헤더 확인
         String header = request.getHeader(JwtProperties.HEADER_STRING);
-        if(header == null || !header.startsWith(JwtProperties.TOKEN_PREFIX)) {
+        if (header == null || !header.startsWith(JwtProperties.TOKEN_PREFIX)) {
             chain.doFilter(request, response);
             return;
         }
@@ -48,22 +48,22 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         String jwtToken = request.getHeader(JwtProperties.HEADER_STRING)
                 .replace("Bearer ", "");
 
-        System.out.println("header : "+header);
+        System.out.println("header : " + header);
 
-        String username =
-                JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(jwtToken).getClaim("username").asString();
+        String nickname =
+                JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(jwtToken).getClaim("nickname").asString();
 
         //서명이 정상적으로 됨.
-        if(username != null) {
-            Member memberEntity = memberRepository.findByUsername(username).orElseThrow(
-                    ()-> new IllegalArgumentException("username이 없습니다.")
+        if (nickname != null) {
+            Member memberEntity = memberRepository.findByNickname(nickname).orElseThrow(
+                    () -> new IllegalArgumentException("nickname이 없습니다.")
             );
 
             UserDetailsImpl userDetails = new UserDetailsImpl(memberEntity);
 
             //Jwt 토큰 서명을 통해서 서명이 정상이면 Authentication 객체를 만들어 준다.
             Authentication authentication =
-                    new UsernamePasswordAuthenticationToken(userDetails, null,userDetails.getAuthorities());
+                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             //홀더에 검증이 완료된 정보 값 넣어준다. -> 이제 controller 에서 @AuthenticationPrincipal UserDetailsImpl userDetails 로 정보를 꺼낼 수 있다.
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -74,14 +74,14 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     /**
      * Jwt Token을 복호화 하여 이름을 얻는다.
      */
-    public String getUserNameFromJwt(String token) {
+    public String getNicknameFromJwt(String token) {
 
-        String username =
-                JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token).getClaim("username").asString();
+        String nickname =
+                JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token).getClaim("nickname").asString();
 
-        if(username != null) {
-            Member memberEntity = memberRepository.findByUsername(username).orElseThrow(
-                    () -> new IllegalArgumentException("username이 없습니다.")
+        if (nickname != null) {
+            Member memberEntity = memberRepository.findByNickname(nickname).orElseThrow(
+                    () -> new IllegalArgumentException("nickname이 없습니다.")
             );
             UserDetailsImpl userDetails = new UserDetailsImpl(memberEntity);
 
@@ -93,12 +93,12 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     public Member getMemberFromJwt(String token) {
 
-        String username =
-                JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token).getClaim("username").asString();
+        String nickname =
+                JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token).getClaim("nickname").asString();
 
-        if(username != null) {
-            Member memberEntity = memberRepository.findByUsername(username).orElseThrow(
-                    () -> new IllegalArgumentException("username이 없습니다.")
+        if (nickname != null) {
+            Member memberEntity = memberRepository.findByNickname(nickname).orElseThrow(
+                    () -> new IllegalArgumentException("nickname이 없습니다.")
             );
             UserDetailsImpl userDetails = new UserDetailsImpl(memberEntity);
 
