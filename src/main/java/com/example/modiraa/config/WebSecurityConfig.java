@@ -1,7 +1,8 @@
 package com.example.modiraa.config;
 
-import com.example.modiraa.config.jwt.FormLoginFilter;
+import com.example.modiraa.config.jwt.JwtAuthenticationFilter;
 import com.example.modiraa.config.jwt.JwtAuthorizationFilter;
+import com.example.modiraa.config.jwt.JwtProperties;
 import com.example.modiraa.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -29,6 +30,7 @@ public class WebSecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
     private final MemberRepository memberRepository;
+    private final JwtProperties jwtProperties;
 
     @Bean   // 비밀번호 암호화
     public BCryptPasswordEncoder passwordEncoder() {
@@ -71,8 +73,8 @@ public class WebSecurityConfig {
                 // 토큰을 활용하면 세션이 필요 없으므로 STATELESS로 설정하여 Session을 사용하지 않는다.
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilterBefore(new FormLoginFilter(authenticationManager(authenticationConfiguration)), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JwtAuthorizationFilter(authenticationManager(authenticationConfiguration), memberRepository), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthenticationFilter(authenticationManager(authenticationConfiguration), jwtProperties), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthorizationFilter(authenticationManager(authenticationConfiguration), memberRepository, jwtProperties), UsernamePasswordAuthenticationFilter.class)
         ;
 
         return http.build();
