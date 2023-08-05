@@ -1,6 +1,6 @@
 package com.example.modiraa.model;
 
-import com.example.modiraa.dto.request.ChatMessageRequestDto;
+import com.example.modiraa.dto.request.ChatMessageRequest;
 import lombok.*;
 
 import javax.persistence.*;
@@ -52,11 +52,11 @@ public class ChatMessage extends Timestamped {
     }
 
     @Builder
-    public ChatMessage(ChatMessageRequestDto chatMessageRequestDto) {
-        this.type = chatMessageRequestDto.getType();
-        this.roomId = chatMessageRequestDto.getRoomId();
-        this.sender =  chatMessageRequestDto.getSender();
-        this.message = chatMessageRequestDto.getMessage();
-        this.userCount = chatMessageRequestDto.getUserCount();
+    public ChatMessage(ChatMessageRequest chatMessageRequest) {
+        this.type = chatMessageRequest.getType();
+        this.roomId = chatMessageRequest.getRoomId();
+        this.sender =  chatMessageRequest.getSender();
+        this.message = chatMessageRequest.getMessage();
+        this.userCount = chatMessageRequest.getUserCount();
     }
 }
