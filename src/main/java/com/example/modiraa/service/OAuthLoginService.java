@@ -31,13 +31,13 @@ import java.util.Optional;
 public class OAuthLoginService {
     private final S3Uploader s3Uploader;
     private final JwtProperties jwtProperties;
+    private final OAuthInfoService OAuthInfoService;
     private final MemberRepository memberRepository;
     private final AuthTokensGenerator authTokensGenerator;
-    private final RequestOAuthInfoService requestOAuthInfoService;
 
 
     public ResponseEntity<SocialResponseDto> login(OAuthLoginParams params) {
-        OAuthInfoResponse oAuthInfoResponse = requestOAuthInfoService.request(params);
+        OAuthInfoResponse oAuthInfoResponse = OAuthInfoService.request(params);
         SocialResponseDto responseDto = checkIsNewMember(oAuthInfoResponse);
 
         if (responseDto.getId() != null) {
