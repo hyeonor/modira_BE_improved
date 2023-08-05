@@ -23,9 +23,6 @@ public class Member {
     private String nickname;
 
     @Column
-    private String username;
-
-    @Column
     private String age;
 
     @Column

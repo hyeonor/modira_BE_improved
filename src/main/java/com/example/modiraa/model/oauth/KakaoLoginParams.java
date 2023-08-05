@@ -19,7 +19,6 @@ public class KakaoLoginParams implements OAuthLoginParams {
     public MultiValueMap<String, String> makeBody() {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("code", authorizationCode);
-        System.out.println("authorizationCode " + authorizationCode);
         return body;
     }
 }
