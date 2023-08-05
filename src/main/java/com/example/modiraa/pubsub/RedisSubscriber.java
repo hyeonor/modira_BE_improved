@@ -1,6 +1,6 @@
 package com.example.modiraa.pubsub;
 
-import com.example.modiraa.dto.response.ChatMessageResponseDto;
+import com.example.modiraa.dto.response.ChatMessageResponse;
 import com.example.modiraa.model.ChatMessage;
 import com.example.modiraa.repository.ChatMessageRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,8 +39,8 @@ public class RedisSubscriber {
         }
     }
 
-    private ChatMessageResponseDto getPayload(ChatMessage chatMessage) {
-        return ChatMessageResponseDto.builder()
+    private ChatMessageResponse getPayload(ChatMessage chatMessage) {
+        return ChatMessageResponse.builder()
                 .type(chatMessage.getType())
                 .roomId(chatMessage.getRoomId())
                 .senderId(chatMessage.getSender().getId())

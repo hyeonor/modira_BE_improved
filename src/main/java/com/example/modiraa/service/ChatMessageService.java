@@ -1,6 +1,6 @@
 package com.example.modiraa.service;
 
-import com.example.modiraa.dto.response.ChatMessageResponseDto;
+import com.example.modiraa.dto.response.ChatMessageResponse;
 import com.example.modiraa.model.ChatMessage;
 import com.example.modiraa.repository.ChatMessageQueryRepository;
 import lombok.RequiredArgsConstructor;
@@ -48,18 +48,18 @@ public class ChatMessageService {
     }
 
     // 채팅방의 마지막 150개 메세지를 페이징하여 리턴
-    public Page<ChatMessageResponseDto> getChatMessageByRoomId(String roomId, Pageable pageable) {
+    public Page<ChatMessageResponse> getChatMessageByRoomId(String roomId, Pageable pageable) {
         int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1);
-        Sort sort = Sort.by(Sort.Direction.DESC, "id" );
-        pageable = PageRequest.of(page, 150, sort );
+        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+        pageable = PageRequest.of(page, 150, sort);
         Page<ChatMessage> chatMessages = chatMessageQueryRepository.findByRoomIdOrderByIdDesc(roomId, pageable);
 
         return chatResponseDto(chatMessages);
     }
 
-    private Page<ChatMessageResponseDto> chatResponseDto(Page<ChatMessage> postSlice) {
+    private Page<ChatMessageResponse> chatResponseDto(Page<ChatMessage> postSlice) {
         return postSlice.map(p ->
-                ChatMessageResponseDto.builder()
+                ChatMessageResponse.builder()
                         .type(p.getType())
                         .roomId(p.getRoomId())
                         .senderId(p.getSender().getId())
