@@ -1,8 +1,8 @@
 package com.example.modiraa.controller;
 
 import com.example.modiraa.dto.response.SocialResponse;
-import com.example.modiraa.model.KakaoLoginParams;
-import com.example.modiraa.model.NaverLoginParams;
+import com.example.modiraa.model.oauth.KakaoLoginParams;
+import com.example.modiraa.model.oauth.NaverLoginParams;
 import com.example.modiraa.service.OAuthLoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
