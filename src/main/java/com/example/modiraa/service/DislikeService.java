@@ -23,7 +23,7 @@ public class DislikeService {
     private final MemberRepository memberRepository;
 
     //유저의 평가 점수 -1점 부여하고 싶을때
-    public ResponseEntity<?> userHates(UserDetailsImpl userDetails, Long userId) {
+    public ResponseEntity<?> dislikeClick(UserDetailsImpl userDetails, Long userId) {
         //USERID 아이디로 USER 를 찾아서 저장
         Member receiver = memberRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("유저가 없습니다"));
         Member giver = userDetails.getMember();
@@ -48,7 +48,7 @@ public class DislikeService {
 
 
     //유저의 평가를 잘못 눌렀을 취소 기능
-    public ResponseEntity<?> deleteHates(UserDetailsImpl userDetails, Long userId) {
+    public ResponseEntity<?> deleteDislike(UserDetailsImpl userDetails, Long userId) {
         // USERID 로 싫어요 한 게시물들을 리스트에 담아서
         Member receiver = memberRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("유저가 없습니다"));
         Member giver = userDetails.getMember();
