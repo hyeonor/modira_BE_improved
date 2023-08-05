@@ -7,10 +7,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class JoinUserListResponseDto {
-
+public class JoinedMembersResponse {
     private Long userId;
     private String nickname;
     private String userProfile;
-
 }
