@@ -3,6 +3,7 @@ package com.example.modiraa.service;
 import com.example.modiraa.auth.UserDetailsImpl;
 import com.example.modiraa.config.jwt.AuthTokens;
 import com.example.modiraa.config.jwt.AuthTokensGenerator;
+import com.example.modiraa.config.jwt.JwtProperties;
 import com.example.modiraa.dto.request.AdditionalInfoRequest;
 import com.example.modiraa.dto.response.OAuthInfoResponse;
 import com.example.modiraa.dto.response.SocialResponseDto;
@@ -17,9 +18,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Slf4j
@@ -27,11 +30,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OAuthLoginService {
     private final S3Uploader s3Uploader;
+    private final JwtProperties jwtProperties;
     private final MemberRepository memberRepository;
     private final AuthTokensGenerator authTokensGenerator;
     private final RequestOAuthInfoService requestOAuthInfoService;
-    private static final String TOKEN_PREFIX = "Bearer ";
-    private static final String HEADER_STRING = "Authorization";
 
 
     public ResponseEntity<SocialResponseDto> login(OAuthLoginParams params) {
@@ -40,12 +42,9 @@ public class OAuthLoginService {
 
         if (responseDto.getId() != null) {
             Member member = findMemberByOAuthId(oAuthInfoResponse.getId());
-
-            UserDetailsImpl userDetails = new UserDetailsImpl(member);
-            setAuthentication(userDetails);
+            UserDetails userDetails = authenticateMember(member);
 
             HttpHeaders headers = createJwtTokenHeaders(userDetails);
-
             return ResponseEntity.ok().headers(headers).body(responseDto);
         }
 
@@ -54,22 +53,28 @@ public class OAuthLoginService {
 
     private Member findMemberByOAuthId(String oAuthId) {
         return memberRepository.findByOAuthId(oAuthId)
-                .orElseThrow(() -> new IllegalArgumentException("oAuth Id가 없습니다."));
+                .orElseThrow(() -> new NoSuchElementException("oAuth Id가 없습니다."));
     }
 
-    private void setAuthentication(UserDetailsImpl userDetails) {
+    private UserDetails authenticateMember(Member member) {
+        UserDetails userDetails = new UserDetailsImpl(member);
+        setAuthentication(userDetails);
+        return userDetails;
+    }
+
+    private void setAuthentication(UserDetails userDetails) {
         Authentication authentication =
                 new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
-    private HttpHeaders createJwtTokenHeaders(UserDetailsImpl userDetails) {
+    private HttpHeaders createJwtTokenHeaders(UserDetails userDetails) {
         //JWT 토큰 발급
-        AuthTokens authTokens = authTokensGenerator.generate(userDetails.getMember().getNickname());
+        AuthTokens authTokens = authTokensGenerator.generate(userDetails.getUsername());
 
         // 응답 헤더에 JWT 토큰 추가
         HttpHeaders headers = new HttpHeaders();
-        headers.add(HEADER_STRING, TOKEN_PREFIX + authTokens.getAccessToken());
+        headers.add(jwtProperties.getAccessHeader(), jwtProperties.getTokenPrefix() + authTokens.getAccessToken());
         return headers;
     }
 
