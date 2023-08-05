@@ -3,6 +3,7 @@ package com.example.modiraa.auth;
 import com.example.modiraa.model.Member;
 import com.example.modiraa.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final MemberRepository memberRepository;
 
-    public UserDetailsImpl loadUserByUsername(String nickname) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String nickname) throws UsernameNotFoundException {
         Member member = memberRepository.findByNickname(nickname)
                 .orElseThrow(() -> new UsernameNotFoundException("Can't find " + nickname));
 
