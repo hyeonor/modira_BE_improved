@@ -1,6 +1,6 @@
 package com.example.modiraa.controller;
 
-import com.example.modiraa.dto.response.SocialResponseDto;
+import com.example.modiraa.dto.response.SocialResponse;
 import com.example.modiraa.model.KakaoLoginParams;
 import com.example.modiraa.model.NaverLoginParams;
 import com.example.modiraa.service.OAuthLoginService;
@@ -18,12 +18,12 @@ public class AuthController {
     private final OAuthLoginService oAuthLoginService;
 
     @PostMapping("/kakao")
-    public ResponseEntity<SocialResponseDto> loginKakao(@RequestBody KakaoLoginParams params) {
+    public ResponseEntity<SocialResponse> loginKakao(@RequestBody KakaoLoginParams params) {
         return oAuthLoginService.login(params);
     }
 
     @PostMapping("/naver")
-    public ResponseEntity<SocialResponseDto> loginNaver(@RequestBody NaverLoginParams params) {
+    public ResponseEntity<SocialResponse> loginNaver(@RequestBody NaverLoginParams params) {
         return oAuthLoginService.login(params);
     }
 }

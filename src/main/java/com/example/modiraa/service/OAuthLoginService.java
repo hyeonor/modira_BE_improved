@@ -6,7 +6,7 @@ import com.example.modiraa.config.jwt.AuthTokensGenerator;
 import com.example.modiraa.config.jwt.JwtProperties;
 import com.example.modiraa.dto.request.AdditionalInfoRequest;
 import com.example.modiraa.dto.response.OAuthInfoResponse;
-import com.example.modiraa.dto.response.SocialResponseDto;
+import com.example.modiraa.dto.response.SocialResponse;
 import com.example.modiraa.model.Member;
 import com.example.modiraa.model.oauth.OAuthLoginParams;
 import com.example.modiraa.model.oauth.OAuthProvider;
@@ -36,9 +36,9 @@ public class OAuthLoginService {
     private final AuthTokensGenerator authTokensGenerator;
 
 
-    public ResponseEntity<SocialResponseDto> login(OAuthLoginParams params) {
+    public ResponseEntity<SocialResponse> login(OAuthLoginParams params) {
         OAuthInfoResponse oAuthInfoResponse = OAuthInfoService.request(params);
-        SocialResponseDto responseDto = checkIsNewMember(oAuthInfoResponse);
+        SocialResponse responseDto = checkIsNewMember(oAuthInfoResponse);
 
         if (responseDto.getId() != null) {
             Member member = findMemberByOAuthId(oAuthInfoResponse.getId());
@@ -78,11 +78,11 @@ public class OAuthLoginService {
         return headers;
     }
 
-    private SocialResponseDto checkIsNewMember(OAuthInfoResponse oAuthInfoResponse) {
+    private SocialResponse checkIsNewMember(OAuthInfoResponse oAuthInfoResponse) {
         Optional<Member> member = memberRepository.findByOAuthId(oAuthInfoResponse.getId());
 
         return member.map(existingMember ->
-                SocialResponseDto.builder()
+                SocialResponse.builder()
                         .id(existingMember.getId())
                         .nickname(existingMember.getNickname())
                         .age(existingMember.getAge())
@@ -91,7 +91,7 @@ public class OAuthLoginService {
                         .oAuthId(existingMember.getOAuthId())
                         .build()
         ).orElse(
-                SocialResponseDto.builder()
+                SocialResponse.builder()
                         .oAuthId(oAuthInfoResponse.getId())
                         .profileImage(oAuthInfoResponse.getProfileImage())
                         .oAuthProvider(oAuthInfoResponse.getOAuthProvider())
