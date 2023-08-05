@@ -23,7 +23,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
-@EnableWebSecurity // 스프링 Security 지원을 가능하게 함
+@EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true)
 @RequiredArgsConstructor
 public class WebSecurityConfig {
@@ -32,7 +32,7 @@ public class WebSecurityConfig {
     private final MemberRepository memberRepository;
     private final JwtProperties jwtProperties;
 
-    @Bean   // 비밀번호 암호화
+    @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
@@ -53,20 +53,17 @@ public class WebSecurityConfig {
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.cors().configurationSource(corsConfigurationSource());
-        http.headers().frameOptions().disable(); //h2-console 보기
+        http.headers().frameOptions().disable();
         http.authorizeRequests()
-
-                // api 요청 접근허용
                 .antMatchers("/api/user/**").permitAll()
                 .antMatchers("/auth/kakao/**").permitAll()
                 .antMatchers("/h2-console/**").permitAll()
                 .antMatchers("/chat/**").permitAll()
                 .antMatchers("**").permitAll()
                 .antMatchers("/").authenticated()
-                //.antMatchers(HttpMethod.GET,"/api/contents").permitAll()  //GET 요청 허용
+                //.antMatchers(HttpMethod.GET,"/api/contents").permitAll()
                 //.antMatchers(HttpMethod.GET, "/api/reply/**").permitAll()
 
-                // 그 외 모든 요청권한
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().disable()

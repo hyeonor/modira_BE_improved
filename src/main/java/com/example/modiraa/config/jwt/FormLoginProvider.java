@@ -25,16 +25,17 @@ public class FormLoginProvider implements AuthenticationProvider {
 
         UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(username);
 
-        //인코딩된 암호는 시간마다 같은 값도 변경 되기 때문에 matches 함수를 이용해 비교.
+        //인코딩된 암호는 시간마다 같은 값도 변경 되기 때문에 matches 함수를 이용해 비교
         if(passwordEncoder.matches(password, userDetails.getPassword())) {
-            return new UsernamePasswordAuthenticationToken(userDetails, null); //이미 인증이 끝났으므로 비밀번호 부분은 삭제한다.
+            //이미 인증이 끝났으므로 비밀번호 부분은 삭제
+            return new UsernamePasswordAuthenticationToken(userDetails, null);
         }else {
-            throw new BadCredentialsException("잘못된 로그인 정보입니다."); //인증 실패
+            throw new BadCredentialsException("잘못된 로그인 정보입니다.");
         }
     }
 
     @Override
-    public boolean supports(Class<?> authentication) {  //token 타입에 따라서 언제 provider를 사용할지 조건을 지정할 수 있다.
+    public boolean supports(Class<?> authentication) {  //token 타입에 따라서 언제 provider를 사용할지 조건을 지정 가능
         return UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication); //provider의 supports 값이 false를 리턴하면, provider의 authenticate 메소드가 호출되지 않는다.
     }
 }

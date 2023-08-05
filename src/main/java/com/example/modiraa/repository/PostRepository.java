@@ -13,9 +13,6 @@ import java.util.List;
 public interface PostRepository extends JpaRepository<Post, Long> {
     Post findByChatRoomId(Long chatRoomId);
 
-    // 룸아이디 꺼내기
-    Post findByTitle(String title);
-
     // 내가 작성한 모임 조회
     @Query("SELECT new com.example.modiraa.dto.response.MyPostsResponse(p.id, p.title, PI.imageurl, p.menu)" +
             "from Post p left outer join PostImage PI on PI.menu=p.menu " +
