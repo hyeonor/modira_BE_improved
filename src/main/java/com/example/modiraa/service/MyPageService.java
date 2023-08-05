@@ -2,7 +2,7 @@ package com.example.modiraa.service;
 
 import com.example.modiraa.auth.UserDetailsImpl;
 import com.example.modiraa.dto.response.MyProfileResponse;
-import com.example.modiraa.dto.response.UserProfileResponseDto;
+import com.example.modiraa.dto.response.UserProfileResponse;
 import com.example.modiraa.model.Member;
 import com.example.modiraa.model.MemberRoom;
 import com.example.modiraa.repository.DislikeRepository;
@@ -18,19 +18,19 @@ import java.util.Optional;
 @Service
 public class MyPageService {
     private final LikeRepository likeRepository;
-    private final DislikeRepository dislikeRepository;
     private final MemberRepository memberRepository;
+    private final DislikeRepository dislikeRepository;
     private final MemberRoomQueryRepository memberRoomQueryRepository;
 
     // 유저 프로필 조회
-    public UserProfileResponseDto getProfile(Long id) throws IllegalAccessException {
+    public UserProfileResponse getProfile(Long id) throws IllegalAccessException {
 
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new IllegalAccessException("유저의 정보가 없습니다."));
 
         Long score = likeRepository.likesCount(member) - dislikeRepository.hatesCount(member);
 
-        return UserProfileResponseDto.builder()
+        return UserProfileResponse.builder()
                 .address(member.getAddress())
                 .age(member.getAge())
                 .userProfile(member.getProfileImage())
@@ -40,7 +40,7 @@ public class MyPageService {
                 .build();
     }
 
-    //마이프로필 조회
+    // 마이프로필 조회
     public MyProfileResponse getMyProfile(UserDetailsImpl userDetails) {
 
         Member member = userDetails.getMember();
@@ -49,6 +49,7 @@ public class MyPageService {
         String roomId = null;
 
         Optional<MemberRoom> memberRoom = memberRoomQueryRepository.findTopByMemberOrderByIdDesc(member);
+
         if (memberRoom.isPresent()) {
             roomId = memberRoom.get().getChatRoom().getRoomId();
         }

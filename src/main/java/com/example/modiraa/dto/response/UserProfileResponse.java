@@ -7,10 +7,10 @@ import lombok.NoArgsConstructor;
 
 
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class UserProfileResponseDto {
+public class UserProfileResponse {
     private String nickname;
     private String userProfile;
     private String age;

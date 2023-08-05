@@ -2,7 +2,7 @@ package com.example.modiraa.controller;
 
 import com.example.modiraa.auth.UserDetailsImpl;
 import com.example.modiraa.dto.response.MyProfileResponse;
-import com.example.modiraa.dto.response.UserProfileResponseDto;
+import com.example.modiraa.dto.response.UserProfileResponse;
 import com.example.modiraa.service.MyPageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,7 +29,7 @@ public class MyPageController {
 
     // 다른 유저 프로필 조회
     @GetMapping("/{id}")
-    public ResponseEntity<UserProfileResponseDto> profileRead(@PathVariable Long id) throws IllegalAccessException {
+    public ResponseEntity<UserProfileResponse> profileRead(@PathVariable Long id) throws IllegalAccessException {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(myPageService.getProfile(id));
     }
