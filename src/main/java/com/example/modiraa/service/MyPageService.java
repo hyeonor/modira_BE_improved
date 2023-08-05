@@ -1,7 +1,7 @@
 package com.example.modiraa.service;
 
 import com.example.modiraa.auth.UserDetailsImpl;
-import com.example.modiraa.dto.response.MyUserProfileResponseDto;
+import com.example.modiraa.dto.response.MyProfileResponse;
 import com.example.modiraa.dto.response.UserProfileResponseDto;
 import com.example.modiraa.model.Member;
 import com.example.modiraa.model.MemberRoom;
@@ -41,7 +41,7 @@ public class MyPageService {
     }
 
     //마이프로필 조회
-    public MyUserProfileResponseDto getMyProfileRead(UserDetailsImpl userDetails) {
+    public MyProfileResponse getMyProfile(UserDetailsImpl userDetails) {
 
         Member member = userDetails.getMember();
         Long score = likeRepository.likesCount(member) - dislikeRepository.hatesCount(member);
@@ -53,7 +53,7 @@ public class MyPageService {
             roomId = memberRoom.get().getChatRoom().getRoomId();
         }
 
-        return MyUserProfileResponseDto.builder()
+        return MyProfileResponse.builder()
                 .address(member.getAddress())
                 .age(member.getAge())
                 .userProfile(member.getProfileImage())
