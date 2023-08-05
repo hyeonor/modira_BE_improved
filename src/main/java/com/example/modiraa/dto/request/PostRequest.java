@@ -1,4 +1,4 @@
-package com.example.modiraa.dto.response;
+package com.example.modiraa.dto.request;
 
 import lombok.*;
 
@@ -7,7 +7,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostRequestDto {
+public class PostRequest {
     private String category;
     private String title;
     private String contents;
