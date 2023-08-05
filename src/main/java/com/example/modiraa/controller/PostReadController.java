@@ -56,8 +56,8 @@ public class PostReadController {
 
     // 모임 상세페이지
     @GetMapping("/detail/{postId}")
-    public ResponseEntity<PostDetailResponseDto> postDetail(@PathVariable Long postId) {
-        PostDetailResponseDto postDetail = postReadService.getPostDetail(postId);
+    public ResponseEntity<PostDetailResponse> postDetail(@PathVariable Long postId) {
+        PostDetailResponse postDetail = postReadService.getPostDetail(postId);
         return ResponseEntity.status(HttpStatus.OK).body(postDetail);
     }
 

@@ -38,7 +38,6 @@ public class PostReadService {
         log.info("result=> {}", posts.getContent());
 
         return postResponseDto(posts);
-
     }
 
     // 카테고리별 모임 더보기
@@ -113,13 +112,13 @@ public class PostReadService {
     }
 
     // 모임 상세페이지
-    public PostDetailResponseDto getPostDetail(Long postId) {
+    public PostDetailResponse getPostDetail(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 없습니다."));
 
         Long score = likeRepository.likesCount(post.getMember()) - dislikeRepository.hatesCount(post.getMember());
 
-        return PostDetailResponseDto.builder()
+        return PostDetailResponse.builder()
                 .category(post.getCategory())
                 .title(post.getTitle())
                 .contents(post.getContents())
