@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class LoginIdCheckDto {
+public class LoginCheckResponse {
     private String username;
     private String nickname;
 }

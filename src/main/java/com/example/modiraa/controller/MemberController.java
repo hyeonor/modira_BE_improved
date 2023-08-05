@@ -2,7 +2,7 @@ package com.example.modiraa.controller;
 
 import com.example.modiraa.auth.UserDetailsImpl;
 import com.example.modiraa.dto.request.AdditionalInfoRequest;
-import com.example.modiraa.dto.response.LoginIdCheckDto;
+import com.example.modiraa.dto.response.LoginCheckResponse;
 import com.example.modiraa.service.OAuthLoginService;
 import com.example.modiraa.service.S3Uploader;
 import com.example.modiraa.service.MemberService;
@@ -38,7 +38,7 @@ public class MemberController {
 
     //로그인 유저 정보
     @GetMapping("/login/auth")
-    public LoginIdCheckDto userDetails(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public LoginCheckResponse userDetails(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return memberService.userInfo(userDetails);
     }
 }
