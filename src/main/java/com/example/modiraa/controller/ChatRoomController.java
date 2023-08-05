@@ -1,6 +1,6 @@
 package com.example.modiraa.controller;
 
-import com.example.modiraa.dto.response.ChatMessageResponseDto;
+import com.example.modiraa.dto.response.ChatMessageResponse;
 import com.example.modiraa.service.ChatMessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,7 +20,7 @@ public class ChatRoomController {
 
     // 해당 채팅방의 메세지 조회
     @GetMapping("/messages/{roomId}")
-    public Page<ChatMessageResponseDto> getRoomMessage(@PathVariable String roomId, @PageableDefault Pageable pageable) {
+    public Page<ChatMessageResponse> getRoomMessage(@PathVariable String roomId, @PageableDefault Pageable pageable) {
         return chatMessageService.getChatMessageByRoomId(roomId, pageable);
     }
 

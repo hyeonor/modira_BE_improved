@@ -26,7 +26,7 @@ public class PostReadService {
     private final MemberRoomRepository memberRoomRepository;
 
     // 모임 검색
-    public Page<PostsResponseDto> searchPosts(String keyword, String address, Pageable pageable, Long lastId) {
+    public Page<PostsResponse> searchPosts(String keyword, String address, Pageable pageable, Long lastId) {
         log.info("keyword -> {}", keyword);
         log.info("address -> {}", address);
         log.info("pageable -> {}", pageable);
@@ -38,11 +38,10 @@ public class PostReadService {
         log.info("result=> {}", posts.getContent());
 
         return postResponseDto(posts);
-
     }
 
     // 카테고리별 모임 더보기
-    public Page<PostsResponseDto> showPosts(String category, Pageable pageable, Long lastId) {
+    public Page<PostsResponse> showPosts(String category, Pageable pageable, Long lastId) {
         log.info("category -> {}", category);
         log.info("lastId -> {}", lastId);
 
@@ -94,9 +93,9 @@ public class PostReadService {
         return postListDto;
     }
 
-    private Page<PostsResponseDto> postResponseDto(Page<Post> postSlice) {
+    private Page<PostsResponse> postResponseDto(Page<Post> postSlice) {
         return postSlice.map(p ->
-                PostsResponseDto.builder()
+                PostsResponse.builder()
                         .postId(p.getId())
                         .title(p.getTitle())
                         .category(p.getCategory())
@@ -113,13 +112,13 @@ public class PostReadService {
     }
 
     // 모임 상세페이지
-    public PostDetailResponseDto getPostDetail(Long postId) {
+    public PostDetailResponse getPostDetail(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 없습니다."));
 
         Long score = likeRepository.likesCount(post.getMember()) - dislikeRepository.hatesCount(post.getMember());
 
-        return PostDetailResponseDto.builder()
+        return PostDetailResponse.builder()
                 .category(post.getCategory())
                 .title(post.getTitle())
                 .contents(post.getContents())
@@ -143,15 +142,15 @@ public class PostReadService {
     }
 
 
-    //내가 쓴 참석 모임 조회
-    public List<MyPostsResponseDto> getMyReadPost(UserDetailsImpl userDetails) {
+    //내가 작성한 모임 조회
+    public List<MyPostsResponse> getMyReadPost(UserDetailsImpl userDetails) {
         Member member = userDetails.getMember();
         Pageable pageable = PageRequest.ofSize(1);
         return postRepository.MyPostRead(member, pageable);
     }
 
     //내가 참석한 모임 조회
-    public List<EnterPostsResponseDto> getMyJoinPost(UserDetailsImpl userDetails) {
+    public List<JoinedPostsResponse> getMyJoinPost(UserDetailsImpl userDetails) {
         Member member = userDetails.getMember();
         Pageable pageable = PageRequest.ofSize(1);
         return memberRoomRepository.MyJoinRead(member, pageable);

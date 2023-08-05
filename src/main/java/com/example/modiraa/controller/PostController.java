@@ -1,7 +1,7 @@
 package com.example.modiraa.controller;
 
 import com.example.modiraa.auth.UserDetailsImpl;
-import com.example.modiraa.dto.response.PostRequestDto;
+import com.example.modiraa.dto.request.PostRequest;
 import com.example.modiraa.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,9 +17,9 @@ public class PostController {
 
     // 모임 생성
     @PostMapping("/api/post")
-    public ResponseEntity<String> createPost(@RequestBody PostRequestDto postRequestDto,
+    public ResponseEntity<String> createPost(@RequestBody PostRequest postRequest,
                                              @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        postService.createPost(postRequestDto, userDetails);
+        postService.createPost(postRequest, userDetails);
         return ResponseEntity.status(HttpStatus.CREATED).body("모임 생성 완료");
     }
 

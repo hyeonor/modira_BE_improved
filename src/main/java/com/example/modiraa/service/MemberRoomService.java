@@ -1,7 +1,7 @@
 package com.example.modiraa.service;
 
 import com.example.modiraa.auth.UserDetailsImpl;
-import com.example.modiraa.dto.response.JoinUserListResponseDto;
+import com.example.modiraa.dto.response.JoinedMembersResponse;
 import com.example.modiraa.exception.CustomException;
 import com.example.modiraa.exception.ErrorCode;
 import com.example.modiraa.model.ChatRoom;
@@ -145,7 +145,7 @@ public class MemberRoomService {
     }
 
     // 참여한 유저 정보 리스트
-    public List<JoinUserListResponseDto> ReadMember(String roomId) {
+    public List<JoinedMembersResponse> ReadMember(String roomId) {
         Optional<ChatRoom> chatroom = chatRoomRepository.findByRoomId(roomId);
         if (chatroom.isEmpty()){
             throw new IllegalArgumentException("존재하지 않는 모임 입니다.");
@@ -177,6 +177,4 @@ public class MemberRoomService {
 
         return new ResponseEntity<>("모임에 참여하셨습니다.", HttpStatus.valueOf(200));
     }
-
-
 }

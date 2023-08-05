@@ -12,10 +12,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
-public class RequestOAuthInfoService {
+public class OAuthInfoService {
     private final Map<OAuthProvider, OAuthApiClient> clients;
 
-    public RequestOAuthInfoService(List<OAuthApiClient> clients) {
+    public OAuthInfoService(List<OAuthApiClient> clients) {
         this.clients = clients.stream().collect(
                 Collectors.toUnmodifiableMap(OAuthApiClient::oAuthProvider, Function.identity())
         );

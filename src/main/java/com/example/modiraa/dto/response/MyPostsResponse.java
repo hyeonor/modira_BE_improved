@@ -6,19 +6,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@AllArgsConstructor
 @Builder
 @NoArgsConstructor
-public class PostsResponseDto {
+@AllArgsConstructor
+public class MyPostsResponse {
     private Long postId;
-    private String category;
     private String title;
-    private String date;
-    private String time;
-    private int numberOfPeople;
-    private int numberOfParticipant;
-    private String menu;
-    private String gender;
-    private String age;
     private String menuForImage;
+    private String menu;
 }

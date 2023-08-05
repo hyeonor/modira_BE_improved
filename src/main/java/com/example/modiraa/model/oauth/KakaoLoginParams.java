@@ -1,7 +1,5 @@
-package com.example.modiraa.model;
+package com.example.modiraa.model.oauth;
 
-import com.example.modiraa.model.oauth.OAuthLoginParams;
-import com.example.modiraa.model.oauth.OAuthProvider;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.util.LinkedMultiValueMap;

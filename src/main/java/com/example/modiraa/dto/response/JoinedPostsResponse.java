@@ -6,12 +6,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MyPostsResponseDto {
+@Builder
+public class JoinedPostsResponse {
     private Long postId;
     private String title;
     private String menuForImage;
     private String menu;
 }
+

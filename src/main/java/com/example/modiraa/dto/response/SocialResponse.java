@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SocialResponseDto {
+public class SocialResponse {
     private Long id;
     private String nickname;
     private String age;

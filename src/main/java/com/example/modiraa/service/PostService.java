@@ -1,7 +1,7 @@
 package com.example.modiraa.service;
 
 import com.example.modiraa.auth.UserDetailsImpl;
-import com.example.modiraa.dto.response.PostRequestDto;
+import com.example.modiraa.dto.request.PostRequest;
 import com.example.modiraa.exception.CustomException;
 import com.example.modiraa.exception.ErrorCode;
 import com.example.modiraa.model.*;
@@ -16,9 +16,9 @@ import java.util.List;
 
 
 @Slf4j
-@RequiredArgsConstructor
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class PostService {
 
     private final MemberRepository memberRepository;
@@ -29,33 +29,33 @@ public class PostService {
     private final MemberRoomQueryRepository memberRoomQueryRepository;
 
     // 모임 생성
-    public void createPost(PostRequestDto postRequestDto, UserDetailsImpl userDetails) {
+    public void createPost(PostRequest postRequest, UserDetailsImpl userDetails) {
         Member member = memberRepository.findByNickname(userDetails.getMember().getNickname())
                 .orElseThrow(() -> new UsernameNotFoundException("다시 로그인해 주세요."));
 
-        PostImage postImage = postImageRepository.findByMenu(postRequestDto.getMenu());
+        PostImage postImage = postImageRepository.findByMenu(postRequest.getMenu());
 
         if (member.getPostState() == null) {
             Post post = Post.builder()
-                    .category(postRequestDto.getCategory())
-                    .title(postRequestDto.getTitle())
-                    .contents(postRequestDto.getContents())
-                    .address(postRequestDto.getAddress())
-                    .latitude(postRequestDto.getLatitude())
-                    .longitude(postRequestDto.getLongitude())
-                    .date(postRequestDto.getDate())
-                    .time(postRequestDto.getTime())
-                    .numberofpeople(postRequestDto.getNumberOfPeople())
-                    .menu(postRequestDto.getMenu())
-                    .gender(postRequestDto.getGender())
-                    .age(postRequestDto.getAge())
+                    .category(postRequest.getCategory())
+                    .title(postRequest.getTitle())
+                    .contents(postRequest.getContents())
+                    .address(postRequest.getAddress())
+                    .latitude(postRequest.getLatitude())
+                    .longitude(postRequest.getLongitude())
+                    .date(postRequest.getDate())
+                    .time(postRequest.getTime())
+                    .numberofpeople(postRequest.getNumberOfPeople())
+                    .menu(postRequest.getMenu())
+                    .gender(postRequest.getGender())
+                    .age(postRequest.getAge())
                     .member(member)
                     .postImage(postImage)
                     .build();
 
             postRepository.save(post);
 
-            member.setPostState(postRequestDto.getTitle());
+            member.setPostState(postRequest.getTitle());
             memberRepository.save(member);
 
             ChatRoom chatRoom = new ChatRoom(userDetails.getMember(), post, post.getNumberofpeople());

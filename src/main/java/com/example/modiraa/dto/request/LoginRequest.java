@@ -1,10 +1,9 @@
 package com.example.modiraa.dto.request;
 
-
 import lombok.Data;
 
 @Data
-public class LoginRequestDto {
+public class LoginRequest {
     private String username;
     private String password;
 }

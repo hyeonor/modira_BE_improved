@@ -1,7 +1,7 @@
 package com.example.modiraa.controller;
 
 import com.example.modiraa.auth.UserDetailsImpl;
-import com.example.modiraa.dto.request.LikeAndDislikeRequestDto;
+import com.example.modiraa.dto.request.LikeAndDislikeRequest;
 import com.example.modiraa.service.LikeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,13 +15,13 @@ public class LikeController {
 
     // 좋아요 기능
     @PostMapping("/api/likes")
-    public ResponseEntity<?> userLikes(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody LikeAndDislikeRequestDto userId) {
+    public ResponseEntity<?> userLikes(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody LikeAndDislikeRequest userId) {
         return likeService.userLikes(userDetails, userId.getUserId());
     }
 
     // 좋아요 취소 기능
     @DeleteMapping("/api/likes")
-    public ResponseEntity<?> deletetLikes(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody LikeAndDislikeRequestDto userId) {
+    public ResponseEntity<?> deletetLikes(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody LikeAndDislikeRequest userId) {
         return likeService.deleteLikes(userDetails, userId.getUserId());
     }
 

@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LikeAndDislikeRequestDto {
+public class LikeAndDislikeRequest {
     private Long userId;
 }
