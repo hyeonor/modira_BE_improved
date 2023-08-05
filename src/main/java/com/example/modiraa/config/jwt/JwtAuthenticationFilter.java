@@ -3,7 +3,7 @@ package com.example.modiraa.config.jwt;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.example.modiraa.auth.UserDetailsImpl;
-import com.example.modiraa.dto.request.LoginRequestDto;
+import com.example.modiraa.dto.request.LoginRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -41,12 +41,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // DB에 있는 nickname과 password가 일치한다.
         try {
             ObjectMapper om = new ObjectMapper();
-            LoginRequestDto loginRequestDto = om.readValue(request.getInputStream(), LoginRequestDto.class); //유저정보 담기
-            System.out.println(loginRequestDto); //입력된 값 확인
+            LoginRequest loginRequest = om.readValue(request.getInputStream(), LoginRequest.class); //유저정보 담기
+            System.out.println(loginRequest); //입력된 값 확인
             System.out.println("==============================================================");
 
             UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(loginRequestDto.getUsername(), loginRequestDto.getPassword());
+                    new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword());
 
             Authentication authentication =
                     getAuthenticationManager().authenticate(authenticationToken);
