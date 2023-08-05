@@ -151,7 +151,7 @@ public class PostReadService {
     }
 
     //내가 참석한 모임 조회
-    public List<EnterPostsResponseDto> getMyJoinPost(UserDetailsImpl userDetails) {
+    public List<JoinedPostsResponse> getMyJoinPost(UserDetailsImpl userDetails) {
         Member member = userDetails.getMember();
         Pageable pageable = PageRequest.ofSize(1);
         return memberRoomRepository.MyJoinRead(member, pageable);

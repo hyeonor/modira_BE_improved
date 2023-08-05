@@ -65,15 +65,13 @@ public class PostReadController {
 
     // 내가 작성한 모임 조회
     @GetMapping("/api/myposts")
-    public ResponseEntity<List<MyPostsResponseDto>> getMyReadPost(@AuthenticationPrincipal UserDetailsImpl userDetails) throws IllegalAccessException {
-
+    public ResponseEntity<List<MyPostsResponseDto>> getMyReadPost(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.status(HttpStatus.OK).body(postReadService.getMyReadPost(userDetails));
     }
 
     // 내가 참석한 모임 조회
     @GetMapping("/api/myjoin")
-    public ResponseEntity<List<EnterPostsResponseDto>> getMyJoinPost(@AuthenticationPrincipal UserDetailsImpl userDetails) throws IllegalAccessException {
-
+    public ResponseEntity<List<JoinedPostsResponse>> getMyJoinPost(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.status(HttpStatus.OK).body(postReadService.getMyJoinPost(userDetails));
     }
 
