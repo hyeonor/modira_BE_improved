@@ -25,20 +25,20 @@ public class PostReadController {
 
     // 모임 검색
     @GetMapping("/search")
-    public ResponseEntity<Slice<PostsResponseDto>> searchPosts(@RequestParam(value = "keyword", defaultValue = "") String keyword,
-                                                               @RequestParam(value = "address", defaultValue = "") String address,
-                                                               @PageableDefault(sort = "id", direction = Sort.Direction.DESC, size = 8) Pageable pageable,
-                                                               @RequestParam(value = "lastId", defaultValue = "" + Long.MAX_VALUE) Long lastId) {
-        Page<PostsResponseDto> posts = postReadService.searchPosts(keyword, address, pageable, lastId);
+    public ResponseEntity<Slice<PostsResponse>> searchPosts(@RequestParam(value = "keyword", defaultValue = "") String keyword,
+                                                            @RequestParam(value = "address", defaultValue = "") String address,
+                                                            @PageableDefault(sort = "id", direction = Sort.Direction.DESC, size = 8) Pageable pageable,
+                                                            @RequestParam(value = "lastId", defaultValue = "" + Long.MAX_VALUE) Long lastId) {
+        Page<PostsResponse> posts = postReadService.searchPosts(keyword, address, pageable, lastId);
         return ResponseEntity.status(HttpStatus.OK).body(posts);
     }
 
     // 카테고리별 모임 더보기
     @GetMapping
-    public ResponseEntity<Slice<PostsResponseDto>> getPosts(@RequestParam(value = "category", defaultValue = "") String category,
-                                                            @PageableDefault(sort = "id", direction = Sort.Direction.DESC, size = 8) Pageable pageable,
-                                                            @RequestParam(value = "lastId", defaultValue = "" + Long.MAX_VALUE) Long lastId) {
-        Page<PostsResponseDto> posts = postReadService.showPosts(category, pageable, lastId);
+    public ResponseEntity<Slice<PostsResponse>> getPosts(@RequestParam(value = "category", defaultValue = "") String category,
+                                                         @PageableDefault(sort = "id", direction = Sort.Direction.DESC, size = 8) Pageable pageable,
+                                                         @RequestParam(value = "lastId", defaultValue = "" + Long.MAX_VALUE) Long lastId) {
+        Page<PostsResponse> posts = postReadService.showPosts(category, pageable, lastId);
         return ResponseEntity.status(HttpStatus.OK).body(posts);
     }
 

@@ -26,7 +26,7 @@ public class PostReadService {
     private final MemberRoomRepository memberRoomRepository;
 
     // 모임 검색
-    public Page<PostsResponseDto> searchPosts(String keyword, String address, Pageable pageable, Long lastId) {
+    public Page<PostsResponse> searchPosts(String keyword, String address, Pageable pageable, Long lastId) {
         log.info("keyword -> {}", keyword);
         log.info("address -> {}", address);
         log.info("pageable -> {}", pageable);
@@ -41,7 +41,7 @@ public class PostReadService {
     }
 
     // 카테고리별 모임 더보기
-    public Page<PostsResponseDto> showPosts(String category, Pageable pageable, Long lastId) {
+    public Page<PostsResponse> showPosts(String category, Pageable pageable, Long lastId) {
         log.info("category -> {}", category);
         log.info("lastId -> {}", lastId);
 
@@ -93,9 +93,9 @@ public class PostReadService {
         return postListDto;
     }
 
-    private Page<PostsResponseDto> postResponseDto(Page<Post> postSlice) {
+    private Page<PostsResponse> postResponseDto(Page<Post> postSlice) {
         return postSlice.map(p ->
-                PostsResponseDto.builder()
+                PostsResponse.builder()
                         .postId(p.getId())
                         .title(p.getTitle())
                         .category(p.getCategory())

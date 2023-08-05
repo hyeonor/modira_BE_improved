@@ -6,10 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
 @NoArgsConstructor
-public class PostsResponseDto {
+public class PostsResponse {
     private Long postId;
     private String category;
     private String title;
