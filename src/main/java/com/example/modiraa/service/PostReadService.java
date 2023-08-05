@@ -143,8 +143,8 @@ public class PostReadService {
     }
 
 
-    //내가 쓴 참석 모임 조회
-    public List<MyPostsResponseDto> getMyReadPost(UserDetailsImpl userDetails) {
+    //내가 작성한 모임 조회
+    public List<MyPostsResponse> getMyReadPost(UserDetailsImpl userDetails) {
         Member member = userDetails.getMember();
         Pageable pageable = PageRequest.ofSize(1);
         return postRepository.MyPostRead(member, pageable);

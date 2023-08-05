@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MyPostsResponseDto {
+public class MyPostsResponse {
     private Long postId;
     private String title;
     private String menuForImage;

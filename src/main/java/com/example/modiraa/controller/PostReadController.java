@@ -12,21 +12,19 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequiredArgsConstructor
 @RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/post")
 public class PostReadController {
 
     private final PostReadService postReadService;
 
     // 모임 검색
-    @GetMapping("/api/search/post")
+    @GetMapping("/search")
     public ResponseEntity<Slice<PostsResponseDto>> searchPosts(@RequestParam(value = "keyword", defaultValue = "") String keyword,
                                                                @RequestParam(value = "address", defaultValue = "") String address,
                                                                @PageableDefault(sort = "id", direction = Sort.Direction.DESC, size = 8) Pageable pageable,
@@ -36,7 +34,7 @@ public class PostReadController {
     }
 
     // 카테고리별 모임 더보기
-    @GetMapping("/api/post")
+    @GetMapping
     public ResponseEntity<Slice<PostsResponseDto>> getPosts(@RequestParam(value = "category", defaultValue = "") String category,
                                                             @PageableDefault(sort = "id", direction = Sort.Direction.DESC, size = 8) Pageable pageable,
                                                             @RequestParam(value = "lastId", defaultValue = "" + Long.MAX_VALUE) Long lastId) {
@@ -45,7 +43,7 @@ public class PostReadController {
     }
 
     // 메인 페이지 카테고리별 모임
-    @GetMapping("/api/post/list")
+    @GetMapping("/list")
     public ResponseEntity<PostListDto> getPostList(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         PostListDto postList;
         if (userDetails == null) {
@@ -57,20 +55,20 @@ public class PostReadController {
     }
 
     // 모임 상세페이지
-    @GetMapping("/api/post/detail/{postId}")
+    @GetMapping("/detail/{postId}")
     public ResponseEntity<PostDetailResponseDto> postDetail(@PathVariable Long postId) {
         PostDetailResponseDto postDetail = postReadService.getPostDetail(postId);
         return ResponseEntity.status(HttpStatus.OK).body(postDetail);
     }
 
     // 내가 작성한 모임 조회
-    @GetMapping("/api/myposts")
-    public ResponseEntity<List<MyPostsResponseDto>> getMyReadPost(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    @GetMapping("/mine")
+    public ResponseEntity<List<MyPostsResponse>> getMyReadPost(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.status(HttpStatus.OK).body(postReadService.getMyReadPost(userDetails));
     }
 
     // 내가 참석한 모임 조회
-    @GetMapping("/api/myjoin")
+    @GetMapping("/join")
     public ResponseEntity<List<JoinedPostsResponse>> getMyJoinPost(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.status(HttpStatus.OK).body(postReadService.getMyJoinPost(userDetails));
     }
