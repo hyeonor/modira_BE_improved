@@ -3,7 +3,7 @@ package com.example.modiraa.controller;
 import com.example.modiraa.auth.UserDetailsImpl;
 import com.example.modiraa.dto.response.MyProfileResponse;
 import com.example.modiraa.dto.response.UserProfileResponse;
-import com.example.modiraa.service.MyPageService;
+import com.example.modiraa.service.MemberProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,20 +18,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/user/info")
 public class MemberProfileController {
 
-    private final MyPageService myPageService;
+    private final MemberProfileService memberProfileService;
 
     // 마이프로필 조회
     @GetMapping
-    public ResponseEntity<MyProfileResponse> getMyProfileRead(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<MyProfileResponse> getMyProfile(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(myPageService.getMyProfile(userDetails));
+                .body(memberProfileService.getMyProfile(userDetails));
     }
 
     // 다른 유저 프로필 조회
     @GetMapping("/{id}")
     public ResponseEntity<UserProfileResponse> profileRead(@PathVariable Long id) throws IllegalAccessException {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(myPageService.getProfile(id));
+                .body(memberProfileService.getProfile(id));
     }
 
 }

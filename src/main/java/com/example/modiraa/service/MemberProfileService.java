@@ -16,33 +16,14 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
-public class MyPageService {
+public class MemberProfileService {
     private final LikeRepository likeRepository;
     private final MemberRepository memberRepository;
     private final DislikeRepository dislikeRepository;
     private final MemberRoomQueryRepository memberRoomQueryRepository;
 
-    // 유저 프로필 조회
-    public UserProfileResponse getProfile(Long id) throws IllegalAccessException {
-
-        Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new IllegalAccessException("유저의 정보가 없습니다."));
-
-        Long score = likeRepository.likesCount(member) - dislikeRepository.hatesCount(member);
-
-        return UserProfileResponse.builder()
-                .address(member.getAddress())
-                .age(member.getAge())
-                .userProfile(member.getProfileImage())
-                .gender(member.getGender())
-                .nickname(member.getNickname())
-                .score(score)
-                .build();
-    }
-
     // 마이프로필 조회
     public MyProfileResponse getMyProfile(UserDetailsImpl userDetails) {
-
         Member member = userDetails.getMember();
         Long score = likeRepository.likesCount(member) - dislikeRepository.hatesCount(member);
 
@@ -63,6 +44,23 @@ public class MyPageService {
                 .score(score)
                 .isJoinPost(member.getPostState())
                 .roomId(roomId)
+                .build();
+    }
+
+    // 유저 프로필 조회
+    public UserProfileResponse getProfile(Long id) throws IllegalAccessException {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new IllegalAccessException("유저의 정보가 없습니다."));
+
+        Long score = likeRepository.likesCount(member) - dislikeRepository.hatesCount(member);
+
+        return UserProfileResponse.builder()
+                .address(member.getAddress())
+                .age(member.getAge())
+                .userProfile(member.getProfileImage())
+                .gender(member.getGender())
+                .nickname(member.getNickname())
+                .score(score)
                 .build();
     }
 }
