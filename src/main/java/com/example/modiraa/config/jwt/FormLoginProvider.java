@@ -1,6 +1,5 @@
 package com.example.modiraa.config.jwt;
 
-import com.example.modiraa.auth.UserDetailsImpl;
 import com.example.modiraa.auth.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -8,6 +7,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +23,7 @@ public class FormLoginProvider implements AuthenticationProvider {
         String username = (String)authentication.getPrincipal();
         String password = (String)authentication.getCredentials();
 
-        UserDetailsImpl userDetails = userDetailsServiceImpl.loadUserByUsername(username);
+        UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(username);
 
         //인코딩된 암호는 시간마다 같은 값도 변경 되기 때문에 matches 함수를 이용해 비교.
         if(passwordEncoder.matches(password, userDetails.getPassword())) {

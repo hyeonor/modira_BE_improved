@@ -39,4 +39,7 @@ modiraa2\
 application.properties
 application.yml
 application-aws.yml
-JwtProperties.java
+application-jwt.yml
+application-oauth.yml
+application-server.yml
+application-spring.yml

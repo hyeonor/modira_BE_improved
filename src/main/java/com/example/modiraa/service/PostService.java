@@ -29,13 +29,13 @@ public class PostService {
     private final MemberRoomQueryRepository memberRoomQueryRepository;
 
     // 모임 생성
-    public void createPost(String username, PostRequestDto postRequestDto, UserDetailsImpl userDetails) {
-        Member member = memberRepository.findByUsername(username)
+    public void createPost(PostRequestDto postRequestDto, UserDetailsImpl userDetails) {
+        Member member = memberRepository.findByNickname(userDetails.getMember().getNickname())
                 .orElseThrow(() -> new UsernameNotFoundException("다시 로그인해 주세요."));
 
         PostImage postImage = postImageRepository.findByMenu(postRequestDto.getMenu());
 
-        if(member.getPostState() == null){
+        if (member.getPostState() == null) {
             Post post = Post.builder()
                     .category(postRequestDto.getCategory())
                     .title(postRequestDto.getTitle())
@@ -58,14 +58,14 @@ public class PostService {
             member.setPostState(postRequestDto.getTitle());
             memberRepository.save(member);
 
-            ChatRoom chatRoom = new ChatRoom(userDetails.getMember(),post,post.getNumberofpeople());
+            ChatRoom chatRoom = new ChatRoom(userDetails.getMember(), post, post.getNumberofpeople());
             chatRoomRepository.save(chatRoom);
 
             post.updateRoom(chatRoom);
 
             MemberRoom memberRoom = new MemberRoom(userDetails.getMember(), chatRoom);
             memberRoomRepository.save(memberRoom);
-        } else{
+        } else {
             throw new CustomException(ErrorCode.POST_CHECK_CODE);
         }
     }
@@ -77,7 +77,7 @@ public class PostService {
 
         List<MemberRoom> memberRoomList = memberRoomQueryRepository.findByChatRoomId(post.getChatRoom().getId());
 
-        for (MemberRoom memberRoom : memberRoomList){
+        for (MemberRoom memberRoom : memberRoomList) {
             memberRoomRepository.deleteById(memberRoom.getId());
 
             Member member = memberRepository.findAllById(memberRoom.getMember().getId());
