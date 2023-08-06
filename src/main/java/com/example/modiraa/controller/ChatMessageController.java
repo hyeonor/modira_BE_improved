@@ -20,14 +20,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/chat/message")
 public class ChatMessageController {
 
     private final ChatMessageService chatMessageService;
     private final JwtAuthorizationFilter jwtAuthorizationFilter;
 
     // websocket "/pub/chat/message"로 들어오는 메시징을 처리
-    @MessageMapping
+    @MessageMapping("/chat/message")
     public void message(@RequestBody ChatMessageRequest messageRequestDto, @Header("Authorization") String token) {
         Member member = jwtAuthorizationFilter.getMemberFromJwt(token);
         ChatMessage chatMessage = new ChatMessage(messageRequestDto);
@@ -36,7 +35,7 @@ public class ChatMessageController {
     }
 
     // 해당 채팅방의 메세지 조회
-    @GetMapping("/{roomId}")
+    @GetMapping("/chat/message/{roomId}")
     public Page<ChatMessageResponse> getRoomMessage(@PathVariable String roomId, @PageableDefault Pageable pageable) {
         return chatMessageService.getChatMessageByRoomId(roomId, pageable);
     }
