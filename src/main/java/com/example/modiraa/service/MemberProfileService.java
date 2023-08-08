@@ -5,8 +5,6 @@ import com.example.modiraa.dto.response.MyProfileResponse;
 import com.example.modiraa.dto.response.UserProfileResponse;
 import com.example.modiraa.model.Member;
 import com.example.modiraa.model.MemberRoom;
-import com.example.modiraa.repository.DislikeRepository;
-import com.example.modiraa.repository.LikeRepository;
 import com.example.modiraa.repository.MemberRepository;
 import com.example.modiraa.repository.MemberRoomQueryRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,19 +15,17 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class MemberProfileService {
-    private final LikeRepository likeRepository;
     private final MemberRepository memberRepository;
-    private final DislikeRepository dislikeRepository;
     private final MemberRoomQueryRepository memberRoomQueryRepository;
+    private final LikeDislikeQueryRepository likeDislikeQueryRepository;
 
     // 마이프로필 조회
     public MyProfileResponse getMyProfile(UserDetailsImpl userDetails) {
         Member member = userDetails.getMember();
-        Long score = likeRepository.likesCount(member) - dislikeRepository.hatesCount(member);
-
-        String roomId = null;
+        Long score = likeDislikeQueryRepository.calculateScore(member);
 
         Optional<MemberRoom> memberRoom = memberRoomQueryRepository.findTopByMemberOrderByIdDesc(member);
+        String roomId = memberRoom.map(mr -> mr.getChatRoom().getRoomId()).orElse(null);
 
         if (memberRoom.isPresent()) {
             roomId = memberRoom.get().getChatRoom().getRoomId();
@@ -52,7 +48,7 @@ public class MemberProfileService {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new IllegalAccessException("유저의 정보가 없습니다."));
 
-        Long score = likeRepository.likesCount(member) - dislikeRepository.hatesCount(member);
+        Long score = likeDislikeQueryRepository.calculateScore(member);
 
         return UserProfileResponse.builder()
                 .address(member.getAddress())

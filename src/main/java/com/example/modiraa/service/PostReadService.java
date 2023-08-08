@@ -3,7 +3,9 @@ package com.example.modiraa.service;
 import com.example.modiraa.auth.UserDetailsImpl;
 import com.example.modiraa.dto.response.*;
 import com.example.modiraa.model.Post;
-import com.example.modiraa.repository.*;
+import com.example.modiraa.repository.MemberRoomQueryRepository;
+import com.example.modiraa.repository.PostQueryRepository;
+import com.example.modiraa.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -19,10 +21,9 @@ import java.util.List;
 @Service
 public class PostReadService {
     private final PostRepository postRepository;
-    private final LikeRepository likeRepository;
-    private final DislikeRepository dislikeRepository;
     private final PostQueryRepository postQueryRepository;
     private final MemberRoomQueryRepository memberRoomQueryRepository;
+    private final LikeDislikeQueryRepository likeDislikeQueryRepository;
 
     // 모임 검색
     public Page<PostsResponse> searchPosts(String keyword, String address, Pageable pageable, Long lastId) {
@@ -115,7 +116,7 @@ public class PostReadService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 없습니다."));
 
-        Long score = likeRepository.likesCount(post.getMember()) - dislikeRepository.hatesCount(post.getMember());
+        Long score = likeDislikeQueryRepository.calculateScore(post.getMember());
 
         return PostDetailResponse.builder()
                 .category(post.getCategory())
