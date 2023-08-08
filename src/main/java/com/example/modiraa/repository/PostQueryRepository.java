@@ -1,15 +1,20 @@
 package com.example.modiraa.repository;
 
-import com.querydsl.core.QueryResults;
-import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.example.modiraa.dto.response.MyPostsResponse;
 import com.example.modiraa.model.Post;
+import com.querydsl.core.QueryResults;
+import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 import static com.example.modiraa.model.QPost.post;
+import static com.example.modiraa.model.QPostImage.postImage;
 
 @RequiredArgsConstructor
 @Repository
@@ -101,4 +106,18 @@ public class PostQueryRepository {
         return new PageImpl<>(result.getResults(), pageable, result.getTotal());
     }
 
+    public List<MyPostsResponse> findMyPostsByMemberOrderByDesc(Long memberId) {
+        return queryFactory
+                .select(Projections.constructor(
+                        MyPostsResponse.class,
+                        post.id,
+                        post.title,
+                        postImage.imageUrl,
+                        post.menu))
+                .from(post)
+                .leftJoin(postImage).on(post.menu.eq(postImage.menu))
+                .where(post.member.id.eq(memberId))
+                .orderBy(post.id.desc())
+                .fetch();
+    }
 }

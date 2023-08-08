@@ -144,9 +144,8 @@ public class PostReadService {
 
     //내가 작성한 모임 조회
     public List<MyPostsResponse> getMyReadPost(UserDetailsImpl userDetails) {
-        Member member = userDetails.getMember();
-        Pageable pageable = PageRequest.ofSize(1);
-        return postRepository.MyPostRead(member, pageable);
+        Long memberId = userDetails.getMember().getId();
+        return postQueryRepository.findMyPostsByMemberOrderByDesc(memberId);
     }
 
     //내가 참석한 모임 조회
