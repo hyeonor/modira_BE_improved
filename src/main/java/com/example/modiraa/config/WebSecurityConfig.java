@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -24,8 +25,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true)
 @RequiredArgsConstructor
+@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class WebSecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
@@ -42,10 +43,12 @@ public class WebSecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-    // 정적 자원에 대해서는 Security 설정을 적용하지 않음.
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+        // h2-console 사용 및 resources 접근 허용
+        return (web) -> web.ignoring()
+                .requestMatchers(PathRequest.toH2Console())
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 
 
@@ -55,19 +58,14 @@ public class WebSecurityConfig {
         http.cors().configurationSource(corsConfigurationSource());
         http.headers().frameOptions().disable();
         http.authorizeRequests()
-                .antMatchers("/api/user/**").permitAll()
-                .antMatchers("/auth/kakao/**").permitAll()
-                .antMatchers("/h2-console/**").permitAll()
-                .antMatchers("/chat/**").permitAll()
-                .antMatchers("**").permitAll()
-                .antMatchers("/").authenticated()
-                //.antMatchers(HttpMethod.GET,"/api/contents").permitAll()
-                //.antMatchers(HttpMethod.GET, "/api/reply/**").permitAll()
+                .antMatchers("/*.html").permitAll()
+                .antMatchers("/ws-stomp/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/signup").permitAll()
 
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().disable()
-                // 토큰을 활용하면 세션이 필요 없으므로 STATELESS로 설정하여 Session을 사용하지 않는다.
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(authenticationManager(authenticationConfiguration), jwtProperties), UsernamePasswordAuthenticationFilter.class)
