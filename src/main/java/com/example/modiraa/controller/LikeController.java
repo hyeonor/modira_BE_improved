@@ -8,19 +8,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-@RequiredArgsConstructor
 @RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/likes")
 public class LikeController {
     private final LikeService likeService;
 
     // 좋아요 기능
-    @PostMapping("/api/likes")
+    @PostMapping
     public ResponseEntity<?> userLikes(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody LikeAndDislikeRequest userId) {
         return likeService.userLikes(userDetails, userId.getUserId());
     }
 
     // 좋아요 취소 기능
-    @DeleteMapping("/api/likes")
+    @DeleteMapping
     public ResponseEntity<?> deletetLikes(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody LikeAndDislikeRequest userId) {
         return likeService.deleteLikes(userDetails, userId.getUserId());
     }

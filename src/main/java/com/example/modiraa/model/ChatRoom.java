@@ -14,10 +14,8 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ChatRoom implements Serializable {
 
-    private static final long serialVersionUID = 6494678977089006639L;
-
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "chatroom_id")
     private Long id;
 
@@ -37,27 +35,22 @@ public class ChatRoom implements Serializable {
     private Post post;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "OWNERMEMBER_ID")
+    @JoinColumn(name = "owner_member_id")
     private Member ownerMember;
 
     public ChatRoom(Member ownerMember, Post post, int maxPeople) {
-        this.ownerMember = ownerMember;
-        this.post = post;
         this.roomId = UUID.randomUUID().toString();
         this.currentPeople = 1;
         this.maxPeople = maxPeople;
-
+        this.post = post;
+        this.ownerMember = ownerMember;
     }
 
     public void updateCurrentPeople() {
         this.currentPeople = this.currentPeople + 1;
     }
+
     public void minusCurrentPeople() {
         this.currentPeople = this.currentPeople - 1;
     }
-
-    public ChatRoom(String uuid) {
-        this.roomId = uuid;
-    }
-
 }

@@ -48,7 +48,7 @@ public class LikeService {
         return new ResponseEntity<>("좋아요 성공! ", HttpStatus.valueOf(201));
     }
 
-    //유저의 평가를 잘못 눌렀을 취소 기능
+    //유저의 평가를 잘못했을 경우 취소 기능
     public ResponseEntity<?> deleteLikes(UserDetailsImpl userDetails, Long userId) {
         // USERID 로 좋아요 한 게시물들을 리스트에 담아서
         Member receiver = memberRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("유저가 없습니다"));

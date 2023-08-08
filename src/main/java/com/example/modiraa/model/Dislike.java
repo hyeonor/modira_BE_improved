@@ -7,20 +7,20 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
 public class Dislike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "dislike_id", nullable = false)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "giver_user_id", nullable = false)
     private Member giver;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "receiver_user_id", nullable = false)
     private Member receiver;
 

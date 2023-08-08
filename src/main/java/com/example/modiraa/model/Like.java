@@ -18,11 +18,11 @@ public class Like {
     @Column(name = "like_id", nullable = false)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "giver_user_id", nullable = false)
     private Member giver;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "receiver_user_id", nullable = false)
     private Member receiver;
 

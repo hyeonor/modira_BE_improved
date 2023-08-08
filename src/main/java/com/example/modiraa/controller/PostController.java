@@ -9,14 +9,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-@RequiredArgsConstructor
 @RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/post")
 public class PostController {
 
     private final PostService postService;
 
     // 모임 생성
-    @PostMapping("/api/post")
+    @PostMapping
     public ResponseEntity<String> createPost(@RequestBody PostRequest postRequest,
                                              @AuthenticationPrincipal UserDetailsImpl userDetails) {
         postService.createPost(postRequest, userDetails);
@@ -24,7 +25,7 @@ public class PostController {
     }
 
     // 모임 삭제
-    @DeleteMapping("/api/post/{postId}")
+    @DeleteMapping("/{postId}")
     public ResponseEntity<Void> deletePost(@PathVariable Long postId,
                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         postService.deletePost(postId, userDetails);

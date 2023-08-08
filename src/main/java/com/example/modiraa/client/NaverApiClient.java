@@ -5,8 +5,8 @@ import com.example.modiraa.dto.response.NaverTokens;
 import com.example.modiraa.dto.response.OAuthInfoResponse;
 import com.example.modiraa.model.oauth.OAuthLoginParams;
 import com.example.modiraa.model.oauth.OAuthProvider;
+import com.example.modiraa.properties.NaverProperties;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -19,20 +19,10 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class NaverApiClient implements OAuthApiClient {
 
-    private static final String GRANT_TYPE = "authorization_code";
-
-    @Value("${oauth.naver.url.auth}")
-    private String authUrl;
-
-    @Value("${oauth.naver.url.api}")
-    private String apiUrl;
-
-    @Value("${oauth.naver.client-id}")
-    private String clientId;
-
-    @Value("${oauth.naver.secret}")
-    private String clientSecret;
-
+    private static final String GRANT_TYPE = "grant_type";
+    private static final String CLIENT_ID = "client_id";
+    private static final String CLIENT_SECRET = "client_secret";
+    private final NaverProperties properties;
     private final RestTemplate restTemplate;
 
     @Override
@@ -42,19 +32,17 @@ public class NaverApiClient implements OAuthApiClient {
 
     @Override
     public String requestAccessToken(OAuthLoginParams params) {
-        String url = authUrl + "/oauth2.0/token";
-
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
         MultiValueMap<String, String> body = params.makeBody();
-        body.add("grant_type", GRANT_TYPE);
-        body.add("client_id", clientId);
-        body.add("client_secret", clientSecret);
+        body.add(GRANT_TYPE, properties.getGrantType());
+        body.add(CLIENT_ID, properties.getClientId());
+        body.add(CLIENT_SECRET, properties.getClientSecret());
 
         HttpEntity<?> request = new HttpEntity<>(body, httpHeaders);
 
-        NaverTokens response = restTemplate.postForObject(url, request, NaverTokens.class);
+        NaverTokens response = restTemplate.postForObject(properties.getAuthUrl(), request, NaverTokens.class);
 
         assert response != null;
         return response.getAccessToken();
@@ -62,16 +50,14 @@ public class NaverApiClient implements OAuthApiClient {
 
     @Override
     public OAuthInfoResponse requestOauthInfo(String accessToken) {
-        String url = apiUrl + "/v1/nid/me";
-
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        httpHeaders.set("Authorization", "Bearer " + accessToken);
+        httpHeaders.set(properties.getHeader(), properties.getPrefix() + accessToken);
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
 
         HttpEntity<?> request = new HttpEntity<>(body, httpHeaders);
 
-        return restTemplate.postForObject(url, request, NaverInfoResponse.class);
+        return restTemplate.postForObject(properties.getApiUrl(), request, NaverInfoResponse.class);
     }
 }

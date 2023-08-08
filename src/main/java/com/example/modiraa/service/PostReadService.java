@@ -2,9 +2,10 @@ package com.example.modiraa.service;
 
 import com.example.modiraa.auth.UserDetailsImpl;
 import com.example.modiraa.dto.response.*;
-import com.example.modiraa.model.Member;
 import com.example.modiraa.model.Post;
-import com.example.modiraa.repository.*;
+import com.example.modiraa.repository.MemberRoomQueryRepository;
+import com.example.modiraa.repository.PostQueryRepository;
+import com.example.modiraa.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -20,10 +21,9 @@ import java.util.List;
 @Service
 public class PostReadService {
     private final PostRepository postRepository;
-    private final LikeRepository likeRepository;
-    private final DislikeRepository dislikeRepository;
     private final PostQueryRepository postQueryRepository;
-    private final MemberRoomRepository memberRoomRepository;
+    private final MemberRoomQueryRepository memberRoomQueryRepository;
+    private final LikeDislikeQueryRepository likeDislikeQueryRepository;
 
     // 모임 검색
     public Page<PostsResponse> searchPosts(String keyword, String address, Pageable pageable, Long lastId) {
@@ -101,12 +101,12 @@ public class PostReadService {
                         .category(p.getCategory())
                         .date(p.getDate())
                         .time(p.getTime())
-                        .numberOfPeople(p.getNumberofpeople())
+                        .numberOfPeople(p.getNumOfPeople())
                         .numberOfParticipant(p.getChatRoom().getCurrentPeople())
                         .menu(p.getMenu())
                         .gender(p.getGender())
                         .age(p.getAge())
-                        .menuForImage(p.getPostImage().getImageurl())
+                        .menuForImage(p.getPostImage().getImageUrl())
                         .build()
         );
     }
@@ -116,7 +116,7 @@ public class PostReadService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 없습니다."));
 
-        Long score = likeRepository.likesCount(post.getMember()) - dislikeRepository.hatesCount(post.getMember());
+        Long score = likeDislikeQueryRepository.calculateScore(post.getMember());
 
         return PostDetailResponse.builder()
                 .category(post.getCategory())
@@ -127,7 +127,7 @@ public class PostReadService {
                 .longitude(post.getLongitude())
                 .date(post.getDate().split("/")[0] + " / " + post.getDate().split("/")[1] + " / " + post.getDate().split("/")[2])
                 .time(post.getTime())
-                .numberOfPeople(post.getNumberofpeople())
+                .numberOfPeople(post.getNumOfPeople())
                 .menu(post.getMenu())
                 .limitGender(post.getGender())
                 .limitAge(post.getAge())
@@ -144,16 +144,14 @@ public class PostReadService {
 
     //내가 작성한 모임 조회
     public List<MyPostsResponse> getMyReadPost(UserDetailsImpl userDetails) {
-        Member member = userDetails.getMember();
-        Pageable pageable = PageRequest.ofSize(1);
-        return postRepository.MyPostRead(member, pageable);
+        Long memberId = userDetails.getMember().getId();
+        return postQueryRepository.findMyPostsByMemberOrderByDesc(memberId);
     }
 
     //내가 참석한 모임 조회
     public List<JoinedPostsResponse> getMyJoinPost(UserDetailsImpl userDetails) {
-        Member member = userDetails.getMember();
-        Pageable pageable = PageRequest.ofSize(1);
-        return memberRoomRepository.MyJoinRead(member, pageable);
+        Long memberId = userDetails.getMember().getId();
+        return memberRoomQueryRepository.findJoinedPostsByMember(memberId);
     }
 }
 

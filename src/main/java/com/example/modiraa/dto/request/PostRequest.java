@@ -16,7 +16,7 @@ public class PostRequest {
     private double longitude;
     private String date;
     private String time;
-    private int numberOfPeople;
+    private int numOfPeople;
     private String menu;
     private String gender;
     private String age;

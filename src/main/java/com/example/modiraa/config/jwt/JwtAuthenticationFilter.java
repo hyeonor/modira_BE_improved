@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
 
-// 스프링 시큐리티에서 UsernamePasswordAuthenticationFilter 가 있음.
+// 스프링 시큐리티에서 UsernamePasswordAuthenticationFilter가 있음.
 // login 요청해서 nickname, password 전송하면 (psot)
 // UsernamePasswordAuthenticationFilter 동작을 함.
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -36,12 +36,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         System.out.println("JwtAuthenticationFilter : 로그인 시도중");
         // 1.nickname, password 받아서
         // 2. 정상인지 로그인 시도를 해보는 것. authenticationManager로 로그인 시도를 하면!!
-        // PrincipalDetailsService가 호출 loadUserByUsername() 함수 실행됨.
-        // PrincipalDetailsService의 loadUserByUsername()함수가 실행된 후 정상이면 authentication이 리턴됨.
-        // DB에 있는 nickname과 password가 일치한다.
+        // PrincipalDetailsService가 호출 loadUserByUsername() 함수 실행됨
+        // PrincipalDetailsService의 loadUserByUsername()함수가 실행된 후 정상이면 authentication이 리턴됨
+        // DB에 있는 nickname과 password가 일치
         try {
             ObjectMapper om = new ObjectMapper();
-            LoginRequest loginRequest = om.readValue(request.getInputStream(), LoginRequest.class); //유저정보 담기
+            LoginRequest loginRequest = om.readValue(request.getInputStream(), LoginRequest.class);
             System.out.println(loginRequest); //입력된 값 확인
             System.out.println("==============================================================");
 

@@ -15,26 +15,20 @@ public class MemberRoom {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "MEMBER_ROOM_ID")
+    @Column(name = "member_room_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "MEMBER_ID")
+    @JoinColumn(name = "member_id")
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CHATROOM_ID")
+    @JoinColumn(name = "chatroom_id")
     private ChatRoom chatRoom;
 
 
-    public MemberRoom(Member member, ChatRoom chatRoom){
+    public MemberRoom(Member member, ChatRoom chatRoom) {
         this.member = member;
         this.chatRoom = chatRoom;
     }
-
-    public MemberRoom(Member member) {
-        this.member = member;
-    }
-
-
 }
