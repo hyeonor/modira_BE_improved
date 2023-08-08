@@ -2,7 +2,6 @@ package com.example.modiraa.service;
 
 import com.example.modiraa.auth.UserDetailsImpl;
 import com.example.modiraa.dto.response.*;
-import com.example.modiraa.model.Member;
 import com.example.modiraa.model.Post;
 import com.example.modiraa.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +22,7 @@ public class PostReadService {
     private final LikeRepository likeRepository;
     private final DislikeRepository dislikeRepository;
     private final PostQueryRepository postQueryRepository;
-    private final MemberRoomRepository memberRoomRepository;
+    private final MemberRoomQueryRepository memberRoomQueryRepository;
 
     // 모임 검색
     public Page<PostsResponse> searchPosts(String keyword, String address, Pageable pageable, Long lastId) {
@@ -150,9 +149,8 @@ public class PostReadService {
 
     //내가 참석한 모임 조회
     public List<JoinedPostsResponse> getMyJoinPost(UserDetailsImpl userDetails) {
-        Member member = userDetails.getMember();
-        Pageable pageable = PageRequest.ofSize(1);
-        return memberRoomRepository.MyJoinRead(member, pageable);
+        Long memberId = userDetails.getMember().getId();
+        return memberRoomQueryRepository.findJoinedPostsByMember(memberId);
     }
 }
 

@@ -1,6 +1,7 @@
 package com.example.modiraa.repository;
 
 import com.example.modiraa.dto.response.JoinedMembersResponse;
+import com.example.modiraa.dto.response.JoinedPostsResponse;
 import com.example.modiraa.model.Member;
 import com.example.modiraa.model.MemberRoom;
 import com.querydsl.core.types.Projections;
@@ -11,8 +12,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.modiraa.model.QChatRoom.chatRoom;
+import static com.example.modiraa.model.QPost.post;
 import static com.example.modiraa.model.QMember.member;
+import static com.example.modiraa.model.QChatRoom.chatRoom;
+import static com.example.modiraa.model.QPostImage.postImage;
 import static com.example.modiraa.model.QMemberRoom.memberRoom;
 
 @RequiredArgsConstructor
@@ -46,6 +49,24 @@ public class MemberRoomQueryRepository {
                 .join(memberRoom.chatRoom)
                 .fetchJoin()
                 .fetchOne());
+    }
+
+    public List<JoinedPostsResponse> findJoinedPostsByMember(Long memberId) {
+        return queryFactory
+                .select(Projections.constructor(
+                        JoinedPostsResponse.class,
+                        post.id,
+                        post.title,
+                        postImage.imageUrl,
+                        post.menu))
+                .from(memberRoom)
+                .leftJoin(post)
+                    .on(memberRoom.chatRoom.eq(post.chatRoom))
+                .leftJoin(postImage)
+                    .on(postImage.menu.eq(post.menu))
+                .where(memberRoom.member.id.eq(memberId).and(post.member.id.ne(memberId)))
+                .orderBy(post.id.desc())
+                .fetch();
     }
 
     public List<JoinedMembersResponse> findJoinedMembersByMemberRoom(Long chatRoomId) {
