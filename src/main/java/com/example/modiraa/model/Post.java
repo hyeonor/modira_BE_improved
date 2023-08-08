@@ -1,18 +1,20 @@
 package com.example.modiraa.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Builder
 @Entity
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Post {
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     //음식 카테고리
@@ -49,7 +51,7 @@ public class Post {
 
     //인원 수
     @Column(nullable = false)
-    private int numberofpeople;
+    private int numOfPeople;
 
     //음식 메뉴
     @Column(nullable = false)
@@ -68,15 +70,33 @@ public class Post {
     private Member member;
 
     @OneToOne
-    @JoinColumn(name = "postimage_id")
+    @JoinColumn(name = "post_image_id")
     private PostImage postImage;
 
     @OneToOne
-    @JoinColumn(name="chatroom_id")
+    @JoinColumn(name = "chat_room_id")
     private ChatRoom chatRoom;
 
     public void updateRoom(ChatRoom chatRoom) {
         this.chatRoom = chatRoom;
     }
 
+    @Builder
+    public Post(String category, String title, String contents, String address, double latitude, double longitude,
+                String date, String time, int numOfPeople, String menu, String gender, String age, Member member, PostImage postImage) {
+        this.category = category;
+        this.title = title;
+        this.contents = contents;
+        this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.date = date;
+        this.time = time;
+        this.numOfPeople = numOfPeople;
+        this.menu = menu;
+        this.gender = gender;
+        this.age = age;
+        this.member = member;
+        this.postImage = postImage;
+    }
 }

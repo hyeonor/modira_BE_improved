@@ -101,12 +101,12 @@ public class PostReadService {
                         .category(p.getCategory())
                         .date(p.getDate())
                         .time(p.getTime())
-                        .numberOfPeople(p.getNumberofpeople())
+                        .numberOfPeople(p.getNumOfPeople())
                         .numberOfParticipant(p.getChatRoom().getCurrentPeople())
                         .menu(p.getMenu())
                         .gender(p.getGender())
                         .age(p.getAge())
-                        .menuForImage(p.getPostImage().getImageurl())
+                        .menuForImage(p.getPostImage().getImageUrl())
                         .build()
         );
     }
@@ -127,7 +127,7 @@ public class PostReadService {
                 .longitude(post.getLongitude())
                 .date(post.getDate().split("/")[0] + " / " + post.getDate().split("/")[1] + " / " + post.getDate().split("/")[2])
                 .time(post.getTime())
-                .numberOfPeople(post.getNumberofpeople())
+                .numberOfPeople(post.getNumOfPeople())
                 .menu(post.getMenu())
                 .limitGender(post.getGender())
                 .limitAge(post.getAge())

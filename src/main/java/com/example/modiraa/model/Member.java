@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@Getter
 @Entity
+@Getter
 @NoArgsConstructor
 public class Member {
 
@@ -19,31 +19,27 @@ public class Member {
     @Column(length = 1000)
     private String profileImage;
 
-    @Column
+    @Column(nullable = false)
     private String nickname;
 
-    @Column
+    @Column(nullable = false)
     private String age;
 
-    @Column
+    @Column(nullable = false)
     private String gender;
 
-    @Column
+    @Column(nullable = false)
     private String address;
 
     @Column
     private String postState;
 
-    @Column
+    @Column(nullable = false)
     private String oAuthId;
 
-    @Column
+    @Column(nullable = false)
     private OAuthProvider oAuthProvider;
 
-
-    public void setPostState(String postState) {
-        this.postState = postState;
-    }
 
     @Builder
     public Member(String profileImage, String nickname, String age, String gender, String address, String oAuthId, OAuthProvider oAuthProvider) {
@@ -54,5 +50,9 @@ public class Member {
         this.address = address;
         this.oAuthId = oAuthId;
         this.oAuthProvider = oAuthProvider;
+    }
+
+    public void setPostState(String postState) {
+        this.postState = postState;
     }
 }

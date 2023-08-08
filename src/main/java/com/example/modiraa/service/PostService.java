@@ -45,7 +45,7 @@ public class PostService {
                     .longitude(postRequest.getLongitude())
                     .date(postRequest.getDate())
                     .time(postRequest.getTime())
-                    .numberofpeople(postRequest.getNumberOfPeople())
+                    .numOfPeople(postRequest.getNumOfPeople())
                     .menu(postRequest.getMenu())
                     .gender(postRequest.getGender())
                     .age(postRequest.getAge())
@@ -58,7 +58,7 @@ public class PostService {
             member.setPostState(postRequest.getTitle());
             memberRepository.save(member);
 
-            ChatRoom chatRoom = new ChatRoom(userDetails.getMember(), post, post.getNumberofpeople());
+            ChatRoom chatRoom = new ChatRoom(userDetails.getMember(), post, post.getNumOfPeople());
             chatRoomRepository.save(chatRoom);
 
             post.updateRoom(chatRoom);
