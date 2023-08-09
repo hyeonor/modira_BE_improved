@@ -3,6 +3,7 @@ package com.example.modiraa.service;
 import com.example.modiraa.auth.UserDetailsImpl;
 import com.example.modiraa.dto.response.*;
 import com.example.modiraa.model.Post;
+import com.example.modiraa.repository.LikeDislikeQueryRepository;
 import com.example.modiraa.repository.MemberRoomQueryRepository;
 import com.example.modiraa.repository.PostQueryRepository;
 import com.example.modiraa.repository.PostRepository;

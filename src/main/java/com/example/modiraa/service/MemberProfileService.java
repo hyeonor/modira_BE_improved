@@ -5,6 +5,7 @@ import com.example.modiraa.dto.response.MyProfileResponse;
 import com.example.modiraa.dto.response.UserProfileResponse;
 import com.example.modiraa.model.Member;
 import com.example.modiraa.model.MemberRoom;
+import com.example.modiraa.repository.LikeDislikeQueryRepository;
 import com.example.modiraa.repository.MemberRepository;
 import com.example.modiraa.repository.MemberRoomQueryRepository;
 import lombok.RequiredArgsConstructor;

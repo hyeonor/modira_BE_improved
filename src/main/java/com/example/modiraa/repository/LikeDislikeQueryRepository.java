@@ -1,4 +1,4 @@
-package com.example.modiraa.service;
+package com.example.modiraa.repository;
 
 import com.example.modiraa.model.Member;
 import com.querydsl.jpa.impl.JPAQueryFactory;
