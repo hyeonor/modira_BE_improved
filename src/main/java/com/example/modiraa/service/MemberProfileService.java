@@ -26,10 +26,10 @@ public class MemberProfileService {
         Long score = likeDislikeQueryRepository.calculateScore(member);
 
         Optional<MemberRoom> memberRoom = memberRoomQueryRepository.findTopByMemberOrderByIdDesc(member);
-        String roomId = memberRoom.map(mr -> mr.getChatRoom().getRoomId()).orElse(null);
+        String roomCode = memberRoom.map(mr -> mr.getChatRoom().getRoomCode()).orElse(null);
 
         if (memberRoom.isPresent()) {
-            roomId = memberRoom.get().getChatRoom().getRoomId();
+            roomCode = memberRoom.get().getChatRoom().getRoomCode();
         }
 
         return MyProfileResponse.builder()
@@ -40,7 +40,7 @@ public class MemberProfileService {
                 .nickname(member.getNickname())
                 .score(score)
                 .isJoinPost(member.getPostState())
-                .roomId(roomId)
+                .roomCode(roomCode)
                 .build();
     }
 

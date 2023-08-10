@@ -49,45 +49,45 @@
     // websocket & stomp initialize
     var sock = new SockJS("/ws-stomp");
     var ws = Stomp.over(sock);
-    var reconnect = 0;
     // vue.js
     var vm = new Vue({
         el: '#app',
         data: {
-            roomId: '',
+            roomCode: '',
             roomName: '',
             message: '',
             messages: [],
-            Authorization: '',
+            authorization: '',
             userCount: 0
         },
         created() {
-            this.roomId = "";
+            this.roomCode = localStorage.getItem('wschat.roomCode');
             this.roomName = localStorage.getItem('wschat.roomName');
-            this.Authorization = "";
             var _this = this;
 
-            ws.connect({"Authorization":_this.Authorization}, function(frame) {
-                ws.subscribe("/sub/chat/room/"+_this.roomId, function(message) {
-                    var recv = JSON.parse(message.body);
-                    console.log(recv);
-                    _this.recvMessage(recv);
-                }, {"Authorization":_this.Authorization});
-                _this.sendMessage('ENTER');
-            }, function(error) {
-                alert("서버 연결에 실패 하였습니다. 다시 접속해 주십시요.");
-                location.href="room.html";
+            axios.get('/chat/user').then(response => {
+                _this.authorization = response.data.authorization;
+                console.log(_this.authorization);
+                ws.connect({"Authorization": _this.authorization}, function (frame) {
+                    ws.subscribe("/sub/chat/room/" + _this.roomCode, function (message) {
+                        var recv = JSON.parse(message.body);
+                        _this.recvMessage(recv);
+                    }, {"Authorization": _this.authorization});
+                }, function (error) {
+                    alert("서버 연결에 실패 하였습니다. 다시 접속해 주십시요.");
+                    location.href = "room.html";
+                });
             });
         },
         methods: {
-            sendMessage: function(type) {
-                ws.send("/pub/chat/message", {"Authorization":this.Authorization},
-                    JSON.stringify({type:type, roomId:this.roomId, message:this.message}));
+            sendMessage: function (type) {
+                ws.send("/pub/chat/message", {"Authorization": this.authorization},
+                    JSON.stringify({type: type, roomCode: this.roomCode, message: this.message}));
                 this.message = '';
             },
-            recvMessage: function(recv) {
+            recvMessage: function (recv) {
                 this.userCount = recv.userCount;
-                this.messages.unshift({"type":recv.type,"sender":recv.sender,"message":recv.message})
+                this.messages.unshift({"type": recv.type, "sender": recv.sender, "message": recv.message})
             }
         }
     });

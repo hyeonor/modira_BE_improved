@@ -16,9 +16,9 @@ import static com.example.modiraa.model.QChatMessage.chatMessage;
 public class ChatMessageQueryRepository {
     private final JPAQueryFactory queryFactory;
 
-    public Page<ChatMessage> findByRoomIdOrderByIdDesc(String roomId, Pageable pageable) {
+    public Page<ChatMessage> findByRoomCodeOrderByIdDesc(String roomCode, Pageable pageable) {
         QueryResults<ChatMessage> result = queryFactory.selectFrom(chatMessage)
-                .where(chatMessage.roomId.eq(roomId))
+                .where(chatMessage.roomCode.eq(roomCode))
                 .orderBy(chatMessage.id.desc())
                 .join(chatMessage.sender)
                 .fetchJoin()

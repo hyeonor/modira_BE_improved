@@ -9,7 +9,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class ChatMessageRequest {
     private ChatMessage.MessageType type;
-    private String roomId;
+    private String roomCode;
     private Member sender;
     private String message;
     private long userCount;

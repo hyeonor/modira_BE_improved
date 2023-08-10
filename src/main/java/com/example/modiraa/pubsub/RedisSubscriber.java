@@ -24,11 +24,11 @@ public class RedisSubscriber {
         try {
             ChatMessage chatMessage = objectMapper.readValue(publishMessage, ChatMessage.class);
 
-            messagingTemplate.convertAndSend("/sub/chat/room/" + chatMessage.getRoomId(), getPayload(chatMessage));
+            messagingTemplate.convertAndSend("/sub/chat/room/" + chatMessage.getRoomCode(), getPayload(chatMessage));
 
             ChatMessage message = new ChatMessage();
             message.setType(chatMessage.getType());
-            message.setRoomId(chatMessage.getRoomId());
+            message.setRoomCode(chatMessage.getRoomCode());
             message.setSender(chatMessage.getSender());
             message.setMessage(chatMessage.getMessage());
             message.setUserCount(chatMessage.getUserCount());
@@ -42,7 +42,7 @@ public class RedisSubscriber {
     private ChatMessageResponse getPayload(ChatMessage chatMessage) {
         return ChatMessageResponse.builder()
                 .type(chatMessage.getType())
-                .roomId(chatMessage.getRoomId())
+                .roomCode(chatMessage.getRoomCode())
                 .senderId(chatMessage.getSender().getId())
                 .sender(chatMessage.getSender().getNickname())
                 .profileImage(chatMessage.getSender().getProfileImage())

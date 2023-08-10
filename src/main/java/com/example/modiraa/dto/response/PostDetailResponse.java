@@ -27,6 +27,6 @@ public class PostDetailResponse {
     private String writerGender;
     private String writerAge;
     private Long writerScore;
-    private String roomId;
+    private String roomCode;
     private int currentPeople;
 }

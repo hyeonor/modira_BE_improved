@@ -17,5 +17,5 @@ public class MyProfileResponse {
     private String gender;
     private Long score;
     private String isJoinPost;
-    private String roomId;
+    private String roomCode;
 }

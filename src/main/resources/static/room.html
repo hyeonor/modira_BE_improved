@@ -32,9 +32,9 @@
         </div>
     </div>
     <ul class="list-group">
-        <li class="list-group-item list-group-item-action" v-for="item in chatrooms" v-bind:key="item.roomId">
+        <li class="list-group-item list-group-item-action" v-for="item in chatrooms" v-bind:key="item.roomCode">
             <h6>
-                <a :href="'roomdetail.html?roomId=' + item.roomId" @click="enterRoom(item.roomId, item.name)">
+                <a :href="'roomdetail.html?roomCode=' + item.roomCode" @click="enterRoom(item.roomCode, item.name)">
                     {{ item.name }}
                 </a>
                 <span class="badge badge-info badge-pill">{{ item.userCount }}</span>
@@ -84,8 +84,8 @@
                         });
                 }
             },
-            enterRoom: function (roomId, roomName) {
-                localStorage.setItem('wschat.roomId', roomId);
+            enterRoom: function (roomCode, roomName) {
+                localStorage.setItem('wschat.roomCode', roomCode);
                 localStorage.setItem('wschat.roomName', roomName);
             }
         }

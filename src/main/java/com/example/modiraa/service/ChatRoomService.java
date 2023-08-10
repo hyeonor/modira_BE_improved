@@ -29,14 +29,14 @@ public class ChatRoomService {
     private final MemberRepository memberRepository;
 
 
-    // redis 에 입장정보로 sessionId 와 roomId를 저장하고 해단 sessionId 와 토큰에서 받아온 userId를 저장함
-    public void setUserEnterInfo(String sessionId, Long memberId, String roomId) {
-        hashOpsEnterInfo.put(ENTER_INFO, sessionId, roomId);
+    // redis 에 입장정보로 sessionId 와 roomCode를 저장하고 해단 sessionId 와 토큰에서 받아온 userId를 저장함
+    public void setUserEnterInfo(String sessionId, Long memberId, String roomCode) {
+        hashOpsEnterInfo.put(ENTER_INFO, sessionId, roomCode);
         hashOpsUserInfo.put(USER_INFO, sessionId, Long.toString(memberId));
     }
 
-    // redis 에 저장했던 sessionId 로 roomId를 리턴함
-    public String getUserEnterRoomId(String memberId) {
+    // redis 에 저장했던 sessionId 로 roomCode를 리턴함
+    public String getUserEnterRoomCode(String memberId) {
         return hashOpsEnterInfo.get(ENTER_INFO, memberId);
     }
 
@@ -53,17 +53,17 @@ public class ChatRoomService {
     }
 
     // 채팅방 유저수 조회
-    public long getUserCount(String roomId) {
-        return Long.valueOf(Optional.ofNullable(valueOps.get(USER_COUNT + "_" + roomId)).orElse("0"));
+    public long getUserCount(String roomCode) {
+        return Long.parseLong(Optional.ofNullable(valueOps.get(USER_COUNT + "_" + roomCode)).orElse("0"));
     }
 
     // 채팅방에 입장한 유저수 +1
-    public long plusUserCount(String roomId) {
-        return Optional.ofNullable(valueOps.increment(USER_COUNT + "_" + roomId)).orElse(0L);
+    public long plusUserCount(String roomCode) {
+        return Optional.ofNullable(valueOps.increment(USER_COUNT + "_" + roomCode)).orElse(0L);
     }
 
     // 채팅방에 입장한 유저수 -1
-    public long minusUserCount(String roomId) {
-        return Optional.ofNullable(valueOps.decrement(USER_COUNT + "_" + roomId)).filter(count -> count > 0).orElse(0L);
+    public long minusUserCount(String roomCode) {
+        return Optional.ofNullable(valueOps.decrement(USER_COUNT + "_" + roomCode)).filter(count -> count > 0).orElse(0L);
     }
 }

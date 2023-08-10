@@ -25,9 +25,9 @@ public class ChatMessage extends Timestamped {
     @Enumerated(value = EnumType.STRING)
     private MessageType type;
 
-    // 채팅방 번호
+    // 채팅방 코드
     @Column
-    private String roomId;
+    private String roomCode;
 
     // 메시지
     @Column(length = 100000)
@@ -43,9 +43,9 @@ public class ChatMessage extends Timestamped {
     private Member sender;
 
     @Builder
-    public ChatMessage(MessageType type, String roomId, Member sender, String message, long userCount) {
+    public ChatMessage(MessageType type, String roomCode, Member sender, String message, long userCount) {
         this.type = type;
-        this.roomId = roomId;
+        this.roomCode = roomCode;
         this.sender = sender;
         this.message = message;
         this.userCount = userCount;
@@ -54,7 +54,7 @@ public class ChatMessage extends Timestamped {
     @Builder
     public ChatMessage(ChatMessageRequest chatMessageRequest) {
         this.type = chatMessageRequest.getType();
-        this.roomId = chatMessageRequest.getRoomId();
+        this.roomCode = chatMessageRequest.getRoomCode();
         this.message = chatMessageRequest.getMessage();
         this.userCount = chatMessageRequest.getUserCount();
         this.sender = chatMessageRequest.getSender();

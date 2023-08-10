@@ -32,11 +32,11 @@ public class MemberRoomService {
     private final PostRepository postRepository;
 
     //채팅 참여하기
-    public ResponseEntity<?> enterRoom(UserDetailsImpl userDetails, String roomId) {
+    public ResponseEntity<?> enterRoom(UserDetailsImpl userDetails, String roomCode) {
         Member member = userDetails.getMember();
-        ChatRoom chatroom = chatRoomRepository.findByRoomId(roomId)
+        ChatRoom chatroom = chatRoomRepository.findByRoomCode(roomCode)
                 .orElseThrow(() -> new CustomException(ErrorCode.JOIN_ROOM_CHECK_CODE));
-        Optional<MemberRoom> memberRoom = memberRoomRepository.findByChatRoomAndMember(chatroom,member);
+        Optional<MemberRoom> memberRoom = memberRoomRepository.findByChatRoomAndMember(chatroom, member);
         Post postRoom = postRepository.findByChatRoomId(chatroom.getId());
 
         //post 성별 조건
@@ -49,7 +49,7 @@ public class MemberRoomService {
         String memberAge = userDetails.getMember().getAge();
 
 
-        if(member.getPostState() == null) {
+        if (member.getPostState() == null) {
             if (chatroom.getMaxPeople() > chatroom.getCurrentPeople()) {
                 MemberRoom SaveMemberRoom = new MemberRoom(member, chatroom);
                 memberRoomRepository.save(SaveMemberRoom);
@@ -72,9 +72,9 @@ public class MemberRoomService {
             int ageMin = Math.min(ageOne, ageTwo);
 
             //나이 순서 정렬
-            if (memberAgeInt <= ageMax && memberAgeInt >= ageMin){
+            if (memberAgeInt <= ageMax && memberAgeInt >= ageMin) {
                 return genderCheck(member, postRoom, postGender, memberGender);
-            }else {
+            } else {
                 throw new CustomException(ErrorCode.JOIN_AGE_CHECK_CODE);
             }
         } else {
@@ -83,32 +83,32 @@ public class MemberRoomService {
     }
 
     private ResponseEntity<String> genderCheck(Member member, Post postRoom, String postGender, String memberGender) {
-        if(postGender.equals("모든성별")){
+        if (postGender.equals("모든성별")) {
             //참가자 state 값 변화.
             member.setPostState(postRoom.getTitle());
             memberRepository.save(member);
             return new ResponseEntity<>("모임에 참여하셨습니다.", HttpStatus.valueOf(200));
-        }else if (postGender.equals(memberGender)) {
+        } else if (postGender.equals(memberGender)) {
             member.setPostState(postRoom.getTitle());
             memberRepository.save(member);
             return new ResponseEntity<>("모임에 참여하셨습니다.", HttpStatus.valueOf(200));
-        }else {
+        } else {
             throw new CustomException(ErrorCode.JOIN_GENDER_CHECK_CODE);
         }
     }
 
 
     //모임 완료하기
-    public ResponseEntity<?> leaveRoom(UserDetailsImpl userDetails, String roomId) {
+    public ResponseEntity<?> leaveRoom(UserDetailsImpl userDetails, String roomCode) {
         Member member = userDetails.getMember();
-        ChatRoom chatroom = chatRoomRepository.findByRoomId(roomId)
+        ChatRoom chatroom = chatRoomRepository.findByRoomCode(roomCode)
                 .orElseThrow(() -> new CustomException(ErrorCode.JOIN_ROOM_CHECK_CODE));
 
         Long chatroomId = chatroom.getId();
 
-        MemberRoom memberRoom  = memberRoomQueryRepository.findByChatRoomIdAndMemberId(chatroomId, member.getId())
+        MemberRoom memberRoom = memberRoomQueryRepository.findByChatRoomIdAndMemberId(chatroomId, member.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.JOIN_ROOM_CHECK_CODE)
-        );
+                );
 
         Long memberRoomId = memberRoom.getId();
         Long memberId = userDetails.getMember().getId();
@@ -119,8 +119,7 @@ public class MemberRoomService {
             if (memberId.equals(post.getMember().getId())) {
                 stateUpdate(member, chatroom, memberRoomId);
                 postRepository.delete(post);
-            }
-            else {
+            } else {
                 stateUpdate(member, chatroom, memberRoomId);
             }
         } else {
@@ -140,8 +139,8 @@ public class MemberRoomService {
     }
 
     // 참여한 유저 정보 리스트
-    public List<JoinedMembersResponse> ReadMember(String roomId) {
-        ChatRoom chatroom = chatRoomRepository.findByRoomId(roomId)
+    public List<JoinedMembersResponse> ReadMember(String roomCode) {
+        ChatRoom chatroom = chatRoomRepository.findByRoomCode(roomCode)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 모임 입니다."));
 
         return memberRoomQueryRepository.findJoinedMembersByMemberRoom(chatroom.getId());
