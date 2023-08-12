@@ -16,14 +16,16 @@ public class DislikeController {
 
     // 싫어요 기능
     @PostMapping
-    public ResponseEntity<?> dislikeClick(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody LikeAndDislikeRequest userId) {
-        return dislikeService.dislikeClick(userDetails, userId.getUserId());
+    public ResponseEntity<String> rateDislike(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                              @RequestBody LikeAndDislikeRequest request) {
+        return dislikeService.rateDislike(userDetails, request.getUserId());
     }
 
     // 싫어요 취소 기능
     @DeleteMapping
-    public ResponseEntity<?> deleteDislike(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody LikeAndDislikeRequest userId) {
-        return dislikeService.deleteDislike(userDetails, userId.getUserId());
+    public ResponseEntity<String> deleteDislike(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                @RequestBody LikeAndDislikeRequest request) {
+        return dislikeService.deleteDislike(userDetails, request.getUserId());
     }
 
 }

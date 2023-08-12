@@ -16,14 +16,16 @@ public class LikeController {
 
     // 좋아요 기능
     @PostMapping
-    public ResponseEntity<?> userLikes(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody LikeAndDislikeRequest userId) {
-        return likeService.userLikes(userDetails, userId.getUserId());
+    public ResponseEntity<String> rateLike(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                           @RequestBody LikeAndDislikeRequest request) {
+        return likeService.rateLike(userDetails, request.getUserId());
     }
 
     // 좋아요 취소 기능
     @DeleteMapping
-    public ResponseEntity<?> deletetLikes(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody LikeAndDislikeRequest userId) {
-        return likeService.deleteLikes(userDetails, userId.getUserId());
+    public ResponseEntity<String> deleteLike(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                             @RequestBody LikeAndDislikeRequest request) {
+        return likeService.deleteLike(userDetails, request.getUserId());
     }
 
 }
