@@ -1,4 +1,4 @@
-package com.example.modiraa.model.oauth;
+package com.example.modiraa.dto.request.oauth;
 
 import org.springframework.util.MultiValueMap;
 

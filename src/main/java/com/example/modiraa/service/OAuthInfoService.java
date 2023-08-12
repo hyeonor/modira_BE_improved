@@ -1,9 +1,9 @@
 package com.example.modiraa.service;
 
 import com.example.modiraa.client.OAuthApiClient;
+import com.example.modiraa.dto.request.oauth.OAuthLoginParams;
+import com.example.modiraa.dto.request.oauth.OAuthProvider;
 import com.example.modiraa.dto.response.OAuthInfoResponse;
-import com.example.modiraa.model.oauth.OAuthLoginParams;
-import com.example.modiraa.model.oauth.OAuthProvider;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

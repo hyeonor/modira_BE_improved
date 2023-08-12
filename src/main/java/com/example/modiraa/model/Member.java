@@ -1,6 +1,6 @@
 package com.example.modiraa.model;
 
-import com.example.modiraa.model.oauth.OAuthProvider;
+import com.example.modiraa.dto.request.oauth.OAuthProvider;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

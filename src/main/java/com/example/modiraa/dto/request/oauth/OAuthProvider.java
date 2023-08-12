@@ -1,4 +1,4 @@
-package com.example.modiraa.model.oauth;
+package com.example.modiraa.dto.request.oauth;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -18,7 +18,7 @@ public enum OAuthProvider {
     }
 
     static {
-        for(OAuthProvider oAuthProvider : values()) {
+        for (OAuthProvider oAuthProvider : values()) {
             map.put(oAuthProvider.value, oAuthProvider);
         }
     }

@@ -1,8 +1,8 @@
 package com.example.modiraa.client;
 
+import com.example.modiraa.dto.request.oauth.OAuthLoginParams;
+import com.example.modiraa.dto.request.oauth.OAuthProvider;
 import com.example.modiraa.dto.response.OAuthInfoResponse;
-import com.example.modiraa.model.oauth.OAuthLoginParams;
-import com.example.modiraa.model.oauth.OAuthProvider;
 
 public interface OAuthApiClient {
     OAuthProvider oAuthProvider();
