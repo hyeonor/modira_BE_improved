@@ -19,38 +19,32 @@ public class RatingService {
     private final RatingRepository ratingRepository;
     private final MemberRepository memberRepository;
 
+    private static final String SUCCESS_RATE_MESSAGE = " 성공";
+    private static final String SUCCESS_CANCEL_MESSAGE = " 취소 성공";
+
     public ResponseEntity<String> rate(UserDetailsImpl userDetails, Long userId, String ratingType) {
+        RatingType type = RatingType.fromValue(ratingType);
         Member giver = userDetails.getMember();
         Member receiver = getReceiver(userId);
 
         checkSelfRating(giver, receiver);
+        checkDuplicateRating(giver, receiver);
+        saveRating(type, giver, receiver);
 
-        Optional<Rating> foundRing = ratingRepository.findByGiverAndReceiver(giver, receiver);
-
-        checkDuplicateRating(foundRing);
-
-        if (ratingType.equals(RatingType.LIKE.getValue())) {
-            saveRating(RatingType.LIKE, giver, receiver);
-            return ResponseEntity.status(HttpStatus.CREATED).body("좋아요 성공!");
-        } else {
-            saveRating(RatingType.DISLIKE, giver, receiver);
-            return ResponseEntity.status(HttpStatus.CREATED).body("싫어요 성공!");
-        }
+        String successMessage = type + SUCCESS_RATE_MESSAGE;
+        return ResponseEntity.status(HttpStatus.CREATED).body(successMessage);
     }
 
     public ResponseEntity<String> deleteRating(UserDetailsImpl userDetails, Long userId, String ratingType) {
+        RatingType type = RatingType.fromValue(ratingType);
         Member giver = userDetails.getMember();
         Member receiver = getReceiver(userId);
 
-        if (ratingType.equals(RatingType.LIKE.getValue())) {
-            Rating foundRating = getFoundRating(RatingType.LIKE, giver, receiver);
-            ratingRepository.delete(foundRating);
-            return ResponseEntity.status(HttpStatus.CREATED).body("좋아요 취소 성공.");
-        } else {
-            Rating foundRating = getFoundRating(RatingType.DISLIKE, giver, receiver);
-            ratingRepository.delete(foundRating);
-            return ResponseEntity.status(HttpStatus.OK).body("싫어요 취소 성공.");
-        }
+        Rating foundRating = getFoundRating(type, giver, receiver);
+        ratingRepository.delete(foundRating);
+
+        String successMessage = type + SUCCESS_CANCEL_MESSAGE;
+        return ResponseEntity.status(HttpStatus.OK).body(successMessage);
     }
 
     private Member getReceiver(Long userId) {
@@ -64,7 +58,9 @@ public class RatingService {
         }
     }
 
-    private void checkDuplicateRating(Optional<Rating> foundRing) {
+    private void checkDuplicateRating(Member giver, Member receiver) {
+        Optional<Rating> foundRing = ratingRepository.findByGiverAndReceiver(giver, receiver);
+
         if (foundRing.isPresent()) {
             throw new IllegalArgumentException("이미 이 유저에게 좋아요 또는 싫어요를 평가했습니다.");
         }
