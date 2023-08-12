@@ -3,6 +3,7 @@ package com.example.modiraa.exception;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.http.HttpStatus;
 
 @Getter
 @Setter
@@ -11,7 +12,7 @@ public class ErrorResponse {
 
     private String message;
     private String code;
-    private int status;
+    private HttpStatus status;
 
 
     // 정적 메서드 -> 클래스가 메모리에 올라갈때 자동적으로 생성
