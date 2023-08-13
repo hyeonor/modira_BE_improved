@@ -65,7 +65,10 @@ public class Post {
 
     //나이대
     @Column(nullable = false)
-    private String age;
+    private int ageMin;
+
+    @Column(nullable = false)
+    private int ageMax;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "member_id")
@@ -81,8 +84,8 @@ public class Post {
 
 
     @Builder
-    public Post(String category, String title, String contents, String address, double latitude, double longitude, String date,
-                String time, int numOfPeople, String menu, GenderType gender, String age, Member member, PostImage postImage, ChatRoom chatRoom) {
+    public Post(String category, String title, String contents, String address, double latitude, double longitude, String date, String time,
+                int numOfPeople, String menu, GenderType gender, int ageMin, int ageMax, Member member, PostImage postImage, ChatRoom chatRoom) {
         this.category = category;
         this.title = title;
         this.contents = contents;
@@ -94,7 +97,8 @@ public class Post {
         this.numOfPeople = numOfPeople;
         this.menu = menu;
         this.gender = gender;
-        this.age = age;
+        this.ageMin = ageMin;
+        this.ageMax = ageMax;
         this.member = member;
         this.postImage = postImage;
         this.chatRoom = chatRoom;

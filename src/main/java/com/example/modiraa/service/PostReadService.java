@@ -107,7 +107,7 @@ public class PostReadService {
                         .numberOfParticipant(p.getChatRoom().getCurrentPeople())
                         .menu(p.getMenu())
                         .gender(p.getGender().getValue())
-                        .age(p.getAge())
+                        .age(p.getAgeMin() + "대~" + p.getAgeMax() + "대")
                         .menuForImage(p.getPostImage().getImageUrl())
                         .build()
         );
@@ -133,7 +133,7 @@ public class PostReadService {
                 .numberOfPeople(post.getNumOfPeople())
                 .menu(post.getMenu())
                 .genderCondition(post.getGender().getValue())
-                .ageCondition(post.getAge())
+                .ageCondition(post.getAgeMin() + "대~" + post.getAgeMax() + "대")
                 .roomCode(post.getChatRoom().getRoomCode())
                 .currentPeople(post.getChatRoom().getCurrentPeople())
                 .writerInfo(WriterInfo.builder()

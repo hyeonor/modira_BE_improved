@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -19,6 +20,9 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class PostService {
+    private static final String ALL_AGES = "모든나이";
+    private static final int DEFAULT_MIN_AGE = 10;
+    private static final int DEFAULT_MAX_AGE = 70;
 
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
@@ -69,6 +73,17 @@ public class PostService {
     }
 
     private void savePost(PostRequest postRequest, Member member, PostImage postImage, ChatRoom chatRoom) {
+        int ageMin = DEFAULT_MIN_AGE;
+        int ageMax = DEFAULT_MAX_AGE;
+        String ageRange = postRequest.getAge();
+
+        if (!ageRange.equals(ALL_AGES)) {
+            int[] ages = sortAges(ageRange);
+
+            ageMin = ages[0];
+            ageMax = ages[1];
+        }
+
         Post post = Post.builder()
                 .category(postRequest.getCategory())
                 .title(postRequest.getTitle())
@@ -81,13 +96,26 @@ public class PostService {
                 .numOfPeople(postRequest.getNumOfPeople())
                 .menu(postRequest.getMenu())
                 .gender(GenderType.fromValue(postRequest.getGender()))
-                .age(postRequest.getAge())
+                .ageMin(ageMin)
+                .ageMax(ageMax)
                 .member(member)
                 .postImage(postImage)
                 .chatRoom(chatRoom)
                 .build();
 
         postRepository.save(post);
+    }
+
+    private int[] sortAges(String ageRange) {
+        String[] ageParts = ageRange.split("~");
+
+        int[] arr = new int[2];
+        arr[0] = Integer.parseInt(ageParts[0].split("대")[0]);
+        arr[1] = Integer.parseInt(ageParts[1].split("대")[0]);
+
+        Arrays.sort(arr);
+
+        return arr;
     }
 
     private void checkPostStatus(Member member) {
