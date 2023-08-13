@@ -102,7 +102,7 @@ public class MemberRoomService {
     private ResponseEntity<String> genderConditionCheck(Member member, ChatRoom chatroom, Post postRoom,
                                                         String genderCondition, String memberGender) {
         if (genderCondition.equals("모든성별") || genderCondition.equals(memberGender)) {
-            member.setPostState(postRoom.getTitle());
+            member.updatePostStatus(postRoom.getTitle());
             memberRepository.save(member);
 
             MemberRoom saveMemberRoom = new MemberRoom(member, chatroom);
@@ -116,7 +116,7 @@ public class MemberRoomService {
     }
 
     private void checkIfAlreadyJoined(Member member) {
-        if (member.getPostState() != null) {
+        if (member.getPostStatus() != null) {
             throw new CustomException(ErrorCode.JOIN_CHATROOM_CHECK_CODE);
         }
     }
@@ -136,19 +136,19 @@ public class MemberRoomService {
     }
 
     private void leavePostOwner(Member member, ChatRoom chatroom, MemberRoom memberRoom, Post post) {
-        stateUpdate(member, chatroom, memberRoom);
+        updateStatus(member, chatroom, memberRoom);
         postRepository.delete(post);
     }
 
     private void leaveMember(Member member, ChatRoom chatroom, MemberRoom memberRoom) {
-        stateUpdate(member, chatroom, memberRoom);
+        updateStatus(member, chatroom, memberRoom);
     }
 
-    private void stateUpdate(Member member, ChatRoom chatroom, MemberRoom memberRoom) {
+    private void updateStatus(Member member, ChatRoom chatroom, MemberRoom memberRoom) {
         memberRoomRepository.deleteById(memberRoom.getId());
 
         //참가자 state 값 변화.
-        member.setPostState(null);
+        member.updatePostStatus(null);
         memberRepository.save(member);
         chatroom.minusCurrentPeople();
     }

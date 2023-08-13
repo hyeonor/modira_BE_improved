@@ -32,7 +32,7 @@ public class Member {
     private String address;
 
     @Column
-    private String postState;
+    private String postStatus;
 
     @Column(nullable = false)
     private String oAuthId;
@@ -52,7 +52,7 @@ public class Member {
         this.oAuthProvider = oAuthProvider;
     }
 
-    public void setPostState(String postState) {
-        this.postState = postState;
+    public void updatePostStatus(String postStatus) {
+        this.postStatus = postStatus;
     }
 }

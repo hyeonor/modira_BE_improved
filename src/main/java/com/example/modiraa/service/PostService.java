@@ -35,7 +35,7 @@ public class PostService {
 
         PostImage postImage = postImageRepository.findByMenu(postRequest.getMenu());
 
-        if (member.getPostState() == null) {
+        if (member.getPostStatus() == null) {
             Post post = Post.builder()
                     .category(postRequest.getCategory())
                     .title(postRequest.getTitle())
@@ -55,7 +55,7 @@ public class PostService {
 
             postRepository.save(post);
 
-            member.setPostState(postRequest.getTitle());
+            member.updatePostStatus(postRequest.getTitle());
             memberRepository.save(member);
 
             ChatRoom chatRoom = new ChatRoom(userDetails.getMember(), post, post.getNumOfPeople());
@@ -82,7 +82,7 @@ public class PostService {
 
             Member member = memberRepository.findAllById(memberRoom.getMember().getId());
 
-            member.setPostState(null);
+            member.updatePostStatus(null);
             memberRepository.save(member);
         }
 

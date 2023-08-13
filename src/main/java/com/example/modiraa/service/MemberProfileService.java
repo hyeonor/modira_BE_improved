@@ -39,7 +39,7 @@ public class MemberProfileService {
                 .gender(member.getGender())
                 .nickname(member.getNickname())
                 .score(score)
-                .isJoinPost(member.getPostState())
+                .isJoinPost(member.getPostStatus())
                 .roomCode(roomCode)
                 .build();
     }
