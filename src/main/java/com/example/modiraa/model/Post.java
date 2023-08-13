@@ -1,5 +1,6 @@
 package com.example.modiraa.model;
 
+import com.example.modiraa.enums.GenderType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -58,8 +59,9 @@ public class Post {
     private String menu;
 
     //성별
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String gender;
+    private GenderType gender;
 
     //나이대
     @Column(nullable = false)
@@ -83,7 +85,7 @@ public class Post {
 
     @Builder
     public Post(String category, String title, String contents, String address, double latitude, double longitude,
-                String date, String time, int numOfPeople, String menu, String gender, String age, Member member, PostImage postImage) {
+                String date, String time, int numOfPeople, String menu, GenderType gender, String age, Member member, PostImage postImage) {
         this.category = category;
         this.title = title;
         this.contents = contents;

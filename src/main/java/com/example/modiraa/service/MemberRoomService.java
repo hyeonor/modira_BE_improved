@@ -2,6 +2,7 @@ package com.example.modiraa.service;
 
 import com.example.modiraa.auth.UserDetailsImpl;
 import com.example.modiraa.dto.response.JoinedMembersResponse;
+import com.example.modiraa.enums.GenderType;
 import com.example.modiraa.exception.CustomException;
 import com.example.modiraa.exception.ErrorCode;
 import com.example.modiraa.model.ChatRoom;
@@ -41,9 +42,9 @@ public class MemberRoomService {
         checkForDuplicateJoin(chatroom, member);
         checkFullNumOfPeople(chatroom);
 
-        String genderCondition = post.getGender();
+        GenderType genderCondition = post.getGender();
         String ageCondition = post.getAge();
-        String memberGender = member.getGender();
+        GenderType memberGender = member.getGender();
         String memberAge = member.getAge();
 
         if (ageCondition.equals("모든나이")) {
@@ -100,8 +101,8 @@ public class MemberRoomService {
     }
 
     private ResponseEntity<String> genderConditionCheck(Member member, ChatRoom chatroom, Post postRoom,
-                                                        String genderCondition, String memberGender) {
-        if (genderCondition.equals("모든성별") || genderCondition.equals(memberGender)) {
+                                                        GenderType genderCondition, GenderType memberGender) {
+        if (genderCondition.equals(GenderType.ALL) || genderCondition.equals(memberGender)) {
             member.updatePostStatus(postRoom.getTitle());
             memberRepository.save(member);
 

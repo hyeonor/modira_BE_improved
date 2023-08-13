@@ -18,8 +18,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Slf4j
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class PostReadService {
     private final PostRepository postRepository;
     private final PostQueryRepository postQueryRepository;
@@ -105,7 +105,7 @@ public class PostReadService {
                         .numberOfPeople(p.getNumOfPeople())
                         .numberOfParticipant(p.getChatRoom().getCurrentPeople())
                         .menu(p.getMenu())
-                        .gender(p.getGender())
+                        .gender(p.getGender().getValue())
                         .age(p.getAge())
                         .menuForImage(p.getPostImage().getImageUrl())
                         .build()
@@ -130,11 +130,11 @@ public class PostReadService {
                 .time(post.getTime())
                 .numberOfPeople(post.getNumOfPeople())
                 .menu(post.getMenu())
-                .limitGender(post.getGender())
+                .limitGender(post.getGender().getValue())
                 .limitAge(post.getAge())
                 .writerProfileImage(post.getMember().getProfileImage())
                 .writerNickname(post.getMember().getNickname())
-                .writerGender(post.getMember().getGender())
+                .writerGender(post.getMember().getGender().getValue())
                 .writerAge(post.getMember().getAge())
                 .writerScore(score)
                 .roomCode(post.getChatRoom().getRoomCode())

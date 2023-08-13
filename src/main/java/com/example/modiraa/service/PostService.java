@@ -2,12 +2,12 @@ package com.example.modiraa.service;
 
 import com.example.modiraa.auth.UserDetailsImpl;
 import com.example.modiraa.dto.request.PostRequest;
+import com.example.modiraa.enums.GenderType;
 import com.example.modiraa.exception.CustomException;
 import com.example.modiraa.exception.ErrorCode;
 import com.example.modiraa.model.*;
 import com.example.modiraa.repository.*;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 
-@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -47,7 +46,7 @@ public class PostService {
                     .time(postRequest.getTime())
                     .numOfPeople(postRequest.getNumOfPeople())
                     .menu(postRequest.getMenu())
-                    .gender(postRequest.getGender())
+                    .gender(GenderType.fromValue(postRequest.getGender()))
                     .age(postRequest.getAge())
                     .member(member)
                     .postImage(postImage)

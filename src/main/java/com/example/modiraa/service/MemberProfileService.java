@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class MemberProfileService {
     private final MemberRepository memberRepository;
     private final RatingQueryRepository ratingQueryRepository;
@@ -36,7 +36,7 @@ public class MemberProfileService {
                 .address(member.getAddress())
                 .age(member.getAge())
                 .userProfile(member.getProfileImage())
-                .gender(member.getGender())
+                .gender(member.getGender().getValue())
                 .nickname(member.getNickname())
                 .score(score)
                 .isJoinPost(member.getPostStatus())
@@ -55,7 +55,7 @@ public class MemberProfileService {
                 .address(member.getAddress())
                 .age(member.getAge())
                 .userProfile(member.getProfileImage())
-                .gender(member.getGender())
+                .gender(member.getGender().getValue())
                 .nickname(member.getNickname())
                 .score(score)
                 .build();
