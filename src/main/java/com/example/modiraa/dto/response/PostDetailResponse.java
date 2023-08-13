@@ -20,13 +20,9 @@ public class PostDetailResponse {
     private String time;
     private int numberOfPeople;
     private String menu;
-    private String limitGender;
-    private String limitAge;
-    private String writerProfileImage;
-    private String writerNickname;
-    private String writerGender;
-    private String writerAge;
-    private Long writerScore;
+    private String genderCondition;
+    private String ageCondition;
     private String roomCode;
     private int currentPeople;
+    private WriterInfo writerInfo;
 }

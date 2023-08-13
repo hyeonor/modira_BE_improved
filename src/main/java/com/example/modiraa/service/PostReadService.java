@@ -2,6 +2,7 @@ package com.example.modiraa.service;
 
 import com.example.modiraa.auth.UserDetailsImpl;
 import com.example.modiraa.dto.response.*;
+import com.example.modiraa.model.Member;
 import com.example.modiraa.model.Post;
 import com.example.modiraa.repository.MemberRoomQueryRepository;
 import com.example.modiraa.repository.PostQueryRepository;
@@ -117,7 +118,8 @@ public class PostReadService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 없습니다."));
 
-        Long score = ratingQueryRepository.calculateScore(post.getMember().getId());
+        Member member = post.getMember();
+        Long score = ratingQueryRepository.calculateScore(member.getId());
 
         return PostDetailResponse.builder()
                 .category(post.getCategory())
@@ -130,15 +132,17 @@ public class PostReadService {
                 .time(post.getTime())
                 .numberOfPeople(post.getNumOfPeople())
                 .menu(post.getMenu())
-                .limitGender(post.getGender().getValue())
-                .limitAge(post.getAge())
-                .writerProfileImage(post.getMember().getProfileImage())
-                .writerNickname(post.getMember().getNickname())
-                .writerGender(post.getMember().getGender().getValue())
-                .writerAge(post.getMember().getAge())
-                .writerScore(score)
+                .genderCondition(post.getGender().getValue())
+                .ageCondition(post.getAge())
                 .roomCode(post.getChatRoom().getRoomCode())
                 .currentPeople(post.getChatRoom().getCurrentPeople())
+                .writerInfo(WriterInfo.builder()
+                        .profileImage(member.getProfileImage())
+                        .nickname(member.getNickname())
+                        .gender(member.getGender().getValue())
+                        .age(member.getAge())
+                        .score(score)
+                        .build())
                 .build();
     }
 
