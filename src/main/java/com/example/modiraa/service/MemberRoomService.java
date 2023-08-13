@@ -45,7 +45,7 @@ public class MemberRoomService {
         GenderType genderCondition = post.getGender();
         String ageCondition = post.getAge();
         GenderType memberGender = member.getGender();
-        String memberAge = member.getAge();
+        int memberAge = member.getAge();
 
         if (ageCondition.equals("모든나이")) {
             return genderConditionCheck(member, chatroom, post, genderCondition, memberGender);
@@ -53,12 +53,11 @@ public class MemberRoomService {
 
         int ageOne = Integer.parseInt(ageCondition.split("~")[0].split("대")[0]);
         int ageTwo = Integer.parseInt(ageCondition.split("~")[1].split("대")[0]);
-        int memberAgeInt = Integer.parseInt(memberAge.split("대")[0]);
         int ageMax = Math.max(ageOne, ageTwo);
         int ageMin = Math.min(ageOne, ageTwo);
 
 
-        if (memberAgeInt <= ageMax && memberAgeInt >= ageMin) {
+        if (memberAge <= ageMax && memberAge >= ageMin) {
             return genderConditionCheck(member, chatroom, post, genderCondition, memberGender);
         } else {
             throw new CustomException(ErrorCode.JOIN_AGE_CHECK_CODE);

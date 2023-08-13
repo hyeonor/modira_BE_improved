@@ -13,6 +13,6 @@ public class WriterInfo {
     private String profileImage;
     private String nickname;
     private String gender;
-    private String age;
+    private int age;
     private Long score;
 }

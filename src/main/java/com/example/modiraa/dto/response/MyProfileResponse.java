@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class MyProfileResponse {
     private String nickname;
     private String userProfile;
-    private String age;
+    private int age;
     private String address;
     private String gender;
     private Long score;
