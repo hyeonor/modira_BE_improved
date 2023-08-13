@@ -14,7 +14,7 @@ public enum ErrorCode {
     ID_DUPLICATION_CODE(BAD_REQUEST, "C002", "중복된 유저 입니다."),
     LENGTH_CHECK_CODE(BAD_REQUEST, "C003", "아이디를 2-8자로 입력해 주세요"),
     IMAGE_CHECK_CODE(BAD_REQUEST, "C004", "이미지를 확인해 주세요"),
-    POST_CHECK_CODE(BAD_REQUEST, "C005", "게시글은 하나만 작성 할 수 있습니다."),
+    POST_CHECK_CODE(BAD_REQUEST, "C005", "참여 중이 모임이 있거나 작성한 게시글이 있습니다."),
     JOIN_CHECK_CODE(BAD_REQUEST, "C006", "중복된 참여는 불가능 합니다."),
     JOIN_PULL_CHECK_CODE(BAD_REQUEST, "C007", "모임 인원이 마감 되었습니다."),
     JOIN_ROOM_CHECK_CODE(BAD_REQUEST, "C008", "존재하는 모임이 없습니다."),

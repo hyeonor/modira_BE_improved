@@ -79,13 +79,10 @@ public class Post {
     @JoinColumn(name = "chat_room_id")
     private ChatRoom chatRoom;
 
-    public void updateRoom(ChatRoom chatRoom) {
-        this.chatRoom = chatRoom;
-    }
 
     @Builder
-    public Post(String category, String title, String contents, String address, double latitude, double longitude,
-                String date, String time, int numOfPeople, String menu, GenderType gender, String age, Member member, PostImage postImage) {
+    public Post(String category, String title, String contents, String address, double latitude, double longitude, String date,
+                String time, int numOfPeople, String menu, GenderType gender, String age, Member member, PostImage postImage, ChatRoom chatRoom) {
         this.category = category;
         this.title = title;
         this.contents = contents;
@@ -100,5 +97,6 @@ public class Post {
         this.age = age;
         this.member = member;
         this.postImage = postImage;
+        this.chatRoom = chatRoom;
     }
 }

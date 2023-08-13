@@ -38,11 +38,10 @@ public class ChatRoom implements Serializable {
     @JoinColumn(name = "owner_member_id")
     private Member ownerMember;
 
-    public ChatRoom(Member ownerMember, Post post, int maxPeople) {
+    public ChatRoom(Member ownerMember, int maxPeople) {
         this.roomCode = UUID.randomUUID().toString();
         this.currentPeople = 1;
         this.maxPeople = maxPeople;
-        this.post = post;
         this.ownerMember = ownerMember;
     }
 

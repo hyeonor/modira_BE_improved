@@ -34,39 +34,14 @@ public class PostService {
 
         PostImage postImage = postImageRepository.findByMenu(postRequest.getMenu());
 
-        if (member.getPostStatus() == null) {
-            Post post = Post.builder()
-                    .category(postRequest.getCategory())
-                    .title(postRequest.getTitle())
-                    .contents(postRequest.getContents())
-                    .address(postRequest.getAddress())
-                    .latitude(postRequest.getLatitude())
-                    .longitude(postRequest.getLongitude())
-                    .date(postRequest.getDate())
-                    .time(postRequest.getTime())
-                    .numOfPeople(postRequest.getNumOfPeople())
-                    .menu(postRequest.getMenu())
-                    .gender(GenderType.fromValue(postRequest.getGender()))
-                    .age(postRequest.getAge())
-                    .member(member)
-                    .postImage(postImage)
-                    .build();
+        checkPostStatus(member);
 
-            postRepository.save(post);
+        ChatRoom chatRoom = new ChatRoom(userDetails.getMember(), postRequest.getNumOfPeople());
+        chatRoomRepository.save(chatRoom);
 
-            member.updatePostStatus(postRequest.getTitle());
-            memberRepository.save(member);
-
-            ChatRoom chatRoom = new ChatRoom(userDetails.getMember(), post, post.getNumOfPeople());
-            chatRoomRepository.save(chatRoom);
-
-            post.updateRoom(chatRoom);
-
-            MemberRoom memberRoom = new MemberRoom(userDetails.getMember(), chatRoom);
-            memberRoomRepository.save(memberRoom);
-        } else {
-            throw new CustomException(ErrorCode.POST_CHECK_CODE);
-        }
+        savePost(postRequest, member, postImage, chatRoom);
+        updateMemberPostStatus(member, postRequest.getTitle());
+        saveMemberRoom(userDetails, chatRoom);
     }
 
     // 모임 삭제
@@ -74,24 +49,66 @@ public class PostService {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
 
-        List<MemberRoom> memberRoomList = memberRoomQueryRepository.findByChatRoomId(post.getChatRoom().getId());
+        Long memberId = userDetails.getMember().getId();
+        Long chatRoomId = post.getChatRoom().getId();
+
+        checkPostDeletionPermission(post, memberId);
+
+        List<MemberRoom> memberRoomList = memberRoomQueryRepository.findByChatRoomId(chatRoomId);
 
         for (MemberRoom memberRoom : memberRoomList) {
             memberRoomRepository.deleteById(memberRoom.getId());
 
-            Member member = memberRepository.findAllById(memberRoom.getMember().getId());
+            Member member = memberRepository.findById(memberRoom.getMember().getId())
+                    .orElseThrow(() -> new IllegalArgumentException("회원이 아닙니다."));
 
-            member.updatePostStatus(null);
-            memberRepository.save(member);
+            updateMemberPostStatus(member, null);
         }
 
-        Long memberId = userDetails.getMember().getId();
+        postRepository.delete(post);
+    }
 
-        if (memberId.equals(post.getMember().getId())) {
-            postRepository.delete(post);
-        } else {
+    private void savePost(PostRequest postRequest, Member member, PostImage postImage, ChatRoom chatRoom) {
+        Post post = Post.builder()
+                .category(postRequest.getCategory())
+                .title(postRequest.getTitle())
+                .contents(postRequest.getContents())
+                .address(postRequest.getAddress())
+                .latitude(postRequest.getLatitude())
+                .longitude(postRequest.getLongitude())
+                .date(postRequest.getDate())
+                .time(postRequest.getTime())
+                .numOfPeople(postRequest.getNumOfPeople())
+                .menu(postRequest.getMenu())
+                .gender(GenderType.fromValue(postRequest.getGender()))
+                .age(postRequest.getAge())
+                .member(member)
+                .postImage(postImage)
+                .chatRoom(chatRoom)
+                .build();
+
+        postRepository.save(post);
+    }
+
+    private void checkPostStatus(Member member) {
+        if (member.getPostStatus() != null) {
+            throw new CustomException(ErrorCode.POST_CHECK_CODE);
+        }
+    }
+
+    private void checkPostDeletionPermission(Post post, Long memberId) {
+        if (!memberId.equals(post.getMember().getId())) {
             throw new IllegalArgumentException("모임을 삭제할 권한이 없습니다");
         }
     }
 
+    private void updateMemberPostStatus(Member member, String postTitle) {
+        member.updatePostStatus(postTitle);
+        memberRepository.save(member);
+    }
+
+    private void saveMemberRoom(UserDetailsImpl userDetails, ChatRoom chatRoom) {
+        MemberRoom memberRoom = new MemberRoom(userDetails.getMember(), chatRoom);
+        memberRoomRepository.save(memberRoom);
+    }
 }
