@@ -33,8 +33,8 @@ public class MemberRoomController {
 
     // 참여한 유저 정보 리스트
     @GetMapping("/join/list/{roomId}")
-    public ResponseEntity<List<JoinedMembersResponse>> ReadMember(@PathVariable String roomId) {
+    public ResponseEntity<List<JoinedMembersResponse>> readMember(@PathVariable String roomId) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(memberRoomService.ReadMember(roomId));
+                .body(memberRoomService.readMember(roomId));
     }
 }

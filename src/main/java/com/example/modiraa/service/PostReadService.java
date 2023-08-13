@@ -6,6 +6,7 @@ import com.example.modiraa.model.Post;
 import com.example.modiraa.repository.MemberRoomQueryRepository;
 import com.example.modiraa.repository.PostQueryRepository;
 import com.example.modiraa.repository.PostRepository;
+import com.example.modiraa.repository.RatingQueryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -17,13 +18,13 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Slf4j
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class PostReadService {
     private final PostRepository postRepository;
     private final PostQueryRepository postQueryRepository;
+    private final RatingQueryRepository ratingQueryRepository;
     private final MemberRoomQueryRepository memberRoomQueryRepository;
-    private final LikeDislikeQueryRepository likeDislikeQueryRepository;
 
     // 모임 검색
     public Page<PostsResponse> searchPosts(String keyword, String address, Pageable pageable, Long lastId) {
@@ -104,7 +105,7 @@ public class PostReadService {
                         .numberOfPeople(p.getNumOfPeople())
                         .numberOfParticipant(p.getChatRoom().getCurrentPeople())
                         .menu(p.getMenu())
-                        .gender(p.getGender())
+                        .gender(p.getGender().getValue())
                         .age(p.getAge())
                         .menuForImage(p.getPostImage().getImageUrl())
                         .build()
@@ -116,7 +117,7 @@ public class PostReadService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 없습니다."));
 
-        Long score = likeDislikeQueryRepository.calculateScore(post.getMember());
+        Long score = ratingQueryRepository.calculateScore(post.getMember().getId());
 
         return PostDetailResponse.builder()
                 .category(post.getCategory())
@@ -129,14 +130,14 @@ public class PostReadService {
                 .time(post.getTime())
                 .numberOfPeople(post.getNumOfPeople())
                 .menu(post.getMenu())
-                .limitGender(post.getGender())
+                .limitGender(post.getGender().getValue())
                 .limitAge(post.getAge())
                 .writerProfileImage(post.getMember().getProfileImage())
                 .writerNickname(post.getMember().getNickname())
-                .writerGender(post.getMember().getGender())
+                .writerGender(post.getMember().getGender().getValue())
                 .writerAge(post.getMember().getAge())
                 .writerScore(score)
-                .roomId(post.getChatRoom().getRoomId())
+                .roomCode(post.getChatRoom().getRoomCode())
                 .currentPeople(post.getChatRoom().getCurrentPeople())
                 .build();
     }

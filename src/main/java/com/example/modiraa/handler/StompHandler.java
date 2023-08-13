@@ -15,6 +15,7 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 
@@ -33,73 +34,81 @@ public class StompHandler implements ChannelInterceptor {
     // 클라이언트가 메세지를 발송하면 최초에 해당 메세지를 인터셉트하여 처리함
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
+        StompCommand command = accessor.getCommand();
 
         // websocket 연결시 헤더의 jwt token 검증
-        if (StompCommand.CONNECT == accessor.getCommand()) {
-
-            String jwtToken = accessor.getFirstNativeHeader("Authorization");
-            log.info("CONNECT: {}", jwtToken);
-            jwtAuthorizationFilter.validateToken(jwtToken);
-
-        } else if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
-
-            // header정보에서 구독 destination정보를 얻고, roomId를 추출한다.
-            String roomId = chatMessageService.getRoomId(Optional.ofNullable((String) message.getHeaders().get("simpDestination")).orElse("InvalidRoomId"));
-
-            // 채팅방에 들어온 클라이언트 sessionId를 roomId와 맵핑해 놓는다.(나중에 특정 세션이 어떤 채팅방에 들어가 있는지 알기 위함)
-            String sessionId = (String) message.getHeaders().get("simpSessionId");
-            log.info("sessionId: {}", sessionId);
-
-            String jwtToken = accessor.getFirstNativeHeader("Authorization");
-
-            Member member;
-            if (jwtToken != null) {
-                member = memberRepository.findByNickname(jwtAuthorizationFilter.getNicknameFromJwt(jwtToken), Member.class)
-                        .orElseThrow(() -> new IllegalArgumentException("member 가 존재하지 않습니다."));
-            } else {
-                throw new IllegalArgumentException("유효하지 않은 token 입니다.");
-            }
-
-            Long memberId = member.getId();
-
-
-            chatRoomService.setUserEnterInfo(sessionId, memberId, roomId);
-
-            // 채팅방의 인원수를 +1한다.
-            chatRoomService.plusUserCount(roomId);
-
-            // 클라이언트 입장 메시지를 채팅방에 발송한다.(redis publish)
-            chatMessageService.sendChatMessage(ChatMessage.builder()
-                    .type(ChatMessage.MessageType.ENTER)
-                    .roomId(roomId)
-                    .sender(member)
-                    .build());
-
-
-            log.info("SUBSCRIBED {}, {}, {}", sessionId, member.getNickname(), roomId);
-
-        } else if (StompCommand.DISCONNECT == accessor.getCommand()) { // Websocket 연결 종료
-            // 연결이 종료된 클라이언트 sesssionId로 채팅방 id를 얻는다.
-            String sessionId = (String) message.getHeaders().get("simpSessionId");
-            String roomId = chatRoomService.getUserEnterRoomId(sessionId);
-
-            // 저장했던 sessionId 로 유저 객체를 받아옴
-            Member member = chatRoomService.checkSessionUser(sessionId);
-
-            // 채팅방의 인원수를 -1한다.
-            chatRoomService.minusUserCount(roomId);
-
-            chatMessageService.sendChatMessage(ChatMessage.builder()
-                    .type(ChatMessage.MessageType.QUIT)
-                    .roomId(roomId)
-                    .sender(member)
-                    .build());
-
-            // 퇴장한 클라이언트의 roomId 맵핑 정보를 삭제한다.
-            chatRoomService.removeUserEnterInfo(sessionId);
-
-            log.info("DISCONNECTED {}, {}, {}", sessionId, member.getNickname(), roomId);
+        if (StompCommand.CONNECT == command) {
+            handleConnect(accessor);
+        } else if (StompCommand.SUBSCRIBE == command) {
+            handleSubscribe(accessor, message);
+        } else if (StompCommand.DISCONNECT == command) { // Websocket 연결 종료
+            handleDisconnect(accessor);
         }
         return message;
+    }
+
+    private void handleConnect(StompHeaderAccessor accessor) {
+        String jwtToken = accessor.getFirstNativeHeader("Authorization");
+        log.info("CONNECT: {}", jwtToken);
+        jwtAuthorizationFilter.validateToken(jwtToken);
+    }
+
+    private void handleSubscribe(StompHeaderAccessor accessor, Message<?> message) {
+        // header정보에서 구독 destination정보를 얻고, roomCode를 추출한다.
+        String roomCode = chatMessageService.getRoomCode(
+                Optional.ofNullable((String) message.getHeaders().get("simpDestination")).orElse("InvalidRoomCode"));
+        // 채팅방에 들어온 클라이언트 sessionId를 roomCode와 맵핑해 놓는다.(나중에 특정 세션이 어떤 채팅방에 들어가 있는지 알기 위함)
+        String sessionId = (String) message.getHeaders().get("simpSessionId");
+
+        String jwtToken = accessor.getFirstNativeHeader("Authorization");
+        if (jwtToken == null) {
+            throw new IllegalArgumentException("유효하지 않은 token 입니다.");
+        }
+
+        String nickname = jwtAuthorizationFilter.getNicknameFromJwt(jwtToken);
+        Member member = memberRepository.findByNickname(nickname, Member.class)
+                .orElseThrow(() -> new NoSuchElementException("nickname에 해당하는 member가 존재하지 않습니다: " + nickname));
+
+        chatRoomService.setUserEnterInfo(sessionId, member.getId(), roomCode);
+        chatRoomService.plusUserCount(roomCode); // 채팅방의 인원수를 +1한다.
+
+        sendEnterMessage(roomCode, member);
+        log.info("SUBSCRIBED: sessionId={}, nickname={}, roomCode={}", sessionId, member.getNickname(), roomCode);
+
+    }
+
+    private void handleDisconnect(StompHeaderAccessor accessor) {
+        // 연결이 종료된 클라이언트 sesssionId로 채팅방 id를 얻는다.
+        String sessionId = (String) accessor.getMessageHeaders().get("simpSessionId");
+        String roomCode = chatRoomService.getUserEnterRoomCode(sessionId);
+
+        // 저장했던 sessionId 로 유저 객체를 받아옴
+        Member member = chatRoomService.checkSessionUser(sessionId);
+
+        // 채팅방의 인원수를 -1한다.
+        chatRoomService.minusUserCount(roomCode);
+        sendQuitMessage(roomCode, member);
+
+        // 퇴장한 클라이언트의 roomCode 맵핑 정보를 삭제한다.
+        chatRoomService.removeUserEnterInfo(sessionId);
+
+        log.info("DISCONNECTED: sessionId={}, nickname={}, roomCode={}", sessionId, member.getNickname(), roomCode);
+    }
+
+    private void sendEnterMessage(String roomCode, Member member) {
+        // 클라이언트 입장 메시지를 채팅방에 발송한다.(redis publish)
+        chatMessageService.sendChatMessage(ChatMessage.builder()
+                .type(ChatMessage.MessageType.ENTER)
+                .roomCode(roomCode)
+                .sender(member)
+                .build());
+    }
+
+    private void sendQuitMessage(String roomCode, Member member) {
+        chatMessageService.sendChatMessage(ChatMessage.builder()
+                .type(ChatMessage.MessageType.QUIT)
+                .roomCode(roomCode)
+                .sender(member)
+                .build());
     }
 }

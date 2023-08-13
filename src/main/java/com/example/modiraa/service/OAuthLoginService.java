@@ -5,11 +5,12 @@ import com.example.modiraa.config.jwt.AuthTokens;
 import com.example.modiraa.config.jwt.AuthTokensGenerator;
 import com.example.modiraa.config.jwt.JwtProperties;
 import com.example.modiraa.dto.request.AdditionalInfoRequest;
+import com.example.modiraa.dto.request.oauth.OAuthLoginParams;
+import com.example.modiraa.dto.request.oauth.OAuthProvider;
 import com.example.modiraa.dto.response.OAuthInfoResponse;
 import com.example.modiraa.dto.response.SocialResponse;
+import com.example.modiraa.enums.GenderType;
 import com.example.modiraa.model.Member;
-import com.example.modiraa.model.oauth.OAuthLoginParams;
-import com.example.modiraa.model.oauth.OAuthProvider;
 import com.example.modiraa.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -86,7 +87,7 @@ public class OAuthLoginService {
                         .id(existingMember.getId())
                         .nickname(existingMember.getNickname())
                         .age(existingMember.getAge())
-                        .gender(existingMember.getGender())
+                        .gender(existingMember.getGender().getValue())
                         .profileImage(existingMember.getProfileImage())
                         .oAuthId(existingMember.getOAuthId())
                         .build()
@@ -110,7 +111,7 @@ public class OAuthLoginService {
                 .profileImage(profileImageUrl)
                 .nickname(request.getNickname())
                 .age(request.getAge())
-                .gender(request.getGender())
+                .gender(GenderType.fromValue(request.getGender()))
                 .address(request.getAddress())
                 .oAuthProvider(OAuthProvider.fromValue(request.getOAuthProvider()))
                 .oAuthId(request.getOAuthId())

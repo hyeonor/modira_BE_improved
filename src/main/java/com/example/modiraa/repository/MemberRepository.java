@@ -11,8 +11,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     <T> Optional<T> findByNickname(String nickname, Class<T> type);
 
-    Member findAllById(Long Id);
-
     @Query("SELECT m FROM Member m WHERE m.oAuthId =:oAuthId")
     Optional<Member> findByOAuthId(String oAuthId);
 }

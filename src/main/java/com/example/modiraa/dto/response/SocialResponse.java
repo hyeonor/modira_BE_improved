@@ -1,6 +1,6 @@
 package com.example.modiraa.dto.response;
 
-import com.example.modiraa.model.oauth.OAuthProvider;
+import com.example.modiraa.dto.request.oauth.OAuthProvider;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

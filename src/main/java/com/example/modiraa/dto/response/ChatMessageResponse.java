@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 public class ChatMessageResponse {
     private ChatMessage.MessageType type;
-    private String roomId;
+    private String roomCode;
     private Long senderId;
     private String sender;
     private String profileImage;

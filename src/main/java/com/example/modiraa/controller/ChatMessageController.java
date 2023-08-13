@@ -34,8 +34,8 @@ public class ChatMessageController {
     }
 
     // 해당 채팅방의 메세지 조회
-    @GetMapping("/chat/message/{roomId}")
-    public Page<ChatMessageResponse> getRoomMessage(@PathVariable String roomId, @PageableDefault Pageable pageable) {
-        return chatMessageService.getChatMessageByRoomId(roomId, pageable);
+    @GetMapping("/chat/message/{roomCode}")
+    public Page<ChatMessageResponse> getRoomMessage(@PathVariable String roomCode, @PageableDefault Pageable pageable) {
+        return chatMessageService.getChatMessageByRoomCode(roomCode, pageable);
     }
 }

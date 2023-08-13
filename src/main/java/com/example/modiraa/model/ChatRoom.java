@@ -20,7 +20,7 @@ public class ChatRoom implements Serializable {
     private Long id;
 
     @Column
-    private String roomId;
+    private String roomCode;
 
     @Column
     private long userCount;
@@ -38,11 +38,10 @@ public class ChatRoom implements Serializable {
     @JoinColumn(name = "owner_member_id")
     private Member ownerMember;
 
-    public ChatRoom(Member ownerMember, Post post, int maxPeople) {
-        this.roomId = UUID.randomUUID().toString();
+    public ChatRoom(Member ownerMember, int maxPeople) {
+        this.roomCode = UUID.randomUUID().toString();
         this.currentPeople = 1;
         this.maxPeople = maxPeople;
-        this.post = post;
         this.ownerMember = ownerMember;
     }
 

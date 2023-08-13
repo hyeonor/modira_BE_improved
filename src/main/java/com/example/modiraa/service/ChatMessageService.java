@@ -23,8 +23,8 @@ public class ChatMessageService {
     private final ChatRoomService chatRoomService;
     private final ChatMessageQueryRepository chatMessageQueryRepository;
 
-    // destination정보에서 roomId 추출
-    public String getRoomId(String destination) {
+    // destination정보에서 roomCode 추출
+    public String getRoomCode(String destination) {
         int lastIndex = destination.lastIndexOf('/');
         if (lastIndex != -1)
             return destination.substring(lastIndex + 1);
@@ -36,7 +36,7 @@ public class ChatMessageService {
     public void sendChatMessage(ChatMessage chatMessage) {
 
         // 채팅방 인원수 세팅
-        chatMessage.setUserCount(chatRoomService.getUserCount(chatMessage.getRoomId()));
+        chatMessage.setUserCount(chatRoomService.getUserCount(chatMessage.getRoomCode()));
 
         if (ChatMessage.MessageType.ENTER.equals(chatMessage.getType())) {
             chatMessage.setMessage(chatMessage.getSender().getNickname() + "님이 방에 입장했습니다.");
@@ -48,11 +48,11 @@ public class ChatMessageService {
     }
 
     // 채팅방의 마지막 150개 메세지를 페이징하여 리턴
-    public Page<ChatMessageResponse> getChatMessageByRoomId(String roomId, Pageable pageable) {
+    public Page<ChatMessageResponse> getChatMessageByRoomCode(String roomCode, Pageable pageable) {
         int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1);
         Sort sort = Sort.by(Sort.Direction.DESC, "id");
         pageable = PageRequest.of(page, 150, sort);
-        Page<ChatMessage> chatMessages = chatMessageQueryRepository.findByRoomIdOrderByIdDesc(roomId, pageable);
+        Page<ChatMessage> chatMessages = chatMessageQueryRepository.findByRoomCodeOrderByIdDesc(roomCode, pageable);
 
         return chatResponseDto(chatMessages);
     }
@@ -61,7 +61,7 @@ public class ChatMessageService {
         return postSlice.map(p ->
                 ChatMessageResponse.builder()
                         .type(p.getType())
-                        .roomId(p.getRoomId())
+                        .roomCode(p.getRoomCode())
                         .senderId(p.getSender().getId())
                         .sender(p.getSender().getNickname())
                         .profileImage(p.getSender().getProfileImage())

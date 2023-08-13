@@ -1,6 +1,7 @@
 package com.example.modiraa.model;
 
-import com.example.modiraa.model.oauth.OAuthProvider;
+import com.example.modiraa.dto.request.oauth.OAuthProvider;
+import com.example.modiraa.enums.GenderType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,24 +26,26 @@ public class Member {
     @Column(nullable = false)
     private String age;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String gender;
+    private GenderType gender;
 
     @Column(nullable = false)
     private String address;
 
     @Column
-    private String postState;
+    private String postStatus;
 
     @Column(nullable = false)
     private String oAuthId;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OAuthProvider oAuthProvider;
 
 
     @Builder
-    public Member(String profileImage, String nickname, String age, String gender, String address, String oAuthId, OAuthProvider oAuthProvider) {
+    public Member(String profileImage, String nickname, String age, GenderType gender, String address, String oAuthId, OAuthProvider oAuthProvider) {
         this.profileImage = profileImage;
         this.nickname = nickname;
         this.age = age;
@@ -52,7 +55,7 @@ public class Member {
         this.oAuthProvider = oAuthProvider;
     }
 
-    public void setPostState(String postState) {
-        this.postState = postState;
+    public void updatePostStatus(String postStatus) {
+        this.postStatus = postStatus;
     }
 }

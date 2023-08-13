@@ -7,39 +7,40 @@ import com.example.modiraa.model.Member;
 import com.example.modiraa.model.MemberRoom;
 import com.example.modiraa.repository.MemberRepository;
 import com.example.modiraa.repository.MemberRoomQueryRepository;
+import com.example.modiraa.repository.RatingQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class MemberProfileService {
     private final MemberRepository memberRepository;
+    private final RatingQueryRepository ratingQueryRepository;
     private final MemberRoomQueryRepository memberRoomQueryRepository;
-    private final LikeDislikeQueryRepository likeDislikeQueryRepository;
 
     // 마이프로필 조회
     public MyProfileResponse getMyProfile(UserDetailsImpl userDetails) {
         Member member = userDetails.getMember();
-        Long score = likeDislikeQueryRepository.calculateScore(member);
+        Long score = ratingQueryRepository.calculateScore(member.getId());
 
         Optional<MemberRoom> memberRoom = memberRoomQueryRepository.findTopByMemberOrderByIdDesc(member);
-        String roomId = memberRoom.map(mr -> mr.getChatRoom().getRoomId()).orElse(null);
+        String roomCode = memberRoom.map(mr -> mr.getChatRoom().getRoomCode()).orElse(null);
 
         if (memberRoom.isPresent()) {
-            roomId = memberRoom.get().getChatRoom().getRoomId();
+            roomCode = memberRoom.get().getChatRoom().getRoomCode();
         }
 
         return MyProfileResponse.builder()
                 .address(member.getAddress())
                 .age(member.getAge())
                 .userProfile(member.getProfileImage())
-                .gender(member.getGender())
+                .gender(member.getGender().getValue())
                 .nickname(member.getNickname())
                 .score(score)
-                .isJoinPost(member.getPostState())
-                .roomId(roomId)
+                .isJoinPost(member.getPostStatus())
+                .roomCode(roomCode)
                 .build();
     }
 
@@ -48,13 +49,13 @@ public class MemberProfileService {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new IllegalAccessException("유저의 정보가 없습니다."));
 
-        Long score = likeDislikeQueryRepository.calculateScore(member);
+        Long score = ratingQueryRepository.calculateScore(member.getId());
 
         return UserProfileResponse.builder()
                 .address(member.getAddress())
                 .age(member.getAge())
                 .userProfile(member.getProfileImage())
-                .gender(member.getGender())
+                .gender(member.getGender().getValue())
                 .nickname(member.getNickname())
                 .score(score)
                 .build();

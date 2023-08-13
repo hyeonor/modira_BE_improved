@@ -1,7 +1,5 @@
 package com.example.modiraa.exception;
 
-
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,9 +11,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ExceptionHandlers {
 
-    @ExceptionHandler(com.example.modiraa.exception.CustomException.class)
-    protected ResponseEntity<com.example.modiraa.exception.ErrorResponse> handleCustomException(com.example.modiraa.exception.CustomException e){
-        com.example.modiraa.exception.ErrorResponse response = com.example.modiraa.exception.ErrorResponse.of(e.getErrorCode());
+    @ExceptionHandler(CustomException.class)
+    protected ResponseEntity<ErrorResponse> handleCustomException(CustomException e) {
+        ErrorResponse response = ErrorResponse.of(e.getErrorCode());
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
