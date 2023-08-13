@@ -10,7 +10,6 @@ import com.example.modiraa.model.MemberRoom;
 import com.example.modiraa.model.Post;
 import com.example.modiraa.repository.*;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -19,118 +18,134 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-@Slf4j
-@Transactional
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class MemberRoomService {
 
-    private final MemberRoomQueryRepository memberRoomQueryRepository;
-    private final MemberRoomRepository memberRoomRepository;
-    private final ChatRoomRepository chatRoomRepository;
-    private final MemberRepository memberRepository;
     private final PostRepository postRepository;
+    private final MemberRepository memberRepository;
+    private final ChatRoomRepository chatRoomRepository;
+    private final MemberRoomRepository memberRoomRepository;
+    private final MemberRoomQueryRepository memberRoomQueryRepository;
 
     //채팅 참여하기
     public ResponseEntity<?> enterRoom(UserDetailsImpl userDetails, String roomCode) {
         Member member = userDetails.getMember();
         ChatRoom chatroom = chatRoomRepository.findByRoomCode(roomCode)
                 .orElseThrow(() -> new CustomException(ErrorCode.JOIN_ROOM_CHECK_CODE));
-        Optional<MemberRoom> memberRoom = memberRoomRepository.findByChatRoomAndMember(chatroom, member);
-        Post postRoom = postRepository.findByChatRoomId(chatroom.getId());
+        Post post = postRepository.findByChatRoomId(chatroom.getId())
+                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
 
-        //post 성별 조건
-        String postGender = postRoom.getGender();
-        //member의 성별
+        checkIfAlreadyJoined(member);
+        checkForDuplicateJoin(chatroom, member);
+        checkFullNumOfPeople(chatroom);
+
+        String genderCondition = post.getGender();
+        String ageCondition = post.getAge();
         String memberGender = member.getGender();
-        //post 나이 조건
-        String age = postRoom.getAge();
-        //member의 나이
-        String memberAge = userDetails.getMember().getAge();
+        String memberAge = member.getAge();
+
+        if (ageCondition.equals("모든나이")) {
+            return genderConditionCheck(member, chatroom, post, genderCondition, memberGender);
+        }
+
+        int ageOne = Integer.parseInt(ageCondition.split("~")[0].split("대")[0]);
+        int ageTwo = Integer.parseInt(ageCondition.split("~")[1].split("대")[0]);
+        int memberAgeInt = Integer.parseInt(memberAge.split("대")[0]);
+        int ageMax = Math.max(ageOne, ageTwo);
+        int ageMin = Math.min(ageOne, ageTwo);
 
 
-        if (member.getPostState() == null) {
-            if (chatroom.getMaxPeople() > chatroom.getCurrentPeople()) {
-                MemberRoom SaveMemberRoom = new MemberRoom(member, chatroom);
-                memberRoomRepository.save(SaveMemberRoom);
-                chatroom.updateCurrentPeople();
-            } else {
-                throw new CustomException(ErrorCode.JOIN_PULL_CHECK_CODE);
-            }
-            if (memberRoom.isPresent()) {
-                throw new CustomException(ErrorCode.JOIN_CHECK_CODE);
-            }
-            //-----------------------------------------------------------------
-            if (age.equals("모든나이")) {
-                return genderCheck(member, postRoom, postGender, memberGender);
-            }
-
-            int ageOne = Integer.parseInt(age.split("~")[0].split("대")[0]);
-            int ageTwo = Integer.parseInt(age.split("~")[1].split("대")[0]);
-            int memberAgeInt = Integer.parseInt(memberAge.split("~")[0].split("대")[0]);
-            int ageMax = Math.max(ageOne, ageTwo);
-            int ageMin = Math.min(ageOne, ageTwo);
-
-            //나이 순서 정렬
-            if (memberAgeInt <= ageMax && memberAgeInt >= ageMin) {
-                return genderCheck(member, postRoom, postGender, memberGender);
-            } else {
-                throw new CustomException(ErrorCode.JOIN_AGE_CHECK_CODE);
-            }
+        if (memberAgeInt <= ageMax && memberAgeInt >= ageMin) {
+            return genderConditionCheck(member, chatroom, post, genderCondition, memberGender);
         } else {
-            throw new CustomException(ErrorCode.JOIN_CHATROOM_CHECK_CODE);
+            throw new CustomException(ErrorCode.JOIN_AGE_CHECK_CODE);
         }
     }
 
-    private ResponseEntity<String> genderCheck(Member member, Post postRoom, String postGender, String memberGender) {
-        if (postGender.equals("모든성별")) {
-            //참가자 state 값 변화.
+    //모임 완료하기
+    public ResponseEntity<?> leaveRoom(UserDetailsImpl userDetails, String roomCode) {
+        Member member = userDetails.getMember();
+        Long memberId = userDetails.getMember().getId();
+
+        ChatRoom chatroom = chatRoomRepository.findByRoomCode(roomCode)
+                .orElseThrow(() -> new CustomException(ErrorCode.JOIN_ROOM_CHECK_CODE));
+
+        MemberRoom memberRoom = memberRoomQueryRepository.findByChatRoomIdAndMemberId(chatroom.getId(), memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.JOIN_ROOM_CHECK_CODE));
+
+        Post post = postRepository.findByChatRoomId(chatroom.getId())
+                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+
+
+        Long postOwnerId = post.getMember().getId();
+
+        if (memberId.equals(postOwnerId)) {
+            leavePostOwner(member, chatroom, memberRoom, post);
+        } else {
+            leaveMember(member, chatroom, memberRoom);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body("모임을 완료하였습니다.");
+    }
+
+
+    // 참여한 유저 정보 리스트
+    public List<JoinedMembersResponse> readMember(String roomCode) {
+        ChatRoom chatroom = chatRoomRepository.findByRoomCode(roomCode)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 모임 입니다."));
+
+        return memberRoomQueryRepository.findJoinedMembersByMemberRoom(chatroom.getId());
+    }
+
+    private ResponseEntity<String> genderConditionCheck(Member member, ChatRoom chatroom, Post postRoom,
+                                                        String genderCondition, String memberGender) {
+        if (genderCondition.equals("모든성별") || genderCondition.equals(memberGender)) {
             member.setPostState(postRoom.getTitle());
             memberRepository.save(member);
-            return new ResponseEntity<>("모임에 참여하셨습니다.", HttpStatus.valueOf(200));
-        } else if (postGender.equals(memberGender)) {
-            member.setPostState(postRoom.getTitle());
-            memberRepository.save(member);
-            return new ResponseEntity<>("모임에 참여하셨습니다.", HttpStatus.valueOf(200));
+
+            MemberRoom saveMemberRoom = new MemberRoom(member, chatroom);
+            memberRoomRepository.save(saveMemberRoom);
+            chatroom.updateCurrentPeople();
+
+            return ResponseEntity.status(HttpStatus.CREATED).body("모임에 참여하셨습니다.");
         } else {
             throw new CustomException(ErrorCode.JOIN_GENDER_CHECK_CODE);
         }
     }
 
-
-    //모임 완료하기
-    public ResponseEntity<?> leaveRoom(UserDetailsImpl userDetails, String roomCode) {
-        Member member = userDetails.getMember();
-        ChatRoom chatroom = chatRoomRepository.findByRoomCode(roomCode)
-                .orElseThrow(() -> new CustomException(ErrorCode.JOIN_ROOM_CHECK_CODE));
-
-        Long chatroomId = chatroom.getId();
-
-        MemberRoom memberRoom = memberRoomQueryRepository.findByChatRoomIdAndMemberId(chatroomId, member.getId())
-                .orElseThrow(() -> new CustomException(ErrorCode.JOIN_ROOM_CHECK_CODE)
-                );
-
-        Long memberRoomId = memberRoom.getId();
-        Long memberId = userDetails.getMember().getId();
-
-        Post post = postRepository.findByChatRoomId(chatroomId);
-
-        if (post != null) {
-            if (memberId.equals(post.getMember().getId())) {
-                stateUpdate(member, chatroom, memberRoomId);
-                postRepository.delete(post);
-            } else {
-                stateUpdate(member, chatroom, memberRoomId);
-            }
-        } else {
-            stateUpdate(member, chatroom, memberRoomId);
+    private void checkIfAlreadyJoined(Member member) {
+        if (member.getPostState() != null) {
+            throw new CustomException(ErrorCode.JOIN_CHATROOM_CHECK_CODE);
         }
-
-        return new ResponseEntity<>("모임을 완료하였습니다.", HttpStatus.valueOf(200));
     }
 
-    private void stateUpdate(Member member, ChatRoom chatroom, Long memberRoomId) {
-        memberRoomRepository.deleteById(memberRoomId);
+    private void checkForDuplicateJoin(ChatRoom chatroom, Member member) {
+        Optional<MemberRoom> memberRoom = memberRoomRepository.findByChatRoomAndMember(chatroom, member);
+
+        if (memberRoom.isPresent()) {
+            throw new CustomException(ErrorCode.JOIN_CHECK_CODE);
+        }
+    }
+
+    private void checkFullNumOfPeople(ChatRoom chatroom) {
+        if (chatroom.getMaxPeople() <= chatroom.getCurrentPeople()) {
+            throw new CustomException(ErrorCode.JOIN_PULL_CHECK_CODE);
+        }
+    }
+
+    private void leavePostOwner(Member member, ChatRoom chatroom, MemberRoom memberRoom, Post post) {
+        stateUpdate(member, chatroom, memberRoom);
+        postRepository.delete(post);
+    }
+
+    private void leaveMember(Member member, ChatRoom chatroom, MemberRoom memberRoom) {
+        stateUpdate(member, chatroom, memberRoom);
+    }
+
+    private void stateUpdate(Member member, ChatRoom chatroom, MemberRoom memberRoom) {
+        memberRoomRepository.deleteById(memberRoom.getId());
 
         //참가자 state 값 변화.
         member.setPostState(null);
@@ -138,11 +153,4 @@ public class MemberRoomService {
         chatroom.minusCurrentPeople();
     }
 
-    // 참여한 유저 정보 리스트
-    public List<JoinedMembersResponse> ReadMember(String roomCode) {
-        ChatRoom chatroom = chatRoomRepository.findByRoomCode(roomCode)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 모임 입니다."));
-
-        return memberRoomQueryRepository.findJoinedMembersByMemberRoom(chatroom.getId());
-    }
 }

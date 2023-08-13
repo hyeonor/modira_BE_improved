@@ -12,11 +12,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.modiraa.model.QPost.post;
-import static com.example.modiraa.model.QMember.member;
 import static com.example.modiraa.model.QChatRoom.chatRoom;
-import static com.example.modiraa.model.QPostImage.postImage;
+import static com.example.modiraa.model.QMember.member;
 import static com.example.modiraa.model.QMemberRoom.memberRoom;
+import static com.example.modiraa.model.QPost.post;
+import static com.example.modiraa.model.QPostImage.postImage;
 
 @RequiredArgsConstructor
 @Repository
@@ -42,12 +42,15 @@ public class MemberRoomQueryRepository {
                 .fetchFirst());
     }
 
-    public Optional<MemberRoom> findByChatRoomIdAndMemberId(Long chatroomID, Long memberID) {
-        return Optional.ofNullable(queryFactory.selectFrom(memberRoom)
-                .where(memberRoom.member.id.eq(memberID).and(memberRoom.chatRoom.id.eq(chatroomID)))
-                .join(memberRoom.member)
-                .join(memberRoom.chatRoom)
+    public Optional<MemberRoom> findByChatRoomIdAndMemberId(Long chatroomId, Long memberId) {
+        return Optional.ofNullable(queryFactory
+                .selectFrom(memberRoom)
+                .join(memberRoom.member, member)
+                .join(memberRoom.chatRoom, chatRoom)
                 .fetchJoin()
+                .where(memberRoom.member.id.eq(memberId)
+                        .and(memberRoom.chatRoom.id.eq(chatroomId))
+                )
                 .fetchOne());
     }
 
