@@ -18,9 +18,10 @@ import static com.example.modiraa.model.QPostImage.postImage;
 
 @RequiredArgsConstructor
 @Repository
-public class PostQueryRepository {
+public class PostRepositoryImpl implements PostRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
+    @Override
     public Page<Post> findBySearchKeywordAndAddress(Long lastId, String address, String keyword, Pageable pageable) {
         QueryResults<Post> result = queryFactory.selectFrom(post)
                 .where(post.id.lt(lastId).and(post.address.contains(address)))
@@ -37,6 +38,7 @@ public class PostQueryRepository {
         return new PageImpl<>(result.getResults(), pageable, result.getTotal());
     }
 
+    @Override
     public Page<Post> findByIdLessThanAndCategory(Long lastId, String category, Pageable pageable) {
         QueryResults<Post> result = queryFactory.selectFrom(post)
                 .where(post.id.lt(lastId).and(post.category.contains(category)))
@@ -51,7 +53,8 @@ public class PostQueryRepository {
         return new PageImpl<>(result.getResults(), pageable, result.getTotal());
     }
 
-    public Page<Post> findAll(Pageable pageable) {
+    @Override
+    public Page<Post> findAllPosts(Pageable pageable) {
         QueryResults<Post> result = queryFactory.selectFrom(post)
                 .join(post.member)
                 .join(post.postImage)
@@ -64,6 +67,7 @@ public class PostQueryRepository {
         return new PageImpl<>(result.getResults(), pageable, result.getTotal());
     }
 
+    @Override
     public Page<Post> findByCategory(String category, Pageable pageable) {
         QueryResults<Post> result = queryFactory.selectFrom(post)
                 .where(post.category.contains(category))
@@ -78,6 +82,7 @@ public class PostQueryRepository {
         return new PageImpl<>(result.getResults(), pageable, result.getTotal());
     }
 
+    @Override
     public Page<Post> findAllByAddress(String address, Pageable pageable) {
         QueryResults<Post> result = queryFactory.selectFrom(post)
                 .where(post.address.contains(address))
@@ -92,6 +97,7 @@ public class PostQueryRepository {
         return new PageImpl<>(result.getResults(), pageable, result.getTotal());
     }
 
+    @Override
     public Page<Post> findByAddressAndCategory(String address, String category, Pageable pageable) {
         QueryResults<Post> result = queryFactory.selectFrom(post)
                 .where(post.address.contains(address).and(post.category.contains(category)))
@@ -106,6 +112,7 @@ public class PostQueryRepository {
         return new PageImpl<>(result.getResults(), pageable, result.getTotal());
     }
 
+    @Override
     public List<MyPostsResponse> findMyPostsByMemberOrderByDesc(Long memberId) {
         return queryFactory
                 .select(Projections.constructor(

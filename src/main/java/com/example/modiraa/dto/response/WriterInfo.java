@@ -5,16 +5,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-
 @Getter
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class UserProfileResponse {
+@NoArgsConstructor
+public class WriterInfo {
+    private String profileImage;
     private String nickname;
-    private String userProfile;
-    private int age;
-    private String address;
     private String gender;
+    private int age;
     private Long score;
 }

@@ -6,8 +6,8 @@ import com.example.modiraa.dto.response.UserProfileResponse;
 import com.example.modiraa.model.Member;
 import com.example.modiraa.model.MemberRoom;
 import com.example.modiraa.repository.MemberRepository;
-import com.example.modiraa.repository.MemberRoomQueryRepository;
-import com.example.modiraa.repository.RatingQueryRepository;
+import com.example.modiraa.repository.MemberRoomRepository;
+import com.example.modiraa.repository.RatingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,15 +17,15 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MemberProfileService {
     private final MemberRepository memberRepository;
-    private final RatingQueryRepository ratingQueryRepository;
-    private final MemberRoomQueryRepository memberRoomQueryRepository;
+    private final RatingRepository ratingRepository;
+    private final MemberRoomRepository memberRoomRepository;
 
     // 마이프로필 조회
     public MyProfileResponse getMyProfile(UserDetailsImpl userDetails) {
         Member member = userDetails.getMember();
-        Long score = ratingQueryRepository.calculateScore(member.getId());
+        Long score = ratingRepository.calculateScore(member.getId());
 
-        Optional<MemberRoom> memberRoom = memberRoomQueryRepository.findTopByMemberOrderByIdDesc(member);
+        Optional<MemberRoom> memberRoom = memberRoomRepository.findTopByMemberOrderByIdDesc(member);
         String roomCode = memberRoom.map(mr -> mr.getChatRoom().getRoomCode()).orElse(null);
 
         if (memberRoom.isPresent()) {
@@ -49,7 +49,7 @@ public class MemberProfileService {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new IllegalAccessException("유저의 정보가 없습니다."));
 
-        Long score = ratingQueryRepository.calculateScore(member.getId());
+        Long score = ratingRepository.calculateScore(member.getId());
 
         return UserProfileResponse.builder()
                 .address(member.getAddress())

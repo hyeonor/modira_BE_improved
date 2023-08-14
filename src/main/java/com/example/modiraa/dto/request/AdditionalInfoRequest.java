@@ -9,7 +9,7 @@ public class AdditionalInfoRequest {
     private MultipartFile modiraProfileImage;
     private String profileImage;
     private String nickname;
-    private String age;
+    private int age;
     private String gender;
     private String address;
     @JsonProperty("oAuthProvider")

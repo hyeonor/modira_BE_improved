@@ -9,7 +9,10 @@ import com.example.modiraa.model.ChatRoom;
 import com.example.modiraa.model.Member;
 import com.example.modiraa.model.MemberRoom;
 import com.example.modiraa.model.Post;
-import com.example.modiraa.repository.*;
+import com.example.modiraa.repository.ChatRoomRepository;
+import com.example.modiraa.repository.MemberRepository;
+import com.example.modiraa.repository.MemberRoomRepository;
+import com.example.modiraa.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,12 +26,10 @@ import java.util.Optional;
 @Transactional
 @RequiredArgsConstructor
 public class MemberRoomService {
-
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final MemberRoomRepository memberRoomRepository;
-    private final MemberRoomQueryRepository memberRoomQueryRepository;
 
     //채팅 참여하기
     public ResponseEntity<?> enterRoom(UserDetailsImpl userDetails, String roomCode) {
@@ -42,27 +43,16 @@ public class MemberRoomService {
         checkForDuplicateJoin(chatroom, member);
         checkFullNumOfPeople(chatroom);
 
-        GenderType genderCondition = post.getGender();
-        String ageCondition = post.getAge();
+        int memberAge = member.getAge();
         GenderType memberGender = member.getGender();
-        String memberAge = member.getAge();
 
-        if (ageCondition.equals("모든나이")) {
-            return genderConditionCheck(member, chatroom, post, genderCondition, memberGender);
-        }
+        ageAndGenderConditionCheck(post, memberAge, memberGender);
 
-        int ageOne = Integer.parseInt(ageCondition.split("~")[0].split("대")[0]);
-        int ageTwo = Integer.parseInt(ageCondition.split("~")[1].split("대")[0]);
-        int memberAgeInt = Integer.parseInt(memberAge.split("대")[0]);
-        int ageMax = Math.max(ageOne, ageTwo);
-        int ageMin = Math.min(ageOne, ageTwo);
+        updatePostStatus(member, post.getTitle());
+        saveMemberRoom(member, chatroom);
+        chatroom.updateCurrentPeople();
 
-
-        if (memberAgeInt <= ageMax && memberAgeInt >= ageMin) {
-            return genderConditionCheck(member, chatroom, post, genderCondition, memberGender);
-        } else {
-            throw new CustomException(ErrorCode.JOIN_AGE_CHECK_CODE);
-        }
+        return ResponseEntity.status(HttpStatus.CREATED).body("모임에 참여하셨습니다.");
     }
 
     //모임 완료하기
@@ -73,7 +63,7 @@ public class MemberRoomService {
         ChatRoom chatroom = chatRoomRepository.findByRoomCode(roomCode)
                 .orElseThrow(() -> new CustomException(ErrorCode.JOIN_ROOM_CHECK_CODE));
 
-        MemberRoom memberRoom = memberRoomQueryRepository.findByChatRoomIdAndMemberId(chatroom.getId(), memberId)
+        MemberRoom memberRoom = memberRoomRepository.findByChatRoomIdAndMemberId(chatroom.getId(), memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.JOIN_ROOM_CHECK_CODE));
 
         Post post = postRepository.findByChatRoomId(chatroom.getId())
@@ -97,21 +87,19 @@ public class MemberRoomService {
         ChatRoom chatroom = chatRoomRepository.findByRoomCode(roomCode)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 모임 입니다."));
 
-        return memberRoomQueryRepository.findJoinedMembersByMemberRoom(chatroom.getId());
+        return memberRoomRepository.findJoinedMembersByMemberRoom(chatroom.getId());
     }
 
-    private ResponseEntity<String> genderConditionCheck(Member member, ChatRoom chatroom, Post postRoom,
-                                                        GenderType genderCondition, GenderType memberGender) {
-        if (genderCondition.equals(GenderType.ALL) || genderCondition.equals(memberGender)) {
-            member.updatePostStatus(postRoom.getTitle());
-            memberRepository.save(member);
+    private void ageAndGenderConditionCheck(Post post, int memberAge, GenderType memberGender) {
+        int ageMinCondition = post.getAgeMin();
+        int ageMaxCondition = post.getAgeMax();
+        GenderType genderCondition = post.getGender();
 
-            MemberRoom saveMemberRoom = new MemberRoom(member, chatroom);
-            memberRoomRepository.save(saveMemberRoom);
-            chatroom.updateCurrentPeople();
+        if (memberAge < ageMinCondition || memberAge > ageMaxCondition) {
+            throw new CustomException(ErrorCode.JOIN_AGE_CHECK_CODE);
+        }
 
-            return ResponseEntity.status(HttpStatus.CREATED).body("모임에 참여하셨습니다.");
-        } else {
+        if (!genderCondition.equals(GenderType.ALL) && !genderCondition.equals(memberGender)) {
             throw new CustomException(ErrorCode.JOIN_GENDER_CHECK_CODE);
         }
     }
@@ -149,9 +137,17 @@ public class MemberRoomService {
         memberRoomRepository.deleteById(memberRoom.getId());
 
         //참가자 state 값 변화.
-        member.updatePostStatus(null);
-        memberRepository.save(member);
+        updatePostStatus(member, null);
         chatroom.minusCurrentPeople();
     }
 
+    private void updatePostStatus(Member member, String post) {
+        member.updatePostStatus(post);
+        memberRepository.save(member);
+    }
+
+    private void saveMemberRoom(Member member, ChatRoom chatroom) {
+        MemberRoom memberRoom = new MemberRoom(member, chatroom);
+        memberRoomRepository.save(memberRoom);
+    }
 }

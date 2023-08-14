@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class SocialResponse {
     private Long id;
     private String nickname;
-    private String age;
+    private int age;
     private String gender;
     private String address;
     private String oAuthId;

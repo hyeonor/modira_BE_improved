@@ -9,9 +9,10 @@ import static com.example.modiraa.model.QRating.rating;
 
 @Repository
 @RequiredArgsConstructor
-public class RatingQueryRepository {
+public class RatingRepositoryImpl implements RatingRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
+    @Override
     public Long countLikesForReceiver(Long receiver) {
         return queryFactory
                 .select(rating.receiver.count())
@@ -21,6 +22,7 @@ public class RatingQueryRepository {
                 .fetchFirst();
     }
 
+    @Override
     public Long countDislikesForReceiver(Long receiver) {
         return queryFactory
                 .select(rating.receiver.count())
@@ -30,6 +32,7 @@ public class RatingQueryRepository {
                 .fetchFirst();
     }
 
+    @Override
     public Long calculateScore(Long receiver) {
         Long likes = countLikesForReceiver(receiver);
         Long dislikes = countDislikesForReceiver(receiver);

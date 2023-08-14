@@ -2,11 +2,11 @@ package com.example.modiraa.service;
 
 import com.example.modiraa.auth.UserDetailsImpl;
 import com.example.modiraa.dto.response.*;
+import com.example.modiraa.model.Member;
 import com.example.modiraa.model.Post;
-import com.example.modiraa.repository.MemberRoomQueryRepository;
-import com.example.modiraa.repository.PostQueryRepository;
+import com.example.modiraa.repository.MemberRoomRepository;
 import com.example.modiraa.repository.PostRepository;
-import com.example.modiraa.repository.RatingQueryRepository;
+import com.example.modiraa.repository.RatingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -22,9 +22,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostReadService {
     private final PostRepository postRepository;
-    private final PostQueryRepository postQueryRepository;
-    private final RatingQueryRepository ratingQueryRepository;
-    private final MemberRoomQueryRepository memberRoomQueryRepository;
+    private final RatingRepository ratingRepository;
+    private final MemberRoomRepository memberRoomRepository;
 
     // 모임 검색
     public Page<PostsResponse> searchPosts(String keyword, String address, Pageable pageable, Long lastId) {
@@ -33,7 +32,7 @@ public class PostReadService {
         log.info("pageable -> {}", pageable);
         log.info("lastId -> {}", lastId);
 
-        Page<Post> posts = postQueryRepository.findBySearchKeywordAndAddress(lastId, address, keyword, pageable);
+        Page<Post> posts = postRepository.findBySearchKeywordAndAddress(lastId, address, keyword, pageable);
 
         log.info("result=> {}", posts);
         log.info("result=> {}", posts.getContent());
@@ -46,7 +45,7 @@ public class PostReadService {
         log.info("category -> {}", category);
         log.info("lastId -> {}", lastId);
 
-        Page<Post> posts = postQueryRepository.findByIdLessThanAndCategory(lastId, category, pageable);
+        Page<Post> posts = postRepository.findByIdLessThanAndCategory(lastId, category, pageable);
 
         log.info("result=> {}", posts);
         log.info("result=> {}", posts.getContent());
@@ -59,9 +58,9 @@ public class PostReadService {
         Sort sort = Sort.by(Sort.Direction.DESC, "id");
         Pageable pageable = PageRequest.of(0, 8, sort);
 
-        Page<Post> postAll = postQueryRepository.findAll(pageable);
-        Page<Post> postGoldenBell = postQueryRepository.findByCategory("방장이 쏜다! 골든벨", pageable);
-        Page<Post> postDutchPay = postQueryRepository.findByCategory("다같이 내자! N빵", pageable);
+        Page<Post> postAll = postRepository.findAllPosts(pageable);
+        Page<Post> postGoldenBell = postRepository.findByCategory("방장이 쏜다! 골든벨", pageable);
+        Page<Post> postDutchPay = postRepository.findByCategory("다같이 내자! N빵", pageable);
 
         PostListDto postListDto = new PostListDto();
 
@@ -81,9 +80,9 @@ public class PostReadService {
 
         log.info("memberAddress: {}", memberAddress);
 
-        Page<Post> postAll = postQueryRepository.findAllByAddress(memberAddress, pageable);
-        Page<Post> postGoldenBell = postQueryRepository.findByAddressAndCategory(memberAddress, "방장이 쏜다! 골든벨", pageable);
-        Page<Post> postDutchPay = postQueryRepository.findByAddressAndCategory(memberAddress, "다같이 내자! N빵", pageable);
+        Page<Post> postAll = postRepository.findAllByAddress(memberAddress, pageable);
+        Page<Post> postGoldenBell = postRepository.findByAddressAndCategory(memberAddress, "방장이 쏜다! 골든벨", pageable);
+        Page<Post> postDutchPay = postRepository.findByAddressAndCategory(memberAddress, "다같이 내자! N빵", pageable);
 
         PostListDto postListDto = new PostListDto();
 
@@ -106,7 +105,7 @@ public class PostReadService {
                         .numberOfParticipant(p.getChatRoom().getCurrentPeople())
                         .menu(p.getMenu())
                         .gender(p.getGender().getValue())
-                        .age(p.getAge())
+                        .age(p.getAgeMin() + "대~" + p.getAgeMax() + "대")
                         .menuForImage(p.getPostImage().getImageUrl())
                         .build()
         );
@@ -117,7 +116,8 @@ public class PostReadService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 없습니다."));
 
-        Long score = ratingQueryRepository.calculateScore(post.getMember().getId());
+        Member member = post.getMember();
+        Long score = ratingRepository.calculateScore(member.getId());
 
         return PostDetailResponse.builder()
                 .category(post.getCategory())
@@ -130,15 +130,17 @@ public class PostReadService {
                 .time(post.getTime())
                 .numberOfPeople(post.getNumOfPeople())
                 .menu(post.getMenu())
-                .limitGender(post.getGender().getValue())
-                .limitAge(post.getAge())
-                .writerProfileImage(post.getMember().getProfileImage())
-                .writerNickname(post.getMember().getNickname())
-                .writerGender(post.getMember().getGender().getValue())
-                .writerAge(post.getMember().getAge())
-                .writerScore(score)
+                .genderCondition(post.getGender().getValue())
+                .ageCondition(post.getAgeMin() + "대~" + post.getAgeMax() + "대")
                 .roomCode(post.getChatRoom().getRoomCode())
                 .currentPeople(post.getChatRoom().getCurrentPeople())
+                .writerInfo(WriterInfo.builder()
+                        .profileImage(member.getProfileImage())
+                        .nickname(member.getNickname())
+                        .gender(member.getGender().getValue())
+                        .age(member.getAge())
+                        .score(score)
+                        .build())
                 .build();
     }
 
@@ -146,13 +148,13 @@ public class PostReadService {
     //내가 작성한 모임 조회
     public List<MyPostsResponse> getMyReadPost(UserDetailsImpl userDetails) {
         Long memberId = userDetails.getMember().getId();
-        return postQueryRepository.findMyPostsByMemberOrderByDesc(memberId);
+        return postRepository.findMyPostsByMemberOrderByDesc(memberId);
     }
 
     //내가 참석한 모임 조회
     public List<JoinedPostsResponse> getMyJoinPost(UserDetailsImpl userDetails) {
         Long memberId = userDetails.getMember().getId();
-        return memberRoomQueryRepository.findJoinedPostsByMember(memberId);
+        return memberRoomRepository.findJoinedPostsByMember(memberId);
     }
 }
 

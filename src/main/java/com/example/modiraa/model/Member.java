@@ -24,7 +24,7 @@ public class Member {
     private String nickname;
 
     @Column(nullable = false)
-    private String age;
+    private int age;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -45,7 +45,7 @@ public class Member {
 
 
     @Builder
-    public Member(String profileImage, String nickname, String age, GenderType gender, String address, String oAuthId, OAuthProvider oAuthProvider) {
+    public Member(String profileImage, String nickname, int age, GenderType gender, String address, String oAuthId, OAuthProvider oAuthProvider) {
         this.profileImage = profileImage;
         this.nickname = nickname;
         this.age = age;
