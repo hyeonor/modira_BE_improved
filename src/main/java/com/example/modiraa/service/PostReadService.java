@@ -4,7 +4,7 @@ import com.example.modiraa.auth.UserDetailsImpl;
 import com.example.modiraa.dto.response.*;
 import com.example.modiraa.model.Member;
 import com.example.modiraa.model.Post;
-import com.example.modiraa.repository.MemberRoomQueryRepository;
+import com.example.modiraa.repository.MemberRoomRepository;
 import com.example.modiraa.repository.PostRepository;
 import com.example.modiraa.repository.RatingRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ import java.util.List;
 public class PostReadService {
     private final PostRepository postRepository;
     private final RatingRepository ratingRepository;
-    private final MemberRoomQueryRepository memberRoomQueryRepository;
+    private final MemberRoomRepository memberRoomRepository;
 
     // 모임 검색
     public Page<PostsResponse> searchPosts(String keyword, String address, Pageable pageable, Long lastId) {
@@ -154,7 +154,7 @@ public class PostReadService {
     //내가 참석한 모임 조회
     public List<JoinedPostsResponse> getMyJoinPost(UserDetailsImpl userDetails) {
         Long memberId = userDetails.getMember().getId();
-        return memberRoomQueryRepository.findJoinedPostsByMember(memberId);
+        return memberRoomRepository.findJoinedPostsByMember(memberId);
     }
 }
 

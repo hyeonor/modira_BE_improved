@@ -20,9 +20,10 @@ import static com.example.modiraa.model.QPostImage.postImage;
 
 @RequiredArgsConstructor
 @Repository
-public class MemberRoomQueryRepository {
+public class MemberRoomRepositoryImpl implements MemberRoomRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
+    @Override
     public List<MemberRoom> findByChatRoomId(Long chatroomId) {
         return queryFactory.selectFrom(memberRoom)
                 .where(memberRoom.chatRoom.id.eq(chatroomId))
@@ -32,6 +33,7 @@ public class MemberRoomQueryRepository {
                 .fetch();
     }
 
+    @Override
     public Optional<MemberRoom> findTopByMemberOrderByIdDesc(Member member) {
         return Optional.ofNullable(queryFactory.selectFrom(memberRoom)
                 .where(memberRoom.member.id.eq(member.getId()))
@@ -42,6 +44,7 @@ public class MemberRoomQueryRepository {
                 .fetchFirst());
     }
 
+    @Override
     public Optional<MemberRoom> findByChatRoomIdAndMemberId(Long chatroomId, Long memberId) {
         return Optional.ofNullable(queryFactory
                 .selectFrom(memberRoom)
@@ -54,6 +57,7 @@ public class MemberRoomQueryRepository {
                 .fetchOne());
     }
 
+    @Override
     public List<JoinedPostsResponse> findJoinedPostsByMember(Long memberId) {
         return queryFactory
                 .select(Projections.constructor(
@@ -72,6 +76,7 @@ public class MemberRoomQueryRepository {
                 .fetch();
     }
 
+    @Override
     public List<JoinedMembersResponse> findJoinedMembersByMemberRoom(Long chatRoomId) {
         return queryFactory
                 .select(Projections.constructor(

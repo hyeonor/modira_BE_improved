@@ -29,7 +29,7 @@ public class PostService {
     private final PostImageRepository postImageRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final MemberRoomRepository memberRoomRepository;
-    private final MemberRoomQueryRepository memberRoomQueryRepository;
+
 
     // 모임 생성
     public void createPost(PostRequest postRequest, UserDetailsImpl userDetails) {
@@ -58,7 +58,7 @@ public class PostService {
 
         checkPostDeletionPermission(post, memberId);
 
-        List<MemberRoom> memberRoomList = memberRoomQueryRepository.findByChatRoomId(chatRoomId);
+        List<MemberRoom> memberRoomList = memberRoomRepository.findByChatRoomId(chatRoomId);
 
         for (MemberRoom memberRoom : memberRoomList) {
             memberRoomRepository.deleteById(memberRoom.getId());

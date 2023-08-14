@@ -9,7 +9,10 @@ import com.example.modiraa.model.ChatRoom;
 import com.example.modiraa.model.Member;
 import com.example.modiraa.model.MemberRoom;
 import com.example.modiraa.model.Post;
-import com.example.modiraa.repository.*;
+import com.example.modiraa.repository.ChatRoomRepository;
+import com.example.modiraa.repository.MemberRepository;
+import com.example.modiraa.repository.MemberRoomRepository;
+import com.example.modiraa.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,12 +26,10 @@ import java.util.Optional;
 @Transactional
 @RequiredArgsConstructor
 public class MemberRoomService {
-
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final MemberRoomRepository memberRoomRepository;
-    private final MemberRoomQueryRepository memberRoomQueryRepository;
 
     //채팅 참여하기
     public ResponseEntity<?> enterRoom(UserDetailsImpl userDetails, String roomCode) {
@@ -62,7 +63,7 @@ public class MemberRoomService {
         ChatRoom chatroom = chatRoomRepository.findByRoomCode(roomCode)
                 .orElseThrow(() -> new CustomException(ErrorCode.JOIN_ROOM_CHECK_CODE));
 
-        MemberRoom memberRoom = memberRoomQueryRepository.findByChatRoomIdAndMemberId(chatroom.getId(), memberId)
+        MemberRoom memberRoom = memberRoomRepository.findByChatRoomIdAndMemberId(chatroom.getId(), memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.JOIN_ROOM_CHECK_CODE));
 
         Post post = postRepository.findByChatRoomId(chatroom.getId())
@@ -86,7 +87,7 @@ public class MemberRoomService {
         ChatRoom chatroom = chatRoomRepository.findByRoomCode(roomCode)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 모임 입니다."));
 
-        return memberRoomQueryRepository.findJoinedMembersByMemberRoom(chatroom.getId());
+        return memberRoomRepository.findJoinedMembersByMemberRoom(chatroom.getId());
     }
 
     private void ageAndGenderConditionCheck(Post post, int memberAge, GenderType memberGender) {
