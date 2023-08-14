@@ -5,7 +5,6 @@ import com.example.modiraa.dto.response.*;
 import com.example.modiraa.model.Member;
 import com.example.modiraa.model.Post;
 import com.example.modiraa.repository.MemberRoomQueryRepository;
-import com.example.modiraa.repository.PostQueryRepository;
 import com.example.modiraa.repository.PostRepository;
 import com.example.modiraa.repository.RatingRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +22,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostReadService {
     private final PostRepository postRepository;
-    private final PostQueryRepository postQueryRepository;
     private final RatingRepository ratingRepository;
     private final MemberRoomQueryRepository memberRoomQueryRepository;
 
@@ -34,7 +32,7 @@ public class PostReadService {
         log.info("pageable -> {}", pageable);
         log.info("lastId -> {}", lastId);
 
-        Page<Post> posts = postQueryRepository.findBySearchKeywordAndAddress(lastId, address, keyword, pageable);
+        Page<Post> posts = postRepository.findBySearchKeywordAndAddress(lastId, address, keyword, pageable);
 
         log.info("result=> {}", posts);
         log.info("result=> {}", posts.getContent());
@@ -47,7 +45,7 @@ public class PostReadService {
         log.info("category -> {}", category);
         log.info("lastId -> {}", lastId);
 
-        Page<Post> posts = postQueryRepository.findByIdLessThanAndCategory(lastId, category, pageable);
+        Page<Post> posts = postRepository.findByIdLessThanAndCategory(lastId, category, pageable);
 
         log.info("result=> {}", posts);
         log.info("result=> {}", posts.getContent());
@@ -60,9 +58,9 @@ public class PostReadService {
         Sort sort = Sort.by(Sort.Direction.DESC, "id");
         Pageable pageable = PageRequest.of(0, 8, sort);
 
-        Page<Post> postAll = postQueryRepository.findAll(pageable);
-        Page<Post> postGoldenBell = postQueryRepository.findByCategory("방장이 쏜다! 골든벨", pageable);
-        Page<Post> postDutchPay = postQueryRepository.findByCategory("다같이 내자! N빵", pageable);
+        Page<Post> postAll = postRepository.findAllPosts(pageable);
+        Page<Post> postGoldenBell = postRepository.findByCategory("방장이 쏜다! 골든벨", pageable);
+        Page<Post> postDutchPay = postRepository.findByCategory("다같이 내자! N빵", pageable);
 
         PostListDto postListDto = new PostListDto();
 
@@ -82,9 +80,9 @@ public class PostReadService {
 
         log.info("memberAddress: {}", memberAddress);
 
-        Page<Post> postAll = postQueryRepository.findAllByAddress(memberAddress, pageable);
-        Page<Post> postGoldenBell = postQueryRepository.findByAddressAndCategory(memberAddress, "방장이 쏜다! 골든벨", pageable);
-        Page<Post> postDutchPay = postQueryRepository.findByAddressAndCategory(memberAddress, "다같이 내자! N빵", pageable);
+        Page<Post> postAll = postRepository.findAllByAddress(memberAddress, pageable);
+        Page<Post> postGoldenBell = postRepository.findByAddressAndCategory(memberAddress, "방장이 쏜다! 골든벨", pageable);
+        Page<Post> postDutchPay = postRepository.findByAddressAndCategory(memberAddress, "다같이 내자! N빵", pageable);
 
         PostListDto postListDto = new PostListDto();
 
@@ -150,7 +148,7 @@ public class PostReadService {
     //내가 작성한 모임 조회
     public List<MyPostsResponse> getMyReadPost(UserDetailsImpl userDetails) {
         Long memberId = userDetails.getMember().getId();
-        return postQueryRepository.findMyPostsByMemberOrderByDesc(memberId);
+        return postRepository.findMyPostsByMemberOrderByDesc(memberId);
     }
 
     //내가 참석한 모임 조회
