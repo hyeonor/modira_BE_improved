@@ -7,7 +7,7 @@ import com.example.modiraa.model.Post;
 import com.example.modiraa.repository.MemberRoomQueryRepository;
 import com.example.modiraa.repository.PostQueryRepository;
 import com.example.modiraa.repository.PostRepository;
-import com.example.modiraa.repository.RatingQueryRepository;
+import com.example.modiraa.repository.RatingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -24,7 +24,7 @@ import java.util.List;
 public class PostReadService {
     private final PostRepository postRepository;
     private final PostQueryRepository postQueryRepository;
-    private final RatingQueryRepository ratingQueryRepository;
+    private final RatingRepository ratingRepository;
     private final MemberRoomQueryRepository memberRoomQueryRepository;
 
     // 모임 검색
@@ -119,7 +119,7 @@ public class PostReadService {
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 없습니다."));
 
         Member member = post.getMember();
-        Long score = ratingQueryRepository.calculateScore(member.getId());
+        Long score = ratingRepository.calculateScore(member.getId());
 
         return PostDetailResponse.builder()
                 .category(post.getCategory())
