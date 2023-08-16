@@ -3,7 +3,6 @@ package com.example.modiraa.controller;
 import com.example.modiraa.config.jwt.JwtAuthorizationFilter;
 import com.example.modiraa.dto.request.ChatMessageRequest;
 import com.example.modiraa.dto.response.ChatMessageResponse;
-import com.example.modiraa.model.ChatMessage;
 import com.example.modiraa.model.Member;
 import com.example.modiraa.service.ChatMessageService;
 import lombok.RequiredArgsConstructor;
@@ -26,11 +25,10 @@ public class ChatMessageController {
 
     // websocket "/pub/chat/message"로 들어오는 메시징을 처리
     @MessageMapping("/chat/message")
-    public void message(@RequestBody ChatMessageRequest messageRequestDto, @Header("Authorization") String token) {
+    public void message(@RequestBody ChatMessageRequest messageRequest, @Header("Authorization") String token) {
         Member member = jwtAuthorizationFilter.getMemberFromJwt(token);
-        ChatMessage chatMessage = new ChatMessage(messageRequestDto);
-        chatMessage.setSender(member);
-        chatMessageService.sendChatMessage(chatMessage);
+        messageRequest.setSender(member);
+        chatMessageService.sendChatMessage(messageRequest);
     }
 
     // 해당 채팅방의 메세지 조회

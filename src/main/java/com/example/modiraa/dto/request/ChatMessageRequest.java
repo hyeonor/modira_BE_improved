@@ -3,9 +3,11 @@ package com.example.modiraa.dto.request;
 import com.example.modiraa.model.ChatMessage;
 import com.example.modiraa.model.Member;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Builder;
+import lombok.Data;
 
-@Getter
+@Data
+@Builder
 @AllArgsConstructor
 public class ChatMessageRequest {
     private ChatMessage.MessageType type;

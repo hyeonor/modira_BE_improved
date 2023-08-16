@@ -1,13 +1,15 @@
 package com.example.modiraa.dto.response;
 
 import com.example.modiraa.model.ChatMessage;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@Setter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class ChatMessageResponse {
     private ChatMessage.MessageType type;
     private String roomCode;
