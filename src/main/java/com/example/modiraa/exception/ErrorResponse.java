@@ -1,30 +1,32 @@
 package com.example.modiraa.exception;
 
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
+import java.time.LocalDateTime;
 
 @Getter
-@Setter
-@NoArgsConstructor
+@Builder
 public class ErrorResponse {
 
-    private String message;
-    private String code;
-    private HttpStatus status;
+    private final LocalDateTime timestamp = LocalDateTime.now();
+    private final int status;
+    private final String error;
+    private final String code;
+    private final String message;
 
 
-    // 정적 메서드 -> 클래스가 메모리에 올라갈때 자동적으로 생성
-    public static ErrorResponse of(ErrorCode code) {
-        // 인스턴스를 생성하지 않아도 호출 가능
-        return new ErrorResponse(code);
-    }
-
-    public ErrorResponse(ErrorCode code) {
-        this.status = code.getStatus();
-        this.code = code.getCode();
-        this.message = code.getMessage();
+    public static ResponseEntity<ErrorResponse> toResponseEntity(ErrorCode errorCode) {
+        return ResponseEntity
+                .status(errorCode.getStatus())
+                .body(ErrorResponse.builder()
+                        .status(errorCode.getStatus().value())
+                        .error(errorCode.getStatus().name())
+                        .code(errorCode.name())
+                        .message(errorCode.getMessage())
+                        .build()
+                );
     }
 
 }
