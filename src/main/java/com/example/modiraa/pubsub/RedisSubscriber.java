@@ -1,5 +1,6 @@
 package com.example.modiraa.pubsub;
 
+import com.example.modiraa.dto.request.ChatMessageRequest;
 import com.example.modiraa.dto.response.ChatMessageResponse;
 import com.example.modiraa.model.ChatMessage;
 import com.example.modiraa.repository.ChatMessageRepository;
@@ -10,8 +11,8 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
 @Slf4j
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class RedisSubscriber {
 
     private final ObjectMapper objectMapper;
@@ -22,24 +23,26 @@ public class RedisSubscriber {
     // 클라이언트에서 메세지가 도착하면 해당 메세지를 messagingTemplate 으로 컨버팅하고 다른 구독자들에게 전송한뒤 해당 메세지를 DB에 저장함
     public void sendMessage(String publishMessage) {
         try {
-            ChatMessage chatMessage = objectMapper.readValue(publishMessage, ChatMessage.class);
+            ChatMessageRequest chatMessage = objectMapper.readValue(publishMessage, ChatMessageRequest.class);
 
             messagingTemplate.convertAndSend("/sub/chat/room/" + chatMessage.getRoomCode(), getPayload(chatMessage));
 
-            ChatMessage message = new ChatMessage();
-            message.setType(chatMessage.getType());
-            message.setRoomCode(chatMessage.getRoomCode());
-            message.setSender(chatMessage.getSender());
-            message.setMessage(chatMessage.getMessage());
-            message.setUserCount(chatMessage.getUserCount());
+            ChatMessage message = ChatMessage.builder()
+                    .type(chatMessage.getType())
+                    .roomCode(chatMessage.getRoomCode())
+                    .sender(chatMessage.getSender())
+                    .message(chatMessage.getMessage())
+                    .userCount(chatMessage.getUserCount())
+                    .build();
+
             chatMessageRepository.save(message);
 
         } catch (Exception e) {
-            log.error("Exception {}", e);
+            log.error("Exception occurred while sending message {}", e.getMessage());
         }
     }
 
-    private ChatMessageResponse getPayload(ChatMessage chatMessage) {
+    private ChatMessageResponse getPayload(ChatMessageRequest chatMessage) {
         return ChatMessageResponse.builder()
                 .type(chatMessage.getType())
                 .roomCode(chatMessage.getRoomCode())

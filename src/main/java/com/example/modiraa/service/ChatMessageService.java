@@ -1,5 +1,6 @@
 package com.example.modiraa.service;
 
+import com.example.modiraa.dto.request.ChatMessageRequest;
 import com.example.modiraa.dto.response.ChatMessageResponse;
 import com.example.modiraa.model.ChatMessage;
 import com.example.modiraa.repository.ChatMessageQueryRepository;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class ChatMessageService {
+    private static final String ENTER_CHAT_ROOM = "님이 방에 입장했습니다.";
+    private static final String QUIT_CHAT_ROOM = "님이 방에서 나갔습니다.";
 
     private final ChannelTopic channelTopic;
     private final RedisTemplate redisTemplate;
@@ -33,16 +36,17 @@ public class ChatMessageService {
     }
 
     // 채팅방에 메시지 발송
-    public void sendChatMessage(ChatMessage chatMessage) {
-
+    public void sendChatMessage(ChatMessageRequest chatMessage) {
         // 채팅방 인원수 세팅
-        chatMessage.setUserCount(chatRoomService.getUserCount(chatMessage.getRoomCode()));
+        long userCount = chatRoomService.getUserCount(chatMessage.getRoomCode());
+        chatMessage.setUserCount(userCount);
 
         if (ChatMessage.MessageType.ENTER.equals(chatMessage.getType())) {
-            chatMessage.setMessage(chatMessage.getSender().getNickname() + "님이 방에 입장했습니다.");
+            chatMessage.setMessage(chatMessage.getSender().getNickname() + ENTER_CHAT_ROOM);
         } else if (ChatMessage.MessageType.QUIT.equals(chatMessage.getType())) {
-            chatMessage.setMessage(chatMessage.getSender().getNickname() + "님이 방에서 나갔습니다.");
+            chatMessage.setMessage(chatMessage.getSender().getNickname() + QUIT_CHAT_ROOM);
         }
+
         log.info("sender, sendMessage: {}, {}", chatMessage.getSender().getNickname(), chatMessage.getMessage());
         redisTemplate.convertAndSend(channelTopic.getTopic(), chatMessage);
     }

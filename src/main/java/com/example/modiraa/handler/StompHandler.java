@@ -1,6 +1,7 @@
 package com.example.modiraa.handler;
 
 import com.example.modiraa.config.jwt.JwtAuthorizationFilter;
+import com.example.modiraa.dto.request.ChatMessageRequest;
 import com.example.modiraa.model.ChatMessage;
 import com.example.modiraa.model.Member;
 import com.example.modiraa.repository.MemberRepository;
@@ -54,7 +55,7 @@ public class StompHandler implements ChannelInterceptor {
     }
 
     private void handleSubscribe(StompHeaderAccessor accessor, Message<?> message) {
-        // header정보에서 구독 destination정보를 얻고, roomCode를 추출한다.
+        // header 정보에서 구독 destination 정보를 얻고, roomCode를 추출한다.
         String roomCode = chatMessageService.getRoomCode(
                 Optional.ofNullable((String) message.getHeaders().get("simpDestination")).orElse("InvalidRoomCode"));
         // 채팅방에 들어온 클라이언트 sessionId를 roomCode와 맵핑해 놓는다.(나중에 특정 세션이 어떤 채팅방에 들어가 있는지 알기 위함)
@@ -70,7 +71,7 @@ public class StompHandler implements ChannelInterceptor {
                 .orElseThrow(() -> new NoSuchElementException("nickname에 해당하는 member가 존재하지 않습니다: " + nickname));
 
         chatRoomService.setUserEnterInfo(sessionId, member.getId(), roomCode);
-        chatRoomService.plusUserCount(roomCode); // 채팅방의 인원수를 +1한다.
+        chatRoomService.plusUserCount(roomCode); // 채팅방의 인원수를 +1
 
         sendEnterMessage(roomCode, member);
         log.info("SUBSCRIBED: sessionId={}, nickname={}, roomCode={}", sessionId, member.getNickname(), roomCode);
@@ -85,11 +86,11 @@ public class StompHandler implements ChannelInterceptor {
         // 저장했던 sessionId 로 유저 객체를 받아옴
         Member member = chatRoomService.checkSessionUser(sessionId);
 
-        // 채팅방의 인원수를 -1한다.
+        // 채팅방의 인원수를 -1
         chatRoomService.minusUserCount(roomCode);
         sendQuitMessage(roomCode, member);
 
-        // 퇴장한 클라이언트의 roomCode 맵핑 정보를 삭제한다.
+        // 퇴장한 클라이언트의 roomCode 맵핑 정보를 삭제
         chatRoomService.removeUserEnterInfo(sessionId);
 
         log.info("DISCONNECTED: sessionId={}, nickname={}, roomCode={}", sessionId, member.getNickname(), roomCode);
@@ -97,7 +98,7 @@ public class StompHandler implements ChannelInterceptor {
 
     private void sendEnterMessage(String roomCode, Member member) {
         // 클라이언트 입장 메시지를 채팅방에 발송한다.(redis publish)
-        chatMessageService.sendChatMessage(ChatMessage.builder()
+        chatMessageService.sendChatMessage(ChatMessageRequest.builder()
                 .type(ChatMessage.MessageType.ENTER)
                 .roomCode(roomCode)
                 .sender(member)
@@ -105,7 +106,7 @@ public class StompHandler implements ChannelInterceptor {
     }
 
     private void sendQuitMessage(String roomCode, Member member) {
-        chatMessageService.sendChatMessage(ChatMessage.builder()
+        chatMessageService.sendChatMessage(ChatMessageRequest.builder()
                 .type(ChatMessage.MessageType.QUIT)
                 .roomCode(roomCode)
                 .sender(member)
