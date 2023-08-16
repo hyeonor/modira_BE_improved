@@ -35,9 +35,9 @@ public class MemberRoomService {
     public ResponseEntity<?> enterRoom(UserDetailsImpl userDetails, String roomCode) {
         Member member = userDetails.getMember();
         ChatRoom chatroom = chatRoomRepository.findByRoomCode(roomCode)
-                .orElseThrow(() -> new CustomException(ErrorCode.JOIN_ROOM_CHECK_CODE));
+                .orElseThrow(() -> new CustomException(ErrorCode.ROOM_CODE_NOT_FOUND));
         Post post = postRepository.findByChatRoomId(chatroom.getId())
-                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
         checkIfAlreadyJoined(member);
         checkForDuplicateJoin(chatroom, member);
@@ -61,13 +61,13 @@ public class MemberRoomService {
         Long memberId = userDetails.getMember().getId();
 
         ChatRoom chatroom = chatRoomRepository.findByRoomCode(roomCode)
-                .orElseThrow(() -> new CustomException(ErrorCode.JOIN_ROOM_CHECK_CODE));
+                .orElseThrow(() -> new CustomException(ErrorCode.ROOM_CODE_NOT_FOUND));
 
         MemberRoom memberRoom = memberRoomRepository.findByChatRoomIdAndMemberId(chatroom.getId(), memberId)
-                .orElseThrow(() -> new CustomException(ErrorCode.JOIN_ROOM_CHECK_CODE));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_ROOM_NOT_FOUND));
 
         Post post = postRepository.findByChatRoomId(chatroom.getId())
-                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
 
         Long postOwnerId = post.getMember().getId();
@@ -85,7 +85,7 @@ public class MemberRoomService {
     // 참여한 유저 정보 리스트
     public List<JoinedMembersResponse> readMember(String roomCode) {
         ChatRoom chatroom = chatRoomRepository.findByRoomCode(roomCode)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 모임 입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.ROOM_CODE_NOT_FOUND));
 
         return memberRoomRepository.findJoinedMembersByMemberRoom(chatroom.getId());
     }
@@ -96,17 +96,17 @@ public class MemberRoomService {
         GenderType genderCondition = post.getGender();
 
         if (memberAge < ageMinCondition || memberAge > ageMaxCondition) {
-            throw new CustomException(ErrorCode.JOIN_AGE_CHECK_CODE);
+            throw new CustomException(ErrorCode.AGE_CONDITION_NOT_MET);
         }
 
         if (!genderCondition.equals(GenderType.ALL) && !genderCondition.equals(memberGender)) {
-            throw new CustomException(ErrorCode.JOIN_GENDER_CHECK_CODE);
+            throw new CustomException(ErrorCode.GENDER_CONDITION_NOT_MET);
         }
     }
 
     private void checkIfAlreadyJoined(Member member) {
         if (member.getPostStatus() != null) {
-            throw new CustomException(ErrorCode.JOIN_CHATROOM_CHECK_CODE);
+            throw new CustomException(ErrorCode.PARTICIPATION_EXISTENCE);
         }
     }
 
@@ -114,13 +114,13 @@ public class MemberRoomService {
         Optional<MemberRoom> memberRoom = memberRoomRepository.findByChatRoomAndMember(chatroom, member);
 
         if (memberRoom.isPresent()) {
-            throw new CustomException(ErrorCode.JOIN_CHECK_CODE);
+            throw new CustomException(ErrorCode.ALREADY_JOINED_ROOM);
         }
     }
 
     private void checkFullNumOfPeople(ChatRoom chatroom) {
         if (chatroom.getMaxPeople() <= chatroom.getCurrentPeople()) {
-            throw new CustomException(ErrorCode.JOIN_PULL_CHECK_CODE);
+            throw new CustomException(ErrorCode.ROOM_FULL_CAPACITY);
         }
     }
 

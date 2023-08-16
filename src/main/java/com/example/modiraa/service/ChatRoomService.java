@@ -1,5 +1,7 @@
 package com.example.modiraa.service;
 
+import com.example.modiraa.exception.CustomException;
+import com.example.modiraa.exception.ErrorCode;
 import com.example.modiraa.model.Member;
 import com.example.modiraa.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +45,8 @@ public class ChatRoomService {
     // redis 에 저장했던 sessionId 로 userId 를 얻어오고 해당 userId 로 Member 객체를 찾아 리턴함
     public Member checkSessionUser(String sessionId) {
         Long memberId = Long.parseLong(Objects.requireNonNull(hashOpsUserInfo.get(USER_INFO, sessionId)));
-        return memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자"));
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
     }
 
     // 유저가 나갈때 redis 에 저장했던 해당 세션 / 유저의 정보를 삭제함

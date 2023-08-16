@@ -10,6 +10,8 @@ import com.example.modiraa.dto.request.oauth.OAuthProvider;
 import com.example.modiraa.dto.response.OAuthInfoResponse;
 import com.example.modiraa.dto.response.SocialResponse;
 import com.example.modiraa.enums.GenderType;
+import com.example.modiraa.exception.CustomException;
+import com.example.modiraa.exception.ErrorCode;
 import com.example.modiraa.model.Member;
 import com.example.modiraa.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +25,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Slf4j
@@ -54,7 +55,7 @@ public class OAuthLoginService {
 
     private Member findMemberByOAuthId(String oAuthId) {
         return memberRepository.findByOAuthId(oAuthId)
-                .orElseThrow(() -> new NoSuchElementException("oAuth Id가 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
     }
 
     private UserDetails authenticateMember(Member member) {
