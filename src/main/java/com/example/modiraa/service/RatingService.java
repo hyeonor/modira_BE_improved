@@ -2,6 +2,8 @@ package com.example.modiraa.service;
 
 import com.example.modiraa.auth.UserDetailsImpl;
 import com.example.modiraa.enums.RatingType;
+import com.example.modiraa.exception.CustomException;
+import com.example.modiraa.exception.ErrorCode;
 import com.example.modiraa.model.Member;
 import com.example.modiraa.model.Rating;
 import com.example.modiraa.repository.MemberRepository;
@@ -49,12 +51,12 @@ public class RatingService {
 
     private Member getReceiver(Long userId) {
         return memberRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("유저가 없습니다"));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
     }
 
     private void checkSelfRating(Member giver, Member receiver) {
         if (giver.getId().equals(receiver.getId())) {
-            throw new IllegalArgumentException("자기 자신을 평가할 수 없습니다.");
+            throw new CustomException(ErrorCode.SELF_RATING_NOT_ALLOWED);
         }
     }
 
@@ -62,7 +64,7 @@ public class RatingService {
         Optional<Rating> foundRing = ratingRepository.findByGiverAndReceiver(giver, receiver);
 
         if (foundRing.isPresent()) {
-            throw new IllegalArgumentException("이미 이 유저에게 좋아요 또는 싫어요를 평가했습니다.");
+            throw new CustomException(ErrorCode.DUPLICATE_RATING);
         }
     }
 
