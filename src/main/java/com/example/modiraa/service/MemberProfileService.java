@@ -3,6 +3,8 @@ package com.example.modiraa.service;
 import com.example.modiraa.auth.UserDetailsImpl;
 import com.example.modiraa.dto.response.MyProfileResponse;
 import com.example.modiraa.dto.response.UserProfileResponse;
+import com.example.modiraa.exception.CustomException;
+import com.example.modiraa.exception.ErrorCode;
 import com.example.modiraa.model.Member;
 import com.example.modiraa.model.MemberRoom;
 import com.example.modiraa.repository.MemberRepository;
@@ -45,9 +47,9 @@ public class MemberProfileService {
     }
 
     // 유저 프로필 조회
-    public UserProfileResponse getProfile(Long id) throws IllegalAccessException {
+    public UserProfileResponse getProfile(Long id) {
         Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new IllegalAccessException("유저의 정보가 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         Long score = ratingRepository.calculateScore(member.getId());
 
