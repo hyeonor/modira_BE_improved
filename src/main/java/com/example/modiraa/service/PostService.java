@@ -8,7 +8,6 @@ import com.example.modiraa.exception.ErrorCode;
 import com.example.modiraa.model.*;
 import com.example.modiraa.repository.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +33,7 @@ public class PostService {
     // 모임 생성
     public void createPost(PostRequest postRequest, UserDetailsImpl userDetails) {
         Member member = memberRepository.findByNickname(userDetails.getMember().getNickname())
-                .orElseThrow(() -> new UsernameNotFoundException("다시 로그인해 주세요."));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         PostImage postImage = postImageRepository.findByMenu(postRequest.getMenu());
 
@@ -50,8 +49,8 @@ public class PostService {
 
     // 모임 삭제
     public void deletePost(Long postId, UserDetailsImpl userDetails) {
-        Post post = postRepository.findById(postId).orElseThrow(
-                () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
         Long memberId = userDetails.getMember().getId();
         Long chatRoomId = post.getChatRoom().getId();
@@ -64,7 +63,7 @@ public class PostService {
             memberRoomRepository.deleteById(memberRoom.getId());
 
             Member member = memberRepository.findById(memberRoom.getMember().getId())
-                    .orElseThrow(() -> new IllegalArgumentException("회원이 아닙니다."));
+                    .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
             updateMemberPostStatus(member, null);
         }
@@ -120,13 +119,13 @@ public class PostService {
 
     private void checkPostStatus(Member member) {
         if (member.getPostStatus() != null) {
-            throw new CustomException(ErrorCode.POST_CHECK_CODE);
+            throw new CustomException(ErrorCode.PARTICIPATION_EXISTENCE);
         }
     }
 
     private void checkPostDeletionPermission(Post post, Long memberId) {
         if (!memberId.equals(post.getMember().getId())) {
-            throw new IllegalArgumentException("모임을 삭제할 권한이 없습니다");
+            throw new CustomException(ErrorCode.PERMISSION_DENIED);
         }
     }
 
