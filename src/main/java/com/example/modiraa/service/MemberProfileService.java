@@ -30,10 +30,6 @@ public class MemberProfileService {
         Optional<MemberRoom> memberRoom = memberRoomRepository.findTopByMemberOrderByIdDesc(member);
         String roomCode = memberRoom.map(mr -> mr.getChatRoom().getRoomCode()).orElse(null);
 
-        if (memberRoom.isPresent()) {
-            roomCode = memberRoom.get().getChatRoom().getRoomCode();
-        }
-
         return MyProfileResponse.builder()
                 .address(member.getAddress())
                 .age(member.getAge())

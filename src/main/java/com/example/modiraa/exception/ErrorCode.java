@@ -31,8 +31,8 @@ public enum ErrorCode {
     POST_NOT_FOUND(NOT_FOUND, "C012", "해당 게시글을 찾을 수 없습니다."),
     ROOM_CODE_NOT_FOUND(NOT_FOUND, "C013", "해당 방 코드를 찾을 수 없습니다."),
     MEMBER_ROOM_NOT_FOUND(NOT_FOUND, "C014", "회원의 방 정보를 찾을 수 없습니다."),
-    REFRESH_TOKEN_NOT_FOUND(NOT_FOUND, "C015", "로그아웃 된 사용자입니다."),
-    NOT_FOLLOW(NOT_FOUND, "C016", "팔로우 중이지 않습니다."),
+    RATING_NOT_FOUND(NOT_FOUND, "C015", "평가 기록을 찾을 수 없습니다."),
+    REFRESH_TOKEN_NOT_FOUND(NOT_FOUND, "C016", "로그아웃 된 사용자입니다."),
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     ALREADY_JOINED_ROOM(CONFLICT, "C017", "이미 해당 방에 참여한 회원입니다."),
