@@ -4,6 +4,7 @@ import com.example.modiraa.auth.UserDetailsImpl;
 import com.example.modiraa.enums.RatingType;
 import com.example.modiraa.exception.CustomException;
 import com.example.modiraa.exception.ErrorCode;
+import com.example.modiraa.exception.NotFoundCustomException;
 import com.example.modiraa.model.Member;
 import com.example.modiraa.model.Rating;
 import com.example.modiraa.repository.MemberRepository;
@@ -75,6 +76,6 @@ public class RatingService {
 
     private Rating getFoundRating(RatingType ratingType, Member giver, Member receiver) {
         return ratingRepository.findByRatingTypeAndGiverAndReceiver(ratingType, giver, receiver)
-                .orElseThrow(() -> new IllegalArgumentException(ratingType.getValue() + "한 기록이 없습니다."));
+                .orElseThrow(() -> new NotFoundCustomException(ErrorCode.RATING_NOT_FOUND, ratingType.getValue()));
     }
 }

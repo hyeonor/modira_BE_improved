@@ -1,6 +1,8 @@
 package com.example.modiraa.exception;
 
+import lombok.Getter;
 
+@Getter
 public class CustomException extends RuntimeException {
     private final ErrorCode errorCode;
 
@@ -9,10 +11,6 @@ public class CustomException extends RuntimeException {
         // detailMessage에 저장한 뒤, getMessage()를 통해 detailMessage를 반환한다.
         super(errorCode.getMessage());
         this.errorCode = errorCode;
-    }
-
-    public ErrorCode getErrorCode() {
-        return this.errorCode;
     }
 
 }

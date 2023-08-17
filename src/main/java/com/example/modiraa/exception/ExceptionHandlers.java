@@ -21,13 +21,19 @@ public class ExceptionHandlers {
     @ExceptionHandler(value = {ConstraintViolationException.class, DataIntegrityViolationException.class})
     protected ResponseEntity<ErrorResponse> handleDataException() {
         log.error("handleDataException throw Exception : {}", DUPLICATE_RESOURCE);
-        return ErrorResponse.toResponseEntity(DUPLICATE_RESOURCE);
+        return ErrorResponse.of(DUPLICATE_RESOURCE);
     }
 
     @ExceptionHandler(value = {CustomException.class})
     protected ResponseEntity<ErrorResponse> handleCustomException(CustomException e) {
         log.error("handleCustomException throw CustomException : {}", e.getErrorCode());
-        return ErrorResponse.toResponseEntity(e.getErrorCode());
+        return ErrorResponse.of(e.getErrorCode());
+    }
+
+    @ExceptionHandler(value = {NotFoundCustomException.class})
+    protected ResponseEntity<ErrorResponse> handleCustomMessageException(NotFoundCustomException e) {
+        log.error("handleNotFoundCustomException throw NotFoundCustomException : {}, {}", e.getErrorCode(), e.getMessage());
+        return ErrorResponse.of(e.getErrorCode(), e.getMessage());
     }
 
 }
