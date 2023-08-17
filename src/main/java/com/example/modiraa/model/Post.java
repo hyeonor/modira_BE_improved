@@ -54,10 +54,6 @@ public class Post {
     @Column(nullable = false)
     private int numOfPeople;
 
-    //음식 메뉴
-    @Column(nullable = false)
-    private String menu;
-
     //성별
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -70,7 +66,7 @@ public class Post {
     @Column(nullable = false)
     private int ageMax;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
@@ -85,7 +81,7 @@ public class Post {
 
     @Builder
     public Post(String category, String title, String contents, String address, double latitude, double longitude, String date, String time,
-                int numOfPeople, String menu, GenderType gender, int ageMin, int ageMax, Member member, PostImage postImage, ChatRoom chatRoom) {
+                int numOfPeople, GenderType gender, int ageMin, int ageMax, Member member, PostImage postImage, ChatRoom chatRoom) {
         this.category = category;
         this.title = title;
         this.contents = contents;
@@ -95,7 +91,6 @@ public class Post {
         this.date = date;
         this.time = time;
         this.numOfPeople = numOfPeople;
-        this.menu = menu;
         this.gender = gender;
         this.ageMin = ageMin;
         this.ageMax = ageMax;

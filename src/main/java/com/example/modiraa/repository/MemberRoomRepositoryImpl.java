@@ -65,13 +65,15 @@ public class MemberRoomRepositoryImpl implements MemberRoomRepositoryCustom {
                         post.id,
                         post.title,
                         postImage.imageUrl,
-                        post.menu))
+                        post.postImage.menu))
                 .from(memberRoom)
                 .leftJoin(post)
-                    .on(memberRoom.chatRoom.eq(post.chatRoom))
+                .on(memberRoom.chatRoom.eq(post.chatRoom))
                 .leftJoin(postImage)
-                    .on(postImage.menu.eq(post.menu))
-                .where(memberRoom.member.id.eq(memberId).and(post.member.id.ne(memberId)))
+                .on(postImage.menu.eq(post.postImage.menu))
+                .where(memberRoom.member.id.eq(memberId)
+                        .and(post.member.id.ne(memberId))
+                )
                 .orderBy(post.id.desc())
                 .fetch();
     }

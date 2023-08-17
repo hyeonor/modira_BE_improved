@@ -24,9 +24,13 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     @Override
     public Page<Post> findBySearchKeywordAndAddress(Long lastId, String address, String keyword, Pageable pageable) {
         QueryResults<Post> result = queryFactory.selectFrom(post)
-                .where(post.id.lt(lastId).and(post.address.contains(address)))
-                .where(post.menu.contains(keyword)
-                        .or(post.title.contains(keyword)).or(post.contents.contains(keyword)))
+                .where(post.id.lt(lastId)
+                        .and(post.address.contains(address))
+                        .and(post.postImage.menu.contains(keyword)
+                                .or(post.title.contains(keyword))
+                                .or(post.contents.contains(keyword))
+                        )
+                )
                 .join(post.member)
                 .join(post.postImage)
                 .join(post.chatRoom)
@@ -120,9 +124,9 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         post.id,
                         post.title,
                         postImage.imageUrl,
-                        post.menu))
+                        post.postImage.menu))
                 .from(post)
-                .leftJoin(postImage).on(post.menu.eq(postImage.menu))
+                .leftJoin(post.postImage, postImage)
                 .where(post.member.id.eq(memberId))
                 .orderBy(post.id.desc())
                 .fetch();

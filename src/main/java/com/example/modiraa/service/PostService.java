@@ -93,7 +93,6 @@ public class PostService {
                 .date(postRequest.getDate())
                 .time(postRequest.getTime())
                 .numOfPeople(postRequest.getNumOfPeople())
-                .menu(postRequest.getMenu())
                 .gender(GenderType.fromValue(postRequest.getGender()))
                 .ageMin(ageMin)
                 .ageMax(ageMax)
