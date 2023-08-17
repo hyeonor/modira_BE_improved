@@ -2,6 +2,8 @@ package com.example.modiraa.service;
 
 import com.example.modiraa.auth.UserDetailsImpl;
 import com.example.modiraa.dto.response.*;
+import com.example.modiraa.exception.CustomException;
+import com.example.modiraa.exception.ErrorCode;
 import com.example.modiraa.model.Member;
 import com.example.modiraa.model.Post;
 import com.example.modiraa.repository.MemberRoomRepository;
@@ -114,7 +116,7 @@ public class PostReadService {
     // 모임 상세페이지
     public PostDetailResponse getPostDetail(Long postId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("게시글이 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
         Member member = post.getMember();
         Long score = ratingRepository.calculateScore(member.getId());
