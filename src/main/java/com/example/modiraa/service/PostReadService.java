@@ -23,6 +23,9 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class PostReadService {
+    private static final String CATEGORY_GOLDEN_BELL = "방장이 쏜다! 골든벨";
+    private static final String CATEGORY_DUTCH_PAY = "다같이 내자! N빵";
+
     private final PostRepository postRepository;
     private final RatingRepository ratingRepository;
     private final MemberRoomRepository memberRoomRepository;
@@ -61,8 +64,8 @@ public class PostReadService {
         Pageable pageable = PageRequest.of(0, 8, sort);
 
         Page<Post> postAll = postRepository.findAllPosts(pageable);
-        Page<Post> postGoldenBell = postRepository.findByCategory("방장이 쏜다! 골든벨", pageable);
-        Page<Post> postDutchPay = postRepository.findByCategory("다같이 내자! N빵", pageable);
+        Page<Post> postGoldenBell = postRepository.findByCategory(CATEGORY_GOLDEN_BELL, pageable);
+        Page<Post> postDutchPay = postRepository.findByCategory(CATEGORY_DUTCH_PAY, pageable);
 
         PostListDto postListDto = new PostListDto();
 
@@ -83,8 +86,8 @@ public class PostReadService {
         log.info("memberAddress: {}", memberAddress);
 
         Page<Post> postAll = postRepository.findAllByAddress(memberAddress, pageable);
-        Page<Post> postGoldenBell = postRepository.findByAddressAndCategory(memberAddress, "방장이 쏜다! 골든벨", pageable);
-        Page<Post> postDutchPay = postRepository.findByAddressAndCategory(memberAddress, "다같이 내자! N빵", pageable);
+        Page<Post> postGoldenBell = postRepository.findByAddressAndCategory(memberAddress, CATEGORY_GOLDEN_BELL, pageable);
+        Page<Post> postDutchPay = postRepository.findByAddressAndCategory(memberAddress, CATEGORY_DUTCH_PAY, pageable);
 
         PostListDto postListDto = new PostListDto();
 
