@@ -22,9 +22,6 @@ public class ChatRoom implements Serializable {
     @Column
     private String roomCode;
 
-    @Column
-    private long userCount;
-
     @Column(nullable = false)
     private int currentPeople;
 
