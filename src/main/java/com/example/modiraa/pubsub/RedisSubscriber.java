@@ -32,7 +32,6 @@ public class RedisSubscriber {
                     .roomCode(chatMessage.getRoomCode())
                     .sender(chatMessage.getSender())
                     .message(chatMessage.getMessage())
-                    .userCount(chatMessage.getUserCount())
                     .build();
 
             chatMessageRepository.save(message);

@@ -34,21 +34,16 @@ public class ChatMessage extends Timestamped {
     @Column(length = 100000)
     private String message;
 
-    // 채팅방 인원수
-    @Column
-    private long userCount;
-
     // 메시지 보낸사람
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member sender;
 
     @Builder
-    public ChatMessage(MessageType type, String roomCode, Member sender, String message, long userCount) {
+    public ChatMessage(MessageType type, String roomCode, Member sender, String message) {
         this.type = type;
         this.roomCode = roomCode;
         this.sender = sender;
         this.message = message;
-        this.userCount = userCount;
     }
 }

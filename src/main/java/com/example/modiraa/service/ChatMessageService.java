@@ -70,7 +70,6 @@ public class ChatMessageService {
                         .sender(p.getSender().getNickname())
                         .profileImage(p.getSender().getProfileImage())
                         .message(p.getMessage())
-                        .userCount(p.getUserCount())
                         .build()
         );
     }
