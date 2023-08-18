@@ -50,10 +50,6 @@ public class Post {
     @Column(nullable = false)
     private String time;
 
-    //인원 수
-    @Column(nullable = false)
-    private int numOfPeople;
-
     //성별
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -80,8 +76,8 @@ public class Post {
 
 
     @Builder
-    public Post(String category, String title, String contents, String address, double latitude, double longitude, String date, String time,
-                int numOfPeople, GenderType gender, int ageMin, int ageMax, Member member, PostImage postImage, ChatRoom chatRoom) {
+    public Post(String category, String title, String contents, String address, double latitude, double longitude, String date,
+                String time, GenderType gender, int ageMin, int ageMax, Member member, PostImage postImage, ChatRoom chatRoom) {
         this.category = category;
         this.title = title;
         this.contents = contents;
@@ -90,7 +86,6 @@ public class Post {
         this.longitude = longitude;
         this.date = date;
         this.time = time;
-        this.numOfPeople = numOfPeople;
         this.gender = gender;
         this.ageMin = ageMin;
         this.ageMax = ageMax;
