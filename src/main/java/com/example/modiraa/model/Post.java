@@ -63,8 +63,8 @@ public class Post {
     private int ageMax;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "owner_id")
+    private Member owner;
 
     @OneToOne
     @JoinColumn(name = "post_image_id")
@@ -77,7 +77,7 @@ public class Post {
 
     @Builder
     public Post(String category, String title, String contents, String address, double latitude, double longitude, String date,
-                String time, GenderType gender, int ageMin, int ageMax, Member member, PostImage postImage, ChatRoom chatRoom) {
+                String time, GenderType gender, int ageMin, int ageMax, Member owner, PostImage postImage, ChatRoom chatRoom) {
         this.category = category;
         this.title = title;
         this.contents = contents;
@@ -89,7 +89,7 @@ public class Post {
         this.gender = gender;
         this.ageMin = ageMin;
         this.ageMax = ageMax;
-        this.member = member;
+        this.owner = owner;
         this.postImage = postImage;
         this.chatRoom = chatRoom;
     }

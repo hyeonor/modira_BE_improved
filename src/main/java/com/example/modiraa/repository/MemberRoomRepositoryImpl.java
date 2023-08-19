@@ -72,7 +72,7 @@ public class MemberRoomRepositoryImpl implements MemberRoomRepositoryCustom {
                 .leftJoin(postImage)
                 .on(postImage.menu.eq(post.postImage.menu))
                 .where(memberRoom.member.id.eq(memberId)
-                        .and(post.member.id.ne(memberId))
+                        .and(post.owner.id.ne(memberId))
                 )
                 .orderBy(post.id.desc())
                 .fetch();

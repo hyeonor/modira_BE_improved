@@ -32,18 +32,18 @@ public class PostService {
 
     // 모임 생성
     public void createPost(PostRequest postRequest, UserDetailsImpl userDetails) {
-        Member member = memberRepository.findByNickname(userDetails.getMember().getNickname())
+        Member owner = memberRepository.findByNickname(userDetails.getMember().getNickname())
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         PostImage postImage = postImageRepository.findByMenu(postRequest.getMenu());
 
-        checkPostStatus(member);
+        checkPostStatus(owner);
 
         ChatRoom chatRoom = new ChatRoom(postRequest.getNumOfPeople());
         chatRoomRepository.save(chatRoom);
 
-        savePost(postRequest, member, postImage, chatRoom);
-        updateMemberPostStatus(member, postRequest.getTitle());
+        savePost(postRequest, owner, postImage, chatRoom);
+        updateMemberPostStatus(owner, postRequest.getTitle());
         saveMemberRoom(userDetails, chatRoom);
     }
 
@@ -71,7 +71,7 @@ public class PostService {
         postRepository.delete(post);
     }
 
-    private void savePost(PostRequest postRequest, Member member, PostImage postImage, ChatRoom chatRoom) {
+    private void savePost(PostRequest postRequest, Member owner, PostImage postImage, ChatRoom chatRoom) {
         int ageMin = DEFAULT_MIN_AGE;
         int ageMax = DEFAULT_MAX_AGE;
         String ageRange = postRequest.getAge();
@@ -95,7 +95,7 @@ public class PostService {
                 .gender(GenderType.fromValue(postRequest.getGender()))
                 .ageMin(ageMin)
                 .ageMax(ageMax)
-                .member(member)
+                .owner(owner)
                 .postImage(postImage)
                 .chatRoom(chatRoom)
                 .build();
@@ -122,7 +122,7 @@ public class PostService {
     }
 
     private void checkPostDeletionPermission(Post post, Long memberId) {
-        if (!memberId.equals(post.getMember().getId())) {
+        if (!memberId.equals(post.getOwner().getId())) {
             throw new CustomException(ErrorCode.PERMISSION_DENIED);
         }
     }

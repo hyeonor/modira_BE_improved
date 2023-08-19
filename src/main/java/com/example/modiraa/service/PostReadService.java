@@ -121,8 +121,8 @@ public class PostReadService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
-        Member member = post.getMember();
-        Long score = ratingRepository.calculateScore(member.getId());
+        Member owner = post.getOwner();
+        Long score = ratingRepository.calculateScore(owner.getId());
 
         return PostDetailResponse.builder()
                 .category(post.getCategory())
@@ -140,10 +140,10 @@ public class PostReadService {
                 .roomCode(post.getChatRoom().getRoomCode())
                 .currentParticipant(post.getChatRoom().getCurrentParticipant())
                 .writerInfo(WriterInfo.builder()
-                        .profileImage(member.getProfileImage())
-                        .nickname(member.getNickname())
-                        .gender(member.getGender().getValue())
-                        .age(member.getAge())
+                        .profileImage(owner.getProfileImage())
+                        .nickname(owner.getNickname())
+                        .gender(owner.getGender().getValue())
+                        .age(owner.getAge())
                         .score(score)
                         .build())
                 .build();

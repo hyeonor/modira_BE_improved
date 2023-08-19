@@ -70,7 +70,7 @@ public class MemberRoomService {
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
 
-        Long postOwnerId = post.getMember().getId();
+        Long postOwnerId = post.getOwner().getId();
 
         if (memberId.equals(postOwnerId)) {
             leavePostOwner(member, chatroom, memberRoom, post);
