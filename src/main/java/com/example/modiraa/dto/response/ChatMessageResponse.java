@@ -14,7 +14,7 @@ public class ChatMessageResponse {
     private ChatMessage.MessageType type;
     private String roomCode;
     private Long senderId;
-    private String sender;
+    private String senderNickname;
     private String profileImage;
     private String message;
     private long userCount;

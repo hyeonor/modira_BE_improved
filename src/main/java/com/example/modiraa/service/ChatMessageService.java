@@ -67,7 +67,7 @@ public class ChatMessageService {
                         .type(p.getType())
                         .roomCode(p.getRoomCode())
                         .senderId(p.getSender().getId())
-                        .sender(p.getSender().getNickname())
+                        .senderNickname(p.getSender().getNickname())
                         .profileImage(p.getSender().getProfileImage())
                         .message(p.getMessage())
                         .build()

@@ -46,7 +46,7 @@ public class RedisSubscriber {
                 .type(chatMessage.getType())
                 .roomCode(chatMessage.getRoomCode())
                 .senderId(chatMessage.getSender().getId())
-                .sender(chatMessage.getSender().getNickname())
+                .senderNickname(chatMessage.getSender().getNickname())
                 .profileImage(chatMessage.getSender().getProfileImage())
                 .message(chatMessage.getMessage())
                 .userCount(chatMessage.getUserCount())
