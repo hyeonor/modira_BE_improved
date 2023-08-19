@@ -18,11 +18,11 @@ public class PostDetailResponse {
     private double longitude;
     private String date;
     private String time;
-    private int maxParticipant;
     private String menu;
     private String genderCondition;
     private String ageCondition;
     private String roomCode;
-    private int currentPeople;
+    private int maxParticipant;
+    private int currentParticipant;
     private WriterInfo writerInfo;
 }

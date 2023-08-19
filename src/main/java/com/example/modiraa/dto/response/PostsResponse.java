@@ -15,10 +15,10 @@ public class PostsResponse {
     private String title;
     private String date;
     private String time;
-    private int maxParticipant;
-    private int numberOfParticipant;
     private String menu;
     private String gender;
     private String age;
     private String menuForImage;
+    private int maxParticipant;
+    private int currentParticipant;
 }

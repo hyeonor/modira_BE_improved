@@ -119,7 +119,7 @@ public class MemberRoomService {
     }
 
     private void checkFullNumOfPeople(ChatRoom chatroom) {
-        if (chatroom.getMaxParticipant() <= chatroom.getCurrentPeople()) {
+        if (chatroom.getMaxParticipant() <= chatroom.getCurrentParticipant()) {
             throw new CustomException(ErrorCode.ROOM_FULL_CAPACITY);
         }
     }

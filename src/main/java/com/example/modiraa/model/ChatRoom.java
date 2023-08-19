@@ -23,7 +23,7 @@ public class ChatRoom implements Serializable {
     private String roomCode;
 
     @Column(nullable = false)
-    private int currentPeople;
+    private int currentParticipant;
 
     @Column(nullable = false)
     private int maxParticipant;
@@ -33,15 +33,15 @@ public class ChatRoom implements Serializable {
 
     public ChatRoom(int maxParticipant) {
         this.roomCode = UUID.randomUUID().toString();
-        this.currentPeople = 1;
+        this.currentParticipant = 1;
         this.maxParticipant = maxParticipant;
     }
 
     public void updateCurrentPeople() {
-        this.currentPeople = this.currentPeople + 1;
+        this.currentParticipant = this.currentParticipant + 1;
     }
 
     public void minusCurrentPeople() {
-        this.currentPeople = this.currentPeople - 1;
+        this.currentParticipant = this.currentParticipant - 1;
     }
 }
