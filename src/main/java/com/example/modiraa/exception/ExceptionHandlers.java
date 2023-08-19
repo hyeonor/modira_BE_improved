@@ -1,14 +1,9 @@
 package com.example.modiraa.exception;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import javax.validation.ConstraintViolationException;
-
-import static com.example.modiraa.exception.ErrorCode.DUPLICATE_RESOURCE;
 
 /**
  * @ControllerAdvice 프로젝트 전역에서 발생하는 모든 예외를 잡아줍니다.
@@ -18,12 +13,6 @@ import static com.example.modiraa.exception.ErrorCode.DUPLICATE_RESOURCE;
 @Slf4j
 @RestControllerAdvice
 public class ExceptionHandlers {
-    @ExceptionHandler(value = {ConstraintViolationException.class, DataIntegrityViolationException.class})
-    protected ResponseEntity<ErrorResponse> handleDataException() {
-        log.error("handleDataException throw Exception : {}", DUPLICATE_RESOURCE);
-        return ErrorResponse.of(DUPLICATE_RESOURCE);
-    }
-
     @ExceptionHandler(value = {CustomException.class})
     protected ResponseEntity<ErrorResponse> handleCustomException(CustomException e) {
         log.error("handleCustomException throw CustomException : {}", e.getErrorCode());
