@@ -19,7 +19,7 @@ public class ChatRoom implements Serializable {
     @Column(name = "chatroom_id")
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private String roomCode;
 
     @Column(nullable = false)
@@ -31,15 +31,10 @@ public class ChatRoom implements Serializable {
     @OneToOne(mappedBy = "chatRoom")
     private Post post;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_member_id")
-    private Member ownerMember;
-
-    public ChatRoom(Member ownerMember, int maxPeople) {
+    public ChatRoom(int maxPeople) {
         this.roomCode = UUID.randomUUID().toString();
         this.currentPeople = 1;
         this.maxPeople = maxPeople;
-        this.ownerMember = ownerMember;
     }
 
     public void updateCurrentPeople() {
