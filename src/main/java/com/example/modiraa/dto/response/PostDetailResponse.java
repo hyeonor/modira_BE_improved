@@ -18,7 +18,7 @@ public class PostDetailResponse {
     private double longitude;
     private String date;
     private String time;
-    private int numberOfPeople;
+    private int maxParticipant;
     private String menu;
     private String genderCondition;
     private String ageCondition;

@@ -26,15 +26,15 @@ public class ChatRoom implements Serializable {
     private int currentPeople;
 
     @Column(nullable = false)
-    private int maxPeople;
+    private int maxParticipant;
 
     @OneToOne(mappedBy = "chatRoom")
     private Post post;
 
-    public ChatRoom(int maxPeople) {
+    public ChatRoom(int maxParticipant) {
         this.roomCode = UUID.randomUUID().toString();
         this.currentPeople = 1;
-        this.maxPeople = maxPeople;
+        this.maxParticipant = maxParticipant;
     }
 
     public void updateCurrentPeople() {

@@ -15,7 +15,7 @@ public class PostsResponse {
     private String title;
     private String date;
     private String time;
-    private int numberOfPeople;
+    private int maxParticipant;
     private int numberOfParticipant;
     private String menu;
     private String gender;
