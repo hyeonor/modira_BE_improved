@@ -39,7 +39,7 @@ public class PostService {
 
         checkPostStatus(owner);
 
-        ChatRoom chatRoom = new ChatRoom(postRequest.getNumOfPeople());
+        ChatRoom chatRoom = new ChatRoom(postRequest.getMaxParticipant());
         chatRoomRepository.save(chatRoom);
 
         savePost(postRequest, owner, postImage, chatRoom);

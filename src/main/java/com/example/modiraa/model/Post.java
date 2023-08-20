@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Getter
@@ -44,11 +46,11 @@ public class Post {
 
     //날짜
     @Column(nullable = false)
-    private String date;
+    private LocalDate date;
 
     //시간
     @Column(nullable = false)
-    private String time;
+    private LocalTime time;
 
     //성별
     @Enumerated(EnumType.STRING)
@@ -76,8 +78,8 @@ public class Post {
 
 
     @Builder
-    public Post(String category, String title, String contents, String address, double latitude, double longitude, String date,
-                String time, GenderType gender, int ageMin, int ageMax, Member owner, PostImage postImage, ChatRoom chatRoom) {
+    public Post(String category, String title, String contents, String address, double latitude, double longitude, LocalDate date,
+                LocalTime time, GenderType gender, int ageMin, int ageMax, Member owner, PostImage postImage, ChatRoom chatRoom) {
         this.category = category;
         this.title = title;
         this.contents = contents;

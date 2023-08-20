@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Slf4j
@@ -104,8 +105,8 @@ public class PostReadService {
                         .postId(p.getId())
                         .title(p.getTitle())
                         .category(p.getCategory())
-                        .date(p.getDate())
-                        .time(p.getTime())
+                        .date(p.getDate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")))
+                        .time(p.getTime().format(DateTimeFormatter.ofPattern("a h시 m분")))
                         .maxParticipant(p.getChatRoom().getMaxParticipant())
                         .currentParticipant(p.getChatRoom().getCurrentParticipant())
                         .menu(p.getPostImage().getMenu())
@@ -124,6 +125,9 @@ public class PostReadService {
         Member owner = post.getOwner();
         Long score = ratingRepository.calculateScore(owner.getId());
 
+        String formatDate = post.getDate().format(DateTimeFormatter.ofPattern("yyyy / MM / dd"));
+        String formatTime = post.getTime().format(DateTimeFormatter.ofPattern("a h시 m분"));
+
         return PostDetailResponse.builder()
                 .category(post.getCategory())
                 .title(post.getTitle())
@@ -131,8 +135,8 @@ public class PostReadService {
                 .restaurantAddress(post.getAddress())
                 .latitude(post.getLatitude())
                 .longitude(post.getLongitude())
-                .date(post.getDate().split("/")[0] + " / " + post.getDate().split("/")[1] + " / " + post.getDate().split("/")[2])
-                .time(post.getTime())
+                .date(formatDate)
+                .time(formatTime)
                 .maxParticipant(post.getChatRoom().getMaxParticipant())
                 .menu(post.getPostImage().getMenu())
                 .genderCondition(post.getGender().getValue())
