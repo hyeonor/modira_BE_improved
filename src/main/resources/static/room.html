@@ -37,7 +37,7 @@
                 <a :href="'roomdetail.html?roomCode=' + item.roomCode" @click="enterRoom(item.roomCode, item.name)">
                     {{ item.name }}
                 </a>
-                <span class="badge badge-info badge-pill">{{ item.userCount }}</span>
+                <span class="badge badge-info badge-pill">{{ item.currentParticipant }}</span>
             </h6>
         </li>
     </ul>

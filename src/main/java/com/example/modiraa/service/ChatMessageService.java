@@ -39,7 +39,7 @@ public class ChatMessageService {
     public void sendChatMessage(ChatMessageRequest chatMessage) {
         // 채팅방 인원수 세팅
         long userCount = chatRoomService.getUserCount(chatMessage.getRoomCode());
-        chatMessage.setUserCount(userCount);
+        chatMessage.setCurrentParticipant(userCount);
 
         if (ChatMessage.MessageType.ENTER.equals(chatMessage.getType())) {
             chatMessage.setMessage(chatMessage.getSender().getNickname() + ENTER_CHAT_ROOM);
@@ -67,10 +67,9 @@ public class ChatMessageService {
                         .type(p.getType())
                         .roomCode(p.getRoomCode())
                         .senderId(p.getSender().getId())
-                        .sender(p.getSender().getNickname())
+                        .senderNickname(p.getSender().getNickname())
                         .profileImage(p.getSender().getProfileImage())
                         .message(p.getMessage())
-                        .userCount(p.getUserCount())
                         .build()
         );
     }

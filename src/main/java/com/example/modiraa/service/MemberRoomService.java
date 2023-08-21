@@ -70,7 +70,7 @@ public class MemberRoomService {
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
 
-        Long postOwnerId = post.getMember().getId();
+        Long postOwnerId = post.getOwner().getId();
 
         if (memberId.equals(postOwnerId)) {
             leavePostOwner(member, chatroom, memberRoom, post);
@@ -119,7 +119,7 @@ public class MemberRoomService {
     }
 
     private void checkFullNumOfPeople(ChatRoom chatroom) {
-        if (chatroom.getMaxPeople() <= chatroom.getCurrentPeople()) {
+        if (chatroom.getMaxParticipant() <= chatroom.getCurrentParticipant()) {
             throw new CustomException(ErrorCode.ROOM_FULL_CAPACITY);
         }
     }

@@ -19,37 +19,29 @@ public class ChatRoom implements Serializable {
     @Column(name = "chatroom_id")
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private String roomCode;
 
-    @Column
-    private long userCount;
+    @Column(nullable = false)
+    private int currentParticipant;
 
     @Column(nullable = false)
-    private int currentPeople;
-
-    @Column(nullable = false)
-    private int maxPeople;
+    private int maxParticipant;
 
     @OneToOne(mappedBy = "chatRoom")
     private Post post;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_member_id")
-    private Member ownerMember;
-
-    public ChatRoom(Member ownerMember, int maxPeople) {
+    public ChatRoom(int maxParticipant) {
         this.roomCode = UUID.randomUUID().toString();
-        this.currentPeople = 1;
-        this.maxPeople = maxPeople;
-        this.ownerMember = ownerMember;
+        this.currentParticipant = 1;
+        this.maxParticipant = maxParticipant;
     }
 
     public void updateCurrentPeople() {
-        this.currentPeople = this.currentPeople + 1;
+        this.currentParticipant = this.currentParticipant + 1;
     }
 
     public void minusCurrentPeople() {
-        this.currentPeople = this.currentPeople - 1;
+        this.currentParticipant = this.currentParticipant - 1;
     }
 }

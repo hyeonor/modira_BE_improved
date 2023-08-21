@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Slf4j
@@ -104,11 +105,11 @@ public class PostReadService {
                         .postId(p.getId())
                         .title(p.getTitle())
                         .category(p.getCategory())
-                        .date(p.getDate())
-                        .time(p.getTime())
-                        .numberOfPeople(p.getNumOfPeople())
-                        .numberOfParticipant(p.getChatRoom().getCurrentPeople())
-                        .menu(p.getMenu())
+                        .date(p.getDate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")))
+                        .time(p.getTime().format(DateTimeFormatter.ofPattern("a h시 m분")))
+                        .maxParticipant(p.getChatRoom().getMaxParticipant())
+                        .currentParticipant(p.getChatRoom().getCurrentParticipant())
+                        .menu(p.getPostImage().getMenu())
                         .gender(p.getGender().getValue())
                         .age(p.getAgeMin() + "대~" + p.getAgeMax() + "대")
                         .menuForImage(p.getPostImage().getImageUrl())
@@ -121,8 +122,11 @@ public class PostReadService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
-        Member member = post.getMember();
-        Long score = ratingRepository.calculateScore(member.getId());
+        Member owner = post.getOwner();
+        Long score = ratingRepository.calculateScore(owner.getId());
+
+        String formatDate = post.getDate().format(DateTimeFormatter.ofPattern("yyyy / MM / dd"));
+        String formatTime = post.getTime().format(DateTimeFormatter.ofPattern("a h시 m분"));
 
         return PostDetailResponse.builder()
                 .category(post.getCategory())
@@ -131,19 +135,19 @@ public class PostReadService {
                 .restaurantAddress(post.getAddress())
                 .latitude(post.getLatitude())
                 .longitude(post.getLongitude())
-                .date(post.getDate().split("/")[0] + " / " + post.getDate().split("/")[1] + " / " + post.getDate().split("/")[2])
-                .time(post.getTime())
-                .numberOfPeople(post.getNumOfPeople())
-                .menu(post.getMenu())
+                .date(formatDate)
+                .time(formatTime)
+                .maxParticipant(post.getChatRoom().getMaxParticipant())
+                .menu(post.getPostImage().getMenu())
                 .genderCondition(post.getGender().getValue())
                 .ageCondition(post.getAgeMin() + "대~" + post.getAgeMax() + "대")
                 .roomCode(post.getChatRoom().getRoomCode())
-                .currentPeople(post.getChatRoom().getCurrentPeople())
+                .currentParticipant(post.getChatRoom().getCurrentParticipant())
                 .writerInfo(WriterInfo.builder()
-                        .profileImage(member.getProfileImage())
-                        .nickname(member.getNickname())
-                        .gender(member.getGender().getValue())
-                        .age(member.getAge())
+                        .profileImage(owner.getProfileImage())
+                        .nickname(owner.getNickname())
+                        .gender(owner.getGender().getValue())
+                        .age(owner.getAge())
                         .score(score)
                         .build())
                 .build();

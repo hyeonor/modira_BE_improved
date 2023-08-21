@@ -32,7 +32,6 @@ public class RedisSubscriber {
                     .roomCode(chatMessage.getRoomCode())
                     .sender(chatMessage.getSender())
                     .message(chatMessage.getMessage())
-                    .userCount(chatMessage.getUserCount())
                     .build();
 
             chatMessageRepository.save(message);
@@ -47,10 +46,10 @@ public class RedisSubscriber {
                 .type(chatMessage.getType())
                 .roomCode(chatMessage.getRoomCode())
                 .senderId(chatMessage.getSender().getId())
-                .sender(chatMessage.getSender().getNickname())
+                .senderNickname(chatMessage.getSender().getNickname())
                 .profileImage(chatMessage.getSender().getProfileImage())
                 .message(chatMessage.getMessage())
-                .userCount(chatMessage.getUserCount())
+                .currentParticipant(chatMessage.getCurrentParticipant())
                 .build();
     }
 }

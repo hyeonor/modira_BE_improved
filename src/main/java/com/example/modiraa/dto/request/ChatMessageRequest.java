@@ -14,5 +14,5 @@ public class ChatMessageRequest {
     private String roomCode;
     private Member sender;
     private String message;
-    private long userCount;
+    private long currentParticipant;
 }

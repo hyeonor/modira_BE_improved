@@ -24,10 +24,14 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     @Override
     public Page<Post> findBySearchKeywordAndAddress(Long lastId, String address, String keyword, Pageable pageable) {
         QueryResults<Post> result = queryFactory.selectFrom(post)
-                .where(post.id.lt(lastId).and(post.address.contains(address)))
-                .where(post.menu.contains(keyword)
-                        .or(post.title.contains(keyword)).or(post.contents.contains(keyword)))
-                .join(post.member)
+                .where(post.id.lt(lastId)
+                        .and(post.address.contains(address))
+                        .and(post.postImage.menu.contains(keyword)
+                                .or(post.title.contains(keyword))
+                                .or(post.contents.contains(keyword))
+                        )
+                )
+                .join(post.owner)
                 .join(post.postImage)
                 .join(post.chatRoom)
                 .fetchJoin()
@@ -42,7 +46,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     public Page<Post> findByIdLessThanAndCategory(Long lastId, String category, Pageable pageable) {
         QueryResults<Post> result = queryFactory.selectFrom(post)
                 .where(post.id.lt(lastId).and(post.category.contains(category)))
-                .join(post.member)
+                .join(post.owner)
                 .join(post.postImage)
                 .join(post.chatRoom)
                 .fetchJoin()
@@ -56,7 +60,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     @Override
     public Page<Post> findAllPosts(Pageable pageable) {
         QueryResults<Post> result = queryFactory.selectFrom(post)
-                .join(post.member)
+                .join(post.owner)
                 .join(post.postImage)
                 .join(post.chatRoom)
                 .fetchJoin()
@@ -71,7 +75,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     public Page<Post> findByCategory(String category, Pageable pageable) {
         QueryResults<Post> result = queryFactory.selectFrom(post)
                 .where(post.category.contains(category))
-                .join(post.member)
+                .join(post.owner)
                 .join(post.postImage)
                 .join(post.chatRoom)
                 .fetchJoin()
@@ -86,7 +90,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     public Page<Post> findAllByAddress(String address, Pageable pageable) {
         QueryResults<Post> result = queryFactory.selectFrom(post)
                 .where(post.address.contains(address))
-                .join(post.member)
+                .join(post.owner)
                 .join(post.postImage)
                 .join(post.chatRoom)
                 .fetchJoin()
@@ -101,7 +105,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     public Page<Post> findByAddressAndCategory(String address, String category, Pageable pageable) {
         QueryResults<Post> result = queryFactory.selectFrom(post)
                 .where(post.address.contains(address).and(post.category.contains(category)))
-                .join(post.member)
+                .join(post.owner)
                 .join(post.postImage)
                 .join(post.chatRoom)
                 .fetchJoin()
@@ -120,10 +124,10 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         post.id,
                         post.title,
                         postImage.imageUrl,
-                        post.menu))
+                        post.postImage.menu))
                 .from(post)
-                .leftJoin(postImage).on(post.menu.eq(postImage.menu))
-                .where(post.member.id.eq(memberId))
+                .leftJoin(post.postImage, postImage)
+                .where(post.owner.id.eq(memberId))
                 .orderBy(post.id.desc())
                 .fetch();
     }
