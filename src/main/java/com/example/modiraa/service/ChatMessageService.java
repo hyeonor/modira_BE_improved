@@ -39,7 +39,7 @@ public class ChatMessageService {
     public void sendChatMessage(ChatMessageRequest chatMessage) {
         // 채팅방 인원수 세팅
         long userCount = chatRoomService.getUserCount(chatMessage.getRoomCode());
-        chatMessage.setUserCount(userCount);
+        chatMessage.setCurrentParticipant(userCount);
 
         if (ChatMessage.MessageType.ENTER.equals(chatMessage.getType())) {
             chatMessage.setMessage(chatMessage.getSender().getNickname() + ENTER_CHAT_ROOM);

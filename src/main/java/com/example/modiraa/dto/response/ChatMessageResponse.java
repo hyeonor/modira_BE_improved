@@ -17,5 +17,5 @@ public class ChatMessageResponse {
     private String senderNickname;
     private String profileImage;
     private String message;
-    private long userCount;
+    private long currentParticipant;
 }

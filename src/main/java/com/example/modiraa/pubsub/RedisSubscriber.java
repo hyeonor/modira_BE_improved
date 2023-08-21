@@ -49,7 +49,7 @@ public class RedisSubscriber {
                 .senderNickname(chatMessage.getSender().getNickname())
                 .profileImage(chatMessage.getSender().getProfileImage())
                 .message(chatMessage.getMessage())
-                .userCount(chatMessage.getUserCount())
+                .currentParticipant(chatMessage.getCurrentParticipant())
                 .build();
     }
 }

@@ -18,7 +18,7 @@
 <div class="container" id="app" v-cloak>
     <div class="row">
         <div class="col-md-6">
-            <h4>{{roomName}} <span class="badge badge-info badge-pill">{{userCount}}</span></h4>
+            <h4>{{roomName}} <span class="badge badge-info badge-pill">{{currentParticipant}}</span></h4>
         </div>
         <div class="col-md-6 text-right">
             <a class="btn btn-primary btn-sm" href="/logout">로그아웃</a>
@@ -58,7 +58,7 @@
             message: '',
             messages: [],
             authorization: '',
-            userCount: 0
+            currentParticipant: 0
         },
         created() {
             this.roomCode = localStorage.getItem('wschat.roomCode');
@@ -86,7 +86,7 @@
                 this.message = '';
             },
             recvMessage: function (recv) {
-                this.userCount = recv.userCount;
+                this.currentParticipant = recv.currentParticipant;
                 this.messages.unshift({"type": recv.type, "senderNickname": recv.senderNickname, "message": recv.message})
             }
         }
