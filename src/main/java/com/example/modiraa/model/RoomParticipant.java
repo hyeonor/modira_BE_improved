@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberRoom {
+public class RoomParticipant {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -27,7 +27,7 @@ public class MemberRoom {
     private ChatRoom chatRoom;
 
 
-    public MemberRoom(Member member, ChatRoom chatRoom) {
+    public RoomParticipant(Member member, ChatRoom chatRoom) {
         this.member = member;
         this.chatRoom = chatRoom;
     }

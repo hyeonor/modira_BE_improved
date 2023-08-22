@@ -27,7 +27,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final PostImageRepository postImageRepository;
     private final ChatRoomRepository chatRoomRepository;
-    private final MemberRoomRepository memberRoomRepository;
+    private final RoomParticipantRepository roomParticipantRepository;
 
 
     // 모임 생성
@@ -57,12 +57,12 @@ public class PostService {
 
         checkPostDeletionPermission(post, memberId);
 
-        List<MemberRoom> memberRoomList = memberRoomRepository.findByChatRoomId(chatRoomId);
+        List<RoomParticipant> roomParticipantList = roomParticipantRepository.findByChatRoomId(chatRoomId);
 
-        for (MemberRoom memberRoom : memberRoomList) {
-            memberRoomRepository.deleteById(memberRoom.getId());
+        for (RoomParticipant roomParticipant : roomParticipantList) {
+            roomParticipantRepository.deleteById(roomParticipant.getId());
 
-            Member member = memberRepository.findById(memberRoom.getMember().getId())
+            Member member = memberRepository.findById(roomParticipant.getMember().getId())
                     .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
             updateMemberPostStatus(member, null);
@@ -133,7 +133,7 @@ public class PostService {
     }
 
     private void saveMemberRoom(UserDetailsImpl userDetails, ChatRoom chatRoom) {
-        MemberRoom memberRoom = new MemberRoom(userDetails.getMember(), chatRoom);
-        memberRoomRepository.save(memberRoom);
+        RoomParticipant roomParticipant = new RoomParticipant(userDetails.getMember(), chatRoom);
+        roomParticipantRepository.save(roomParticipant);
     }
 }

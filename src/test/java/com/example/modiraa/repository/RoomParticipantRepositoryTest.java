@@ -25,12 +25,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 @Import({TestQuerydslConfig.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-class MemberRoomRepositoryTest {
+class RoomParticipantRepositoryTest {
     @Autowired
     private EntityManager em;
 
     @Autowired
-    private MemberRoomRepository repository;
+    private RoomParticipantRepository repository;
 
     @BeforeEach
     public void before() {
@@ -57,12 +57,12 @@ class MemberRoomRepositoryTest {
         Post post3 = new Post("N빵", "title3", "contents3", "서울 동대문구", 3.3, 3.3,
                 LocalDate.now(), LocalTime.now(), GenderType.FEMALE, 30, 40, member3, postImage2, chatRoom3);
 
-        MemberRoom memberRoom1 = new MemberRoom(member2, chatRoom1);
-        MemberRoom memberRoom2 = new MemberRoom(member3, chatRoom1);
-        MemberRoom memberRoom3 = new MemberRoom(member4, chatRoom1);
-        MemberRoom memberRoom4 = new MemberRoom(member1, chatRoom2);
-        MemberRoom memberRoom5 = new MemberRoom(member3, chatRoom2);
-        MemberRoom memberRoom6 = new MemberRoom(member1, chatRoom3);
+        RoomParticipant roomParticipant1 = new RoomParticipant(member2, chatRoom1);
+        RoomParticipant roomParticipant2 = new RoomParticipant(member3, chatRoom1);
+        RoomParticipant roomParticipant3 = new RoomParticipant(member4, chatRoom1);
+        RoomParticipant roomParticipant4 = new RoomParticipant(member1, chatRoom2);
+        RoomParticipant roomParticipant5 = new RoomParticipant(member3, chatRoom2);
+        RoomParticipant roomParticipant6 = new RoomParticipant(member1, chatRoom3);
 
         em.persist(member1);
         em.persist(member2);
@@ -76,12 +76,12 @@ class MemberRoomRepositoryTest {
         em.persist(post1);
         em.persist(post2);
         em.persist(post3);
-        em.persist(memberRoom1);
-        em.persist(memberRoom2);
-        em.persist(memberRoom3);
-        em.persist(memberRoom4);
-        em.persist(memberRoom5);
-        em.persist(memberRoom6);
+        em.persist(roomParticipant1);
+        em.persist(roomParticipant2);
+        em.persist(roomParticipant3);
+        em.persist(roomParticipant4);
+        em.persist(roomParticipant5);
+        em.persist(roomParticipant6);
     }
 
     @AfterEach
@@ -90,63 +90,63 @@ class MemberRoomRepositoryTest {
     }
 
     @Test
-    @DisplayName("ChatRoom, Member로 MemberRoom 조회")
+    @DisplayName("ChatRoom, Member로 RoomParticipant 조회")
     void testFindByChatRoomAndMember() {
         ChatRoom chatRoom1 = em.find(ChatRoom.class, 1L);
         Member member2 = em.find(Member.class, 2L);
-        MemberRoom memberRoom1 = em.find(MemberRoom.class, 1L);
+        RoomParticipant roomParticipant1 = em.find(RoomParticipant.class, 1L);
 
         // When
-        MemberRoom result = repository.findByChatRoomAndMember(chatRoom1, member2).get();
+        RoomParticipant result = repository.findByChatRoomAndMember(chatRoom1, member2).get();
 
         // Then
-        assertThat(result).isEqualTo(memberRoom1);
+        assertThat(result).isEqualTo(roomParticipant1);
     }
 
     @Test
-    @DisplayName("ChatRoomId로 MemberRoom 조회")
+    @DisplayName("ChatRoomId로 RoomParticipant 조회")
     void testFindByChatRoomId() {
         // Given
         ChatRoom chatRoom1 = em.find(ChatRoom.class, 1L);
-        MemberRoom memberRoom1 = em.find(MemberRoom.class, 1L);
-        MemberRoom memberRoom2 = em.find(MemberRoom.class, 2L);
-        MemberRoom memberRoom3 = em.find(MemberRoom.class, 3L);
+        RoomParticipant roomParticipant1 = em.find(RoomParticipant.class, 1L);
+        RoomParticipant roomParticipant2 = em.find(RoomParticipant.class, 2L);
+        RoomParticipant roomParticipant3 = em.find(RoomParticipant.class, 3L);
 
         // When
-        List<MemberRoom> result = repository.findByChatRoomId(chatRoom1.getId());
+        List<RoomParticipant> result = repository.findByChatRoomId(chatRoom1.getId());
 
         // Then
         assertThat(result.size()).isEqualTo(3);
-        assertThat(result).containsExactly(memberRoom1, memberRoom2, memberRoom3);
+        assertThat(result).containsExactly(roomParticipant1, roomParticipant2, roomParticipant3);
     }
 
     @Test
-    @DisplayName("멤버가 가장 최근에 참여한(작성한) MemberRoom 조회")
+    @DisplayName("멤버가 가장 최근에 참여한(작성한) RoomParticipant 조회")
     void testFindTopByMemberOrderByIdDesc() {
         // Given
         Member member1 = em.find(Member.class, 1L);
-        MemberRoom memberRoom6 = em.find(MemberRoom.class, 6L);
+        RoomParticipant roomParticipant6 = em.find(RoomParticipant.class, 6L);
 
         // When
-        MemberRoom result = repository.findTopByMemberOrderByIdDesc(member1).get();
+        RoomParticipant result = repository.findTopByMemberOrderByIdDesc(member1).get();
 
         // Then
-        assertThat(result).isEqualTo(memberRoom6);
+        assertThat(result).isEqualTo(roomParticipant6);
     }
 
     @Test
-    @DisplayName("ChatRoomId, MemberId로 MemberRoom 조회")
+    @DisplayName("ChatRoomId, MemberId로 RoomParticipant 조회")
     void testFindByChatRoomIdAndMemberId() {
         // Given
         ChatRoom chatRoom1 = em.find(ChatRoom.class, 1L);
         Member member2 = em.find(Member.class, 2L);
-        MemberRoom memberRoom1 = em.find(MemberRoom.class, 1L);
+        RoomParticipant roomParticipant1 = em.find(RoomParticipant.class, 1L);
 
         // When
-        MemberRoom result = repository.findByChatRoomIdAndMemberId(chatRoom1.getId(), member2.getId()).get();
+        RoomParticipant result = repository.findByChatRoomIdAndMemberId(chatRoom1.getId(), member2.getId()).get();
 
         // Then
-        assertThat(result).isEqualTo(memberRoom1);
+        assertThat(result).isEqualTo(roomParticipant1);
     }
 
     @Test
