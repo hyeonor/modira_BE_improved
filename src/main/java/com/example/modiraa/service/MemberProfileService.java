@@ -5,11 +5,11 @@ import com.example.modiraa.dto.response.MyProfileResponse;
 import com.example.modiraa.dto.response.UserProfileResponse;
 import com.example.modiraa.exception.CustomException;
 import com.example.modiraa.exception.ErrorCode;
-import com.example.modiraa.model.RoomParticipant;
 import com.example.modiraa.model.Member;
+import com.example.modiraa.model.RoomParticipant;
 import com.example.modiraa.repository.MemberRepository;
-import com.example.modiraa.repository.MemberRoomRepository;
 import com.example.modiraa.repository.RatingRepository;
+import com.example.modiraa.repository.RoomParticipantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,14 +20,14 @@ import java.util.Optional;
 public class MemberProfileService {
     private final MemberRepository memberRepository;
     private final RatingRepository ratingRepository;
-    private final MemberRoomRepository memberRoomRepository;
+    private final RoomParticipantRepository roomParticipantRepository;
 
     // 마이프로필 조회
     public MyProfileResponse getMyProfile(UserDetailsImpl userDetails) {
         Member member = userDetails.getMember();
         Long score = ratingRepository.calculateScore(member.getId());
 
-        Optional<RoomParticipant> memberRoom = memberRoomRepository.findTopByMemberOrderByIdDesc(member);
+        Optional<RoomParticipant> memberRoom = roomParticipantRepository.findTopByMemberOrderByIdDesc(member);
         String roomCode = memberRoom.map(mr -> mr.getChatRoom().getRoomCode()).orElse(null);
 
         return MyProfileResponse.builder()

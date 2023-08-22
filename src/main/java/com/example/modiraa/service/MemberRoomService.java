@@ -6,13 +6,13 @@ import com.example.modiraa.enums.GenderType;
 import com.example.modiraa.exception.CustomException;
 import com.example.modiraa.exception.ErrorCode;
 import com.example.modiraa.model.ChatRoom;
-import com.example.modiraa.model.RoomParticipant;
 import com.example.modiraa.model.Member;
 import com.example.modiraa.model.Post;
+import com.example.modiraa.model.RoomParticipant;
 import com.example.modiraa.repository.ChatRoomRepository;
 import com.example.modiraa.repository.MemberRepository;
-import com.example.modiraa.repository.MemberRoomRepository;
 import com.example.modiraa.repository.PostRepository;
+import com.example.modiraa.repository.RoomParticipantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +29,7 @@ public class MemberRoomService {
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
     private final ChatRoomRepository chatRoomRepository;
-    private final MemberRoomRepository memberRoomRepository;
+    private final RoomParticipantRepository roomParticipantRepository;
 
     //채팅 참여하기
     public ResponseEntity<?> enterRoom(UserDetailsImpl userDetails, String roomCode) {
@@ -63,7 +63,7 @@ public class MemberRoomService {
         ChatRoom chatroom = chatRoomRepository.findByRoomCode(roomCode)
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_CODE_NOT_FOUND));
 
-        RoomParticipant roomParticipant = memberRoomRepository.findByChatRoomIdAndMemberId(chatroom.getId(), memberId)
+        RoomParticipant roomParticipant = roomParticipantRepository.findByChatRoomIdAndMemberId(chatroom.getId(), memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_ROOM_NOT_FOUND));
 
         Post post = postRepository.findByChatRoomId(chatroom.getId())
@@ -87,7 +87,7 @@ public class MemberRoomService {
         ChatRoom chatroom = chatRoomRepository.findByRoomCode(roomCode)
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_CODE_NOT_FOUND));
 
-        return memberRoomRepository.findJoinedMembersByMemberRoom(chatroom.getId());
+        return roomParticipantRepository.findJoinedMembersByMemberRoom(chatroom.getId());
     }
 
     private void ageAndGenderConditionCheck(Post post, int memberAge, GenderType memberGender) {
@@ -111,7 +111,7 @@ public class MemberRoomService {
     }
 
     private void checkForDuplicateJoin(ChatRoom chatroom, Member member) {
-        Optional<RoomParticipant> memberRoom = memberRoomRepository.findByChatRoomAndMember(chatroom, member);
+        Optional<RoomParticipant> memberRoom = roomParticipantRepository.findByChatRoomAndMember(chatroom, member);
 
         if (memberRoom.isPresent()) {
             throw new CustomException(ErrorCode.ALREADY_JOINED_ROOM);
@@ -134,7 +134,7 @@ public class MemberRoomService {
     }
 
     private void updateStatus(Member member, ChatRoom chatroom, RoomParticipant roomParticipant) {
-        memberRoomRepository.deleteById(roomParticipant.getId());
+        roomParticipantRepository.deleteById(roomParticipant.getId());
 
         //참가자 state 값 변화.
         updatePostStatus(member, null);
@@ -148,6 +148,6 @@ public class MemberRoomService {
 
     private void saveMemberRoom(Member member, ChatRoom chatroom) {
         RoomParticipant roomParticipant = new RoomParticipant(member, chatroom);
-        memberRoomRepository.save(roomParticipant);
+        roomParticipantRepository.save(roomParticipant);
     }
 }

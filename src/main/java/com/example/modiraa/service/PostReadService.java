@@ -6,9 +6,9 @@ import com.example.modiraa.exception.CustomException;
 import com.example.modiraa.exception.ErrorCode;
 import com.example.modiraa.model.Member;
 import com.example.modiraa.model.Post;
-import com.example.modiraa.repository.MemberRoomRepository;
 import com.example.modiraa.repository.PostRepository;
 import com.example.modiraa.repository.RatingRepository;
+import com.example.modiraa.repository.RoomParticipantRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -29,7 +29,7 @@ public class PostReadService {
 
     private final PostRepository postRepository;
     private final RatingRepository ratingRepository;
-    private final MemberRoomRepository memberRoomRepository;
+    private final RoomParticipantRepository roomParticipantRepository;
 
     // 모임 검색
     public Page<PostsResponse> searchPosts(String keyword, String address, Pageable pageable, Long lastId) {
@@ -163,7 +163,7 @@ public class PostReadService {
     //내가 참석한 모임 조회
     public List<JoinedPostsResponse> getMyJoinPost(UserDetailsImpl userDetails) {
         Long memberId = userDetails.getMember().getId();
-        return memberRoomRepository.findJoinedPostsByMember(memberId);
+        return roomParticipantRepository.findJoinedPostsByMember(memberId);
     }
 }
 

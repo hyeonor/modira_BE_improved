@@ -30,7 +30,7 @@ class RoomParticipantRepositoryTest {
     private EntityManager em;
 
     @Autowired
-    private MemberRoomRepository repository;
+    private RoomParticipantRepository repository;
 
     @BeforeEach
     public void before() {
