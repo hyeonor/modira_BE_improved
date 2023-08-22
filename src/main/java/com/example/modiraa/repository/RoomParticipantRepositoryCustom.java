@@ -8,7 +8,7 @@ import com.example.modiraa.model.Member;
 import java.util.List;
 import java.util.Optional;
 
-public interface MemberRoomRepositoryCustom {
+public interface RoomParticipantRepositoryCustom {
     List<RoomParticipant> findByChatRoomId(Long chatroomId);
 
     Optional<RoomParticipant> findTopByMemberOrderByIdDesc(Member member);
