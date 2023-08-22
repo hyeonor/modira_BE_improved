@@ -25,7 +25,7 @@ import java.util.Optional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class MemberRoomService {
+public class RoomParticipantService {
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
     private final ChatRoomRepository chatRoomRepository;
