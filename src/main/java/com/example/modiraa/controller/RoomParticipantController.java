@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
-public class MemberRoomController {
+public class RoomParticipantController {
 
     private final RoomParticipantService roomParticipantService;
 
@@ -34,7 +34,6 @@ public class MemberRoomController {
     // 참여한 유저 정보 리스트
     @GetMapping("/join/list/{roomId}")
     public ResponseEntity<List<JoinedMembersResponse>> readMember(@PathVariable String roomId) {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(roomParticipantService.readMember(roomId));
+        return ResponseEntity.status(HttpStatus.OK).body(roomParticipantService.readMember(roomId));
     }
 }
