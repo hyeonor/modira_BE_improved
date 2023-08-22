@@ -6,8 +6,8 @@ import com.example.modiraa.enums.GenderType;
 import com.example.modiraa.exception.CustomException;
 import com.example.modiraa.exception.ErrorCode;
 import com.example.modiraa.model.ChatRoom;
+import com.example.modiraa.model.RoomParticipant;
 import com.example.modiraa.model.Member;
-import com.example.modiraa.model.MemberRoom;
 import com.example.modiraa.model.Post;
 import com.example.modiraa.repository.ChatRoomRepository;
 import com.example.modiraa.repository.MemberRepository;
@@ -63,7 +63,7 @@ public class MemberRoomService {
         ChatRoom chatroom = chatRoomRepository.findByRoomCode(roomCode)
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_CODE_NOT_FOUND));
 
-        MemberRoom memberRoom = memberRoomRepository.findByChatRoomIdAndMemberId(chatroom.getId(), memberId)
+        RoomParticipant roomParticipant = memberRoomRepository.findByChatRoomIdAndMemberId(chatroom.getId(), memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_ROOM_NOT_FOUND));
 
         Post post = postRepository.findByChatRoomId(chatroom.getId())
@@ -73,9 +73,9 @@ public class MemberRoomService {
         Long postOwnerId = post.getOwner().getId();
 
         if (memberId.equals(postOwnerId)) {
-            leavePostOwner(member, chatroom, memberRoom, post);
+            leavePostOwner(member, chatroom, roomParticipant, post);
         } else {
-            leaveMember(member, chatroom, memberRoom);
+            leaveMember(member, chatroom, roomParticipant);
         }
 
         return ResponseEntity.status(HttpStatus.OK).body("모임을 완료하였습니다.");
@@ -111,7 +111,7 @@ public class MemberRoomService {
     }
 
     private void checkForDuplicateJoin(ChatRoom chatroom, Member member) {
-        Optional<MemberRoom> memberRoom = memberRoomRepository.findByChatRoomAndMember(chatroom, member);
+        Optional<RoomParticipant> memberRoom = memberRoomRepository.findByChatRoomAndMember(chatroom, member);
 
         if (memberRoom.isPresent()) {
             throw new CustomException(ErrorCode.ALREADY_JOINED_ROOM);
@@ -124,17 +124,17 @@ public class MemberRoomService {
         }
     }
 
-    private void leavePostOwner(Member member, ChatRoom chatroom, MemberRoom memberRoom, Post post) {
-        updateStatus(member, chatroom, memberRoom);
+    private void leavePostOwner(Member member, ChatRoom chatroom, RoomParticipant roomParticipant, Post post) {
+        updateStatus(member, chatroom, roomParticipant);
         postRepository.delete(post);
     }
 
-    private void leaveMember(Member member, ChatRoom chatroom, MemberRoom memberRoom) {
-        updateStatus(member, chatroom, memberRoom);
+    private void leaveMember(Member member, ChatRoom chatroom, RoomParticipant roomParticipant) {
+        updateStatus(member, chatroom, roomParticipant);
     }
 
-    private void updateStatus(Member member, ChatRoom chatroom, MemberRoom memberRoom) {
-        memberRoomRepository.deleteById(memberRoom.getId());
+    private void updateStatus(Member member, ChatRoom chatroom, RoomParticipant roomParticipant) {
+        memberRoomRepository.deleteById(roomParticipant.getId());
 
         //참가자 state 값 변화.
         updatePostStatus(member, null);
@@ -147,7 +147,7 @@ public class MemberRoomService {
     }
 
     private void saveMemberRoom(Member member, ChatRoom chatroom) {
-        MemberRoom memberRoom = new MemberRoom(member, chatroom);
-        memberRoomRepository.save(memberRoom);
+        RoomParticipant roomParticipant = new RoomParticipant(member, chatroom);
+        memberRoomRepository.save(roomParticipant);
     }
 }

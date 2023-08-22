@@ -57,12 +57,12 @@ public class PostService {
 
         checkPostDeletionPermission(post, memberId);
 
-        List<MemberRoom> memberRoomList = memberRoomRepository.findByChatRoomId(chatRoomId);
+        List<RoomParticipant> roomParticipantList = memberRoomRepository.findByChatRoomId(chatRoomId);
 
-        for (MemberRoom memberRoom : memberRoomList) {
-            memberRoomRepository.deleteById(memberRoom.getId());
+        for (RoomParticipant roomParticipant : roomParticipantList) {
+            memberRoomRepository.deleteById(roomParticipant.getId());
 
-            Member member = memberRepository.findById(memberRoom.getMember().getId())
+            Member member = memberRepository.findById(roomParticipant.getMember().getId())
                     .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
             updateMemberPostStatus(member, null);
@@ -133,7 +133,7 @@ public class PostService {
     }
 
     private void saveMemberRoom(UserDetailsImpl userDetails, ChatRoom chatRoom) {
-        MemberRoom memberRoom = new MemberRoom(userDetails.getMember(), chatRoom);
-        memberRoomRepository.save(memberRoom);
+        RoomParticipant roomParticipant = new RoomParticipant(userDetails.getMember(), chatRoom);
+        memberRoomRepository.save(roomParticipant);
     }
 }

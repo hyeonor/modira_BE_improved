@@ -5,8 +5,8 @@ import com.example.modiraa.dto.response.MyProfileResponse;
 import com.example.modiraa.dto.response.UserProfileResponse;
 import com.example.modiraa.exception.CustomException;
 import com.example.modiraa.exception.ErrorCode;
+import com.example.modiraa.model.RoomParticipant;
 import com.example.modiraa.model.Member;
-import com.example.modiraa.model.MemberRoom;
 import com.example.modiraa.repository.MemberRepository;
 import com.example.modiraa.repository.MemberRoomRepository;
 import com.example.modiraa.repository.RatingRepository;
@@ -27,7 +27,7 @@ public class MemberProfileService {
         Member member = userDetails.getMember();
         Long score = ratingRepository.calculateScore(member.getId());
 
-        Optional<MemberRoom> memberRoom = memberRoomRepository.findTopByMemberOrderByIdDesc(member);
+        Optional<RoomParticipant> memberRoom = memberRoomRepository.findTopByMemberOrderByIdDesc(member);
         String roomCode = memberRoom.map(mr -> mr.getChatRoom().getRoomCode()).orElse(null);
 
         return MyProfileResponse.builder()
