@@ -2,13 +2,11 @@ package com.example.modiraa.repository;
 
 import com.example.modiraa.dto.response.MyPostsResponse;
 import com.example.modiraa.model.Post;
-import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
@@ -132,17 +130,23 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
 
     @Override
     public Page<Post> findByAddressAndCategory(String address, String category, Pageable pageable) {
-        QueryResults<Post> result = queryFactory.selectFrom(post)
-                .where(post.address.contains(address).and(post.category.contains(category)))
-                .join(post.owner)
-                .join(post.postImage)
-                .join(post.chatRoom)
-                .fetchJoin()
+        List<Post> result = queryFactory.selectFrom(post)
+                .join(post.postImage).fetchJoin()
+                .join(post.chatRoom).fetchJoin()
+                .where(post.address.contains(address)
+                        .and(post.category.contains(category)))
                 .orderBy(post.id.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .fetchResults();
-        return new PageImpl<>(result.getResults(), pageable, result.getTotal());
+                .fetch();
+
+        JPAQuery<Long> countQuery = queryFactory
+                .select(post.count())
+                .from(post)
+                .where(post.address.contains(address)
+                        .and(post.category.contains(category)));
+
+        return PageableExecutionUtils.getPage(result, pageable, countQuery::fetchOne);
     }
 
     @Override
