@@ -113,17 +113,21 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
 
     @Override
     public Page<Post> findAllByAddress(String address, Pageable pageable) {
-        QueryResults<Post> result = queryFactory.selectFrom(post)
+        List<Post> result = queryFactory.selectFrom(post)
+                .join(post.postImage).fetchJoin()
+                .join(post.chatRoom).fetchJoin()
                 .where(post.address.contains(address))
-                .join(post.owner)
-                .join(post.postImage)
-                .join(post.chatRoom)
-                .fetchJoin()
                 .orderBy(post.id.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .fetchResults();
-        return new PageImpl<>(result.getResults(), pageable, result.getTotal());
+                .fetch();
+
+        JPAQuery<Long> countQuery = queryFactory
+                .select(post.count())
+                .from(post)
+                .where(post.address.contains(address));
+
+        return PageableExecutionUtils.getPage(result, pageable, countQuery::fetchOne);
     }
 
     @Override
