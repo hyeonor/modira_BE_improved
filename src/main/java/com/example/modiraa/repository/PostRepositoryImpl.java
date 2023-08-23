@@ -58,17 +58,21 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
 
     @Override
     public Page<Post> findByIdLessThanAndCategory(Long lastId, String category, Pageable pageable) {
-        QueryResults<Post> result = queryFactory.selectFrom(post)
+        List<Post> result = queryFactory.selectFrom(post)
+                .join(post.postImage).fetchJoin()
+                .join(post.chatRoom).fetchJoin()
                 .where(post.id.lt(lastId).and(post.category.contains(category)))
-                .join(post.owner)
-                .join(post.postImage)
-                .join(post.chatRoom)
-                .fetchJoin()
                 .orderBy(post.id.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .fetchResults();
-        return new PageImpl<>(result.getResults(), pageable, result.getTotal());
+                .fetch();
+
+        JPAQuery<Long> countQuery = queryFactory
+                .select(post.count())
+                .from(post)
+                .where(post.id.lt(lastId).and(post.category.contains(category)));
+
+        return PageableExecutionUtils.getPage(result, pageable, countQuery::fetchOne);
     }
 
     @Override
