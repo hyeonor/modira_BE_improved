@@ -4,15 +4,18 @@ import com.example.modiraa.dto.response.MyPostsResponse;
 import com.example.modiraa.model.Post;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static com.example.modiraa.model.QChatRoom.chatRoom;
 import static com.example.modiraa.model.QPost.post;
 import static com.example.modiraa.model.QPostImage.postImage;
 
@@ -23,7 +26,9 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
 
     @Override
     public Page<Post> findBySearchKeywordAndAddress(Long lastId, String address, String keyword, Pageable pageable) {
-        QueryResults<Post> result = queryFactory.selectFrom(post)
+        List<Post> result = queryFactory.selectFrom(post)
+                .join(post.postImage, postImage).fetchJoin()
+                .join(post.chatRoom, chatRoom).fetchJoin()
                 .where(post.id.lt(lastId)
                         .and(post.address.contains(address))
                         .and(post.postImage.menu.contains(keyword)
@@ -31,15 +36,24 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                                 .or(post.contents.contains(keyword))
                         )
                 )
-                .join(post.owner)
-                .join(post.postImage)
-                .join(post.chatRoom)
-                .fetchJoin()
                 .orderBy(post.id.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .fetchResults();
-        return new PageImpl<>(result.getResults(), pageable, result.getTotal());
+                .fetch();
+
+        JPAQuery<Long> countQuery = queryFactory
+                .select(post.count())
+                .from(post)
+                .join(post.postImage, postImage)
+                .where(post.id.lt(lastId)
+                        .and(post.address.contains(address))
+                        .and(post.postImage.menu.contains(keyword)
+                                .or(post.title.contains(keyword))
+                                .or(post.contents.contains(keyword))
+                        )
+                );
+
+        return PageableExecutionUtils.getPage(result, pageable, countQuery::fetchOne);
     }
 
     @Override
