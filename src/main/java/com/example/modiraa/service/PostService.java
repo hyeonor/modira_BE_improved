@@ -1,6 +1,7 @@
 package com.example.modiraa.service;
 
 import com.example.modiraa.auth.UserDetailsImpl;
+import com.example.modiraa.dto.ChatParticipantInfo;
 import com.example.modiraa.dto.request.PostRequest;
 import com.example.modiraa.enums.GenderType;
 import com.example.modiraa.exception.CustomException;
@@ -57,12 +58,12 @@ public class PostService {
 
         checkPostDeletionPermission(post, memberId);
 
-        List<RoomParticipant> roomParticipantList = roomParticipantRepository.findByChatRoomId(chatRoomId);
+        List<ChatParticipantInfo> chatParticipantInfoList = roomParticipantRepository.findByChatRoomId(chatRoomId);
 
-        for (RoomParticipant roomParticipant : roomParticipantList) {
-            roomParticipantRepository.deleteById(roomParticipant.getId());
+        for (ChatParticipantInfo chatParticipantInfo : chatParticipantInfoList) {
+            roomParticipantRepository.deleteById(chatParticipantInfo.getRoomParticipantId());
 
-            Member member = memberRepository.findById(roomParticipant.getMember().getId())
+            Member member = memberRepository.findById(chatParticipantInfo.getParticipantId())
                     .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
             updateMemberPostStatus(member, null);

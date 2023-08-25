@@ -1,6 +1,7 @@
 package com.example.modiraa.repository;
 
 import com.example.modiraa.config.TestQuerydslConfig;
+import com.example.modiraa.dto.ChatParticipantInfo;
 import com.example.modiraa.dto.request.oauth.OAuthProvider;
 import com.example.modiraa.dto.response.JoinedMembersResponse;
 import com.example.modiraa.dto.response.JoinedPostsResponse;
@@ -113,11 +114,17 @@ class RoomParticipantRepositoryTest {
         RoomParticipant roomParticipant3 = em.find(RoomParticipant.class, 3L);
 
         // When
-        List<RoomParticipant> result = repository.findByChatRoomId(chatRoom1.getId());
+        List<ChatParticipantInfo> result = repository.findByChatRoomId(chatRoom1.getId());
 
         // Then
         assertThat(result.size()).isEqualTo(3);
-        assertThat(result).containsExactly(roomParticipant1, roomParticipant2, roomParticipant3);
+        assertThat(result)
+                .extracting("roomParticipantId")
+                .containsExactly(roomParticipant1.getId(), roomParticipant2.getId(), roomParticipant3.getId());
+        assertThat(result)
+                .extracting("participantId")
+                .containsExactly(roomParticipant1.getMember().getId(), roomParticipant2.getMember().getId(), roomParticipant3.getMember().getId());
+
     }
 
     @Test
