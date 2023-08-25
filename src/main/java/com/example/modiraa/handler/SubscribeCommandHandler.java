@@ -27,28 +27,34 @@ public class SubscribeCommandHandler implements StompCommandHandler {
 
     @Override
     public void process(StompHeaderAccessor accessor, Message<?> message) {
-        // header 정보에서 구독 destination 정보를 얻고, roomCode를 추출한다.
-        String roomCode = chatMessageService.getRoomCode(
-                Optional.ofNullable((String) message.getHeaders().get("simpDestination")).orElse("InvalidRoomCode"));
-        // 채팅방에 들어온 클라이언트 sessionId를 roomCode와 맵핑해 놓는다.(나중에 특정 세션이 어떤 채팅방에 들어가 있는지 알기 위함)
-        String sessionId = (String) message.getHeaders().get("simpSessionId");
-
         String jwtToken = accessor.getFirstNativeHeader("Authorization");
-        if (jwtToken == null) {
-            throw new IllegalArgumentException("유효하지 않은 token 입니다.");
-        }
+        jwtAuthorizationFilter.validateToken(jwtToken);
 
         Member member = jwtAuthorizationFilter.getMemberFromJwt(jwtToken);
 
+        // header 정보에서  sessionId를 얻는다.
+        String sessionId = accessor.getSessionId();
+        String roomCode = getRoomCode(accessor);
+
+        // 채팅방에 들어온 클라이언트 sessionId, roomCode 맵핑 (특정 세션이 어떤 채팅방에 들어가 있는지 알기 위함)
         chatRoomService.setUserEnterInfo(sessionId, member.getId(), roomCode);
         chatRoomService.plusUserCount(roomCode); // 채팅방의 인원수를 +1
-
         sendEnterMessage(roomCode, member);
+
         log.info("SUBSCRIBED: sessionId={}, nickname={}, roomCode={}", sessionId, member.getNickname(), roomCode);
     }
 
+    private String getRoomCode(StompHeaderAccessor accessor) {
+        // header 정보에서 구독 destination 정보를 얻고, roomCode 추출
+        String destination = accessor.getDestination();
+        String defaultRoomCode = "InvalidRoomCode";
+        return chatMessageService.getRoomCode(Optional.ofNullable(destination).orElse(defaultRoomCode));
+    }
+
+    /**
+     * 클라이언트 입장 메시지를 채팅방에 발송한다. (redis publish)
+     */
     private void sendEnterMessage(String roomCode, Member member) {
-        // 클라이언트 입장 메시지를 채팅방에 발송한다.(redis publish)
         chatMessageService.sendChatMessage(ChatMessageRequest.builder()
                 .type(ChatMessage.MessageType.ENTER)
                 .roomCode(roomCode)
