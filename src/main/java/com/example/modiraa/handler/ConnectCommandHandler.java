@@ -2,7 +2,6 @@ package com.example.modiraa.handler;
 
 import com.example.modiraa.config.jwt.JwtAuthorizationFilter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.messaging.Message;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 
 @Slf4j
@@ -14,7 +13,7 @@ public class ConnectCommandHandler implements StompCommandHandler {
     }
 
     @Override
-    public void process(StompHeaderAccessor accessor, Message<?> message) {
+    public void process(StompHeaderAccessor accessor) {
         String jwtToken = accessor.getFirstNativeHeader("Authorization");
         log.info("CONNECT: {}", jwtToken);
         jwtAuthorizationFilter.validateToken(jwtToken);

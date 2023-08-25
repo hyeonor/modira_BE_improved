@@ -7,7 +7,6 @@ import com.example.modiraa.model.Member;
 import com.example.modiraa.service.ChatMessageService;
 import com.example.modiraa.service.ChatRoomService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.messaging.Message;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 
 import java.util.Optional;
@@ -26,7 +25,7 @@ public class SubscribeCommandHandler implements StompCommandHandler {
     }
 
     @Override
-    public void process(StompHeaderAccessor accessor, Message<?> message) {
+    public void process(StompHeaderAccessor accessor) {
         String jwtToken = accessor.getFirstNativeHeader("Authorization");
         jwtAuthorizationFilter.validateToken(jwtToken);
 

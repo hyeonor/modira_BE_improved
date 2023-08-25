@@ -6,7 +6,6 @@ import com.example.modiraa.model.Member;
 import com.example.modiraa.service.ChatMessageService;
 import com.example.modiraa.service.ChatRoomService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.messaging.Message;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 
 
@@ -21,7 +20,7 @@ public class DisconnectCommandHandler implements StompCommandHandler {
     }
 
     @Override
-    public void process(StompHeaderAccessor accessor, Message<?> message) {
+    public void process(StompHeaderAccessor accessor) {
         // 연결이 종료된 클라이언트 sesssionId로 채팅방 id를 얻는다.
         String sessionId = (String) accessor.getMessageHeaders().get("simpSessionId");
         String roomCode = chatRoomService.getUserEnterRoomCode(sessionId);

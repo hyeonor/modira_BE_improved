@@ -1,7 +1,6 @@
 package com.example.modiraa.handler;
 
 import com.example.modiraa.config.jwt.JwtAuthorizationFilter;
-import com.example.modiraa.repository.MemberRepository;
 import com.example.modiraa.service.ChatMessageService;
 import com.example.modiraa.service.ChatRoomService;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +20,7 @@ import java.util.Map;
 public class StompHandler implements ChannelInterceptor {
     private final Map<StompCommand, StompCommandHandler> commandHandlers = new HashMap<>();
 
-    public StompHandler(JwtAuthorizationFilter jwtAuthorizationFilter,ChatRoomService chatRoomService, ChatMessageService chatMessageService) {
+    public StompHandler(JwtAuthorizationFilter jwtAuthorizationFilter, ChatRoomService chatRoomService, ChatMessageService chatMessageService) {
         commandHandlers.put(StompCommand.CONNECT, new ConnectCommandHandler(jwtAuthorizationFilter));
         commandHandlers.put(StompCommand.SUBSCRIBE, new SubscribeCommandHandler(jwtAuthorizationFilter, chatRoomService, chatMessageService));
         commandHandlers.put(StompCommand.DISCONNECT, new DisconnectCommandHandler(chatRoomService, chatMessageService));
@@ -34,7 +33,7 @@ public class StompHandler implements ChannelInterceptor {
 
         StompCommandHandler handler = commandHandlers.get(command);
         if (handler != null) {
-            handler.process(accessor, message);
+            handler.process(accessor);
         }
 
         return message;
