@@ -3,6 +3,9 @@ package com.example.modiraa.config.jwt;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.example.modiraa.auth.UserDetailsImpl;
+import com.example.modiraa.exception.CustomException;
+import com.example.modiraa.exception.ErrorCode;
+import com.example.modiraa.exception.NotFoundCustomException;
 import com.example.modiraa.model.Member;
 import com.example.modiraa.repository.MemberRepository;
 import io.jsonwebtoken.*;
@@ -21,13 +24,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-//시큐리티가 filter 가지고 있는데 그 필터중에 BasicAuthenticationFilter 라는 것이 있음.
-//권한이나 인증이 필요한 특정 주소를 요청했을 때 위 필터를 무조건 타게 되어있음.!!!!!!
-//만약 권한이나 인증이 필요한 주소가 아니라면 이 필터를 안탐.
+/**
+ * 시큐리티가 filter 가지고 있는데 그 필터중에 BasicAuthenticationFilter 라는 것이 있음.
+ * 권한이나 인증이 필요한 특정 주소를 요청했을 때 위 필터를 무조건 타게 되어있음.!!!!!!
+ * 만약 권한이나 인증이 필요한 주소가 아니라면 이 필터를 안탐.
+ */
 @Slf4j
 @Component
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
-
     private final MemberRepository memberRepository;
     private final JwtProperties jwtProperties;
 
@@ -77,38 +81,23 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     /**
      * Jwt Token을 복호화 하여 Member를 얻는다.
      */
-    public String getNicknameFromJwt(String token) {
-
-        String nickname =
-                JWT.require(Algorithm.HMAC512(jwtProperties.getSecretKey())).build().verify(token).getClaim(jwtProperties.getNicknameClaim()).asString();
-
-        if (nickname != null) {
-            Member memberEntity = memberRepository.findByNickname(nickname).orElseThrow(
-                    () -> new IllegalArgumentException("nickname이 없습니다.")
-            );
-            UserDetailsImpl userDetails = new UserDetailsImpl(memberEntity);
-
-            return userDetails.getMember().getNickname();
-        }
-
-        throw new IllegalArgumentException("회원이 아닙니다.");
-    }
-
     public Member getMemberFromJwt(String token) {
-
-        String nickname =
-                JWT.require(Algorithm.HMAC512(jwtProperties.getSecretKey())).build().verify(token).getClaim(jwtProperties.getNicknameClaim()).asString();
+        String nickname = JWT.require(Algorithm.HMAC512(jwtProperties.getSecretKey()))
+                .build()
+                .verify(token)
+                .getClaim(jwtProperties.getNicknameClaim())
+                .asString();
 
         if (nickname != null) {
-            Member memberEntity = memberRepository.findByNickname(nickname).orElseThrow(
-                    () -> new IllegalArgumentException("nickname이 없습니다.")
-            );
-            UserDetailsImpl userDetails = new UserDetailsImpl(memberEntity);
+            Member member = memberRepository.findByNickname(nickname).orElseThrow(
+                    () -> new NotFoundCustomException(ErrorCode.MEMBER_NOT_FOUND, nickname));
+
+            UserDetailsImpl userDetails = new UserDetailsImpl(member);
 
             return userDetails.getMember();
         }
 
-        throw new IllegalArgumentException("회원이 아닙니다.");
+        throw new CustomException(ErrorCode.MEMBER_NOT_FOUND);
     }
 
     public boolean validateToken(String jwt) {
@@ -117,7 +106,10 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     private Jws<Claims> getClaims(String jwt) {
         try {
-            return Jwts.parser().setSigningKey(jwtProperties.getSecretKey().getBytes()).parseClaimsJws(jwt);
+            return Jwts.parserBuilder()
+                    .setSigningKey(jwtProperties.getSecretKey().getBytes())
+                    .build()
+                    .parseClaimsJws(jwt);
         } catch (SignatureException ex) {
             log.error("Invalid JWT signature");
             throw ex;

@@ -4,28 +4,24 @@ import com.example.modiraa.config.jwt.JwtAuthorizationFilter;
 import com.example.modiraa.dto.request.ChatMessageRequest;
 import com.example.modiraa.model.ChatMessage;
 import com.example.modiraa.model.Member;
-import com.example.modiraa.repository.MemberRepository;
 import com.example.modiraa.service.ChatMessageService;
 import com.example.modiraa.service.ChatRoomService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Slf4j
 public class SubscribeCommandHandler implements StompCommandHandler {
     private final JwtAuthorizationFilter jwtAuthorizationFilter;
     private final ChatRoomService chatRoomService;
-    private final MemberRepository memberRepository;
     private final ChatMessageService chatMessageService;
 
     public SubscribeCommandHandler(JwtAuthorizationFilter jwtAuthorizationFilter, ChatRoomService chatRoomService,
-                                   MemberRepository memberRepository, ChatMessageService chatMessageService) {
+                                   ChatMessageService chatMessageService) {
         this.jwtAuthorizationFilter = jwtAuthorizationFilter;
         this.chatRoomService = chatRoomService;
-        this.memberRepository = memberRepository;
         this.chatMessageService = chatMessageService;
     }
 
@@ -42,9 +38,7 @@ public class SubscribeCommandHandler implements StompCommandHandler {
             throw new IllegalArgumentException("유효하지 않은 token 입니다.");
         }
 
-        String nickname = jwtAuthorizationFilter.getNicknameFromJwt(jwtToken);
-        Member member = memberRepository.findByNickname(nickname, Member.class)
-                .orElseThrow(() -> new NoSuchElementException("nickname에 해당하는 member가 존재하지 않습니다: " + nickname));
+        Member member = jwtAuthorizationFilter.getMemberFromJwt(jwtToken);
 
         chatRoomService.setUserEnterInfo(sessionId, member.getId(), roomCode);
         chatRoomService.plusUserCount(roomCode); // 채팅방의 인원수를 +1

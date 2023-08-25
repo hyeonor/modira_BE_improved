@@ -21,10 +21,9 @@ import java.util.Map;
 public class StompHandler implements ChannelInterceptor {
     private final Map<StompCommand, StompCommandHandler> commandHandlers = new HashMap<>();
 
-    public StompHandler(JwtAuthorizationFilter jwtAuthorizationFilter,ChatRoomService chatRoomService,
-                        MemberRepository memberRepository,ChatMessageService chatMessageService) {
+    public StompHandler(JwtAuthorizationFilter jwtAuthorizationFilter,ChatRoomService chatRoomService, ChatMessageService chatMessageService) {
         commandHandlers.put(StompCommand.CONNECT, new ConnectCommandHandler(jwtAuthorizationFilter));
-        commandHandlers.put(StompCommand.SUBSCRIBE, new SubscribeCommandHandler(jwtAuthorizationFilter, chatRoomService, memberRepository, chatMessageService));
+        commandHandlers.put(StompCommand.SUBSCRIBE, new SubscribeCommandHandler(jwtAuthorizationFilter, chatRoomService, chatMessageService));
         commandHandlers.put(StompCommand.DISCONNECT, new DisconnectCommandHandler(chatRoomService, chatMessageService));
     }
 
