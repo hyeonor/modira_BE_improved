@@ -29,7 +29,7 @@ public class MemberProfileController {
 
     // 다른 유저 프로필 조회
     @GetMapping("/{id}")
-    public ResponseEntity<UserProfileResponse> profileRead(@PathVariable Long id) throws IllegalAccessException {
+    public ResponseEntity<UserProfileResponse> profileRead(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(memberProfileService.getProfile(id));
     }
