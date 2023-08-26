@@ -22,7 +22,7 @@ public class DisconnectCommandHandler implements StompCommandHandler {
     @Override
     public void process(StompHeaderAccessor accessor) {
         // 연결이 종료된 클라이언트 sesssionId로 채팅방 id를 얻는다.
-        String sessionId = (String) accessor.getMessageHeaders().get("simpSessionId");
+        String sessionId = accessor.getSessionId();
         String roomCode = chatRoomService.getUserEnterRoomCode(sessionId);
 
         // 저장했던 sessionId 로 유저 객체를 받아옴
