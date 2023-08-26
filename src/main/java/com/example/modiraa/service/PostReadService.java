@@ -40,9 +40,6 @@ public class PostReadService {
 
         Page<Post> posts = postRepository.findBySearchKeywordAndAddress(lastId, address, keyword, pageable);
 
-        log.info("result=> {}", posts);
-        log.info("result=> {}", posts.getContent());
-
         return postResponseDto(posts);
     }
 
@@ -52,9 +49,6 @@ public class PostReadService {
         log.info("lastId -> {}", lastId);
 
         Page<Post> posts = postRepository.findByIdLessThanAndCategory(lastId, category, pageable);
-
-        log.info("result=> {}", posts);
-        log.info("result=> {}", posts.getContent());
 
         return postResponseDto(posts);
     }
