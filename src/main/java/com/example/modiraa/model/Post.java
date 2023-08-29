@@ -34,38 +34,35 @@ public class Post {
     @Column(nullable = false)
     private String contents;
 
-    //주소
+    //위치 정보
     @Column(nullable = false)
     private String address;
 
-    //위도
     @Column(nullable = false)
     private double latitude;
 
-    //경도
     @Column(nullable = false)
     private double longitude;
 
-    //날짜
+    //모임 날짜 & 시간 정보
     @Column(nullable = false)
     private LocalDate date;
 
-    //시간
     @Column(nullable = false)
     private LocalTime time;
 
-    //성별
+    //성별 & 나이 조건
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private GenderType gender;
 
-    //나이대
     @Column(nullable = false)
     private int ageMin;
 
     @Column(nullable = false)
     private int ageMax;
 
+    //관계 정보
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id")
     private Member owner;
