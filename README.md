@@ -84,6 +84,10 @@
 ![아키텍처](https://user-images.githubusercontent.com/107676736/190206885-2f698bff-e07b-4fa3-9165-f5fb3f6b24a0.png)
 
 
+## ERD
+![ERD](https://github.com/hyeonor/modira_BE_improved/assets/107676736/fc192dd0-30ab-437d-8353-4d32fc1e130c)
+
+
 <br>
 
 
