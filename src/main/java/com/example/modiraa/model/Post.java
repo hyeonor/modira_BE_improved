@@ -70,7 +70,7 @@ public class Post {
     @JoinColumn(name = "owner_id")
     private Member owner;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_image_id")
     private PostImage postImage;
 
