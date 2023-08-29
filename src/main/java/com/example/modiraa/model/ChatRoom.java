@@ -18,12 +18,15 @@ public class ChatRoom implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // 채팅방 코드
     @Column(nullable = false)
     private String roomCode;
 
+    // 현재 인원 수
     @Column(nullable = false)
     private int currentParticipant;
 
+    // 참여 가능한 최대 인원 수
     @Column(nullable = false)
     private int maxParticipant;
 
