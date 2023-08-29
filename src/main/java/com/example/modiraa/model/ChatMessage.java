@@ -30,7 +30,7 @@ public class ChatMessage extends Timestamped {
     @Column(length = 100000)
     private String message;
 
-    // 채팅방 코드
+    // 채팅방
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_room_id")
     private ChatRoom chatRoom;
