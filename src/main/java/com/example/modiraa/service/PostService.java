@@ -3,6 +3,7 @@ package com.example.modiraa.service;
 import com.example.modiraa.auth.UserDetailsImpl;
 import com.example.modiraa.dto.ChatParticipantInfo;
 import com.example.modiraa.dto.request.PostRequest;
+import com.example.modiraa.enums.CategoryType;
 import com.example.modiraa.enums.GenderType;
 import com.example.modiraa.exception.CustomException;
 import com.example.modiraa.exception.ErrorCode;
@@ -85,7 +86,7 @@ public class PostService {
         }
 
         Post post = Post.builder()
-                .category(postRequest.getCategory())
+                .category(CategoryType.fromValue(postRequest.getCategory()))
                 .title(postRequest.getTitle())
                 .contents(postRequest.getContents())
                 .address(postRequest.getAddress())

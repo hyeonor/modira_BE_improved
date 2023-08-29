@@ -98,7 +98,7 @@ public class PostReadService {
                 PostsResponse.builder()
                         .postId(p.getId())
                         .title(p.getTitle())
-                        .category(p.getCategory())
+                        .category(p.getCategory().getValue())
                         .date(p.getDate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")))
                         .time(p.getTime().format(DateTimeFormatter.ofPattern("a h시 m분")))
                         .maxParticipant(p.getChatRoom().getMaxParticipant())
@@ -123,7 +123,7 @@ public class PostReadService {
         String formatTime = post.getTime().format(DateTimeFormatter.ofPattern("a h시 m분"));
 
         return PostDetailResponse.builder()
-                .category(post.getCategory())
+                .category(post.getCategory().getValue())
                 .title(post.getTitle())
                 .contents(post.getContents())
                 .restaurantAddress(post.getAddress())

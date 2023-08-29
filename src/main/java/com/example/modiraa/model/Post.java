@@ -1,5 +1,6 @@
 package com.example.modiraa.model;
 
+import com.example.modiraa.enums.CategoryType;
 import com.example.modiraa.enums.GenderType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,9 +21,10 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //음식 카테고리
+    //카테고리
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String category;
+    private CategoryType category;
 
     //제목
     @Column(nullable = false)
@@ -78,7 +80,7 @@ public class Post {
 
 
     @Builder
-    public Post(String category, String title, String contents, String address, double latitude, double longitude, LocalDate date,
+    public Post(CategoryType category, String title, String contents, String address, double latitude, double longitude, LocalDate date,
                 LocalTime time, GenderType gender, int ageMin, int ageMax, Member owner, PostImage postImage, ChatRoom chatRoom) {
         this.category = category;
         this.title = title;

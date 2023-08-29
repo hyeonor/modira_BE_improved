@@ -58,7 +58,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         List<Post> result = queryFactory.selectFrom(post)
                 .join(post.postImage).fetchJoin()
                 .join(post.chatRoom).fetchJoin()
-                .where(post.id.lt(lastId).and(post.category.contains(category)))
+                .where(post.id.lt(lastId).and(post.category.stringValue().contains(category)))
                 .orderBy(post.id.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -67,7 +67,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         JPAQuery<Long> countQuery = queryFactory
                 .select(post.count())
                 .from(post)
-                .where(post.category.contains(category));
+                .where(post.category.stringValue().contains(category));
 
         return PageableExecutionUtils.getPage(result, pageable, countQuery::fetchOne);
     }
@@ -94,7 +94,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         List<Post> result = queryFactory.selectFrom(post)
                 .join(post.postImage).fetchJoin()
                 .join(post.chatRoom).fetchJoin()
-                .where(post.category.contains(category))
+                .where(post.category.stringValue().contains(category))
                 .orderBy(post.id.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -103,7 +103,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         JPAQuery<Long> countQuery = queryFactory
                 .select(post.count())
                 .from(post)
-                .where(post.category.contains(category));
+                .where(post.category.stringValue().contains(category));
 
         return PageableExecutionUtils.getPage(result, pageable, countQuery::fetchOne);
     }
@@ -133,7 +133,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .join(post.postImage).fetchJoin()
                 .join(post.chatRoom).fetchJoin()
                 .where(post.address.contains(address)
-                        .and(post.category.contains(category)))
+                        .and(post.category.stringValue().contains(category)))
                 .orderBy(post.id.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -143,7 +143,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .select(post.count())
                 .from(post)
                 .where(post.address.contains(address)
-                        .and(post.category.contains(category)));
+                        .and(post.category.stringValue().contains(category)));
 
         return PageableExecutionUtils.getPage(result, pageable, countQuery::fetchOne);
     }
