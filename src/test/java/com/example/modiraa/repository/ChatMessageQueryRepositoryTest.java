@@ -41,18 +41,12 @@ class ChatMessageQueryRepositoryTest {
         ChatRoom chatRoom1 = new ChatRoom(5);
         ChatRoom chatRoom2 = new ChatRoom(6);
 
-        ChatMessage chatMessage1 = new ChatMessage(ChatMessage.MessageType.ENTER,
-                chatRoom1.getRoomCode(), member1, "message1");
-        ChatMessage chatMessage2 = new ChatMessage(ChatMessage.MessageType.TALK,
-                chatRoom1.getRoomCode(), member1, "message2");
-        ChatMessage chatMessage3 = new ChatMessage(ChatMessage.MessageType.TALK,
-                chatRoom1.getRoomCode(), member1, "message3");
-        ChatMessage chatMessage4 = new ChatMessage(ChatMessage.MessageType.TALK,
-                chatRoom2.getRoomCode(), member2, "message4");
-        ChatMessage chatMessage5 = new ChatMessage(ChatMessage.MessageType.TALK,
-                chatRoom2.getRoomCode(), member2, "message5");
-        ChatMessage chatMessage6 = new ChatMessage(ChatMessage.MessageType.TALK,
-                chatRoom2.getRoomCode(), member2, "message6");
+        ChatMessage chatMessage1 = new ChatMessage(ChatMessage.MessageType.ENTER, "message1", chatRoom1, member1);
+        ChatMessage chatMessage2 = new ChatMessage(ChatMessage.MessageType.TALK, "message2", chatRoom1, member1);
+        ChatMessage chatMessage3 = new ChatMessage(ChatMessage.MessageType.TALK, "message3", chatRoom1, member1);
+        ChatMessage chatMessage4 = new ChatMessage(ChatMessage.MessageType.TALK, "message4", chatRoom2, member2);
+        ChatMessage chatMessage5 = new ChatMessage(ChatMessage.MessageType.TALK, "message5", chatRoom2, member2);
+        ChatMessage chatMessage6 = new ChatMessage(ChatMessage.MessageType.TALK, "message6", chatRoom2, member2);
 
         em.persist(member1);
         em.persist(member2);

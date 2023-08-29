@@ -3,6 +3,7 @@ package com.example.modiraa.repository;
 import com.example.modiraa.config.TestQuerydslConfig;
 import com.example.modiraa.dto.request.oauth.OAuthProvider;
 import com.example.modiraa.dto.response.MyPostsResponse;
+import com.example.modiraa.enums.CategoryType;
 import com.example.modiraa.enums.GenderType;
 import com.example.modiraa.model.ChatRoom;
 import com.example.modiraa.model.Member;
@@ -55,11 +56,11 @@ class PostRepositoryTest {
         ChatRoom chatRoom2 = new ChatRoom(20);
         ChatRoom chatRoom3 = new ChatRoom(30);
 
-        Post post1 = new Post("골든벨", "title1", "contents1", "서울 성동구", 1.1, 1.1,
+        Post post1 = new Post(CategoryType.GOLDEN_BELL, "title1", "contents1", "서울 성동구", 1.1, 1.1,
                 LocalDate.now(), LocalTime.now(), GenderType.MALE, 10, 20, member1, postImage1, chatRoom1);
-        Post post2 = new Post("N빵", "title2", "contents2", "서울 용산구", 2.2, 2.2,
+        Post post2 = new Post(CategoryType.DUTCH_PAY, "title2", "contents2", "서울 용산구", 2.2, 2.2,
                 LocalDate.now(), LocalTime.now(), GenderType.MALE, 20, 30, member1, postImage2, chatRoom2);
-        Post post3 = new Post("N빵", "title3", "contents3", "서울 동대문구", 3.3, 3.3,
+        Post post3 = new Post(CategoryType.DUTCH_PAY, "title3", "contents3", "서울 동대문구", 3.3, 3.3,
                 LocalDate.now(), LocalTime.now(), GenderType.FEMALE, 30, 40, member3, postImage2, chatRoom3);
 
         em.persist(member1);
@@ -88,7 +89,7 @@ class PostRepositoryTest {
         Member member1 = em.find(Member.class, 1L);
         PostImage postImage1 = em.find(PostImage.class, 1L);
         ChatRoom chatRoom1 = em.find(ChatRoom.class, 1L);
-        Post post1 = new Post("category1", "title1", "contents1", "address1", 1.1, 1.1,
+        Post post1 = new Post(CategoryType.DUTCH_PAY, "title1", "contents1", "address1", 1.1, 1.1,
                 LocalDate.now(), LocalTime.now(), GenderType.MALE, 10, 20, member1, postImage1, chatRoom1);
 
         // When
@@ -183,8 +184,8 @@ class PostRepositoryTest {
     public void testFindByIdLessThanAndCategory() {
         // Given
         Long lastId = 100L;
-        String goldenBellCategory = "골든벨";
-        String dutchPayCategory = "N빵";
+        String goldenBellCategory = "GOLDEN_BELL";
+        String dutchPayCategory = "DUTCH_PAY";
         Pageable pageable = PageRequest.of(0, 8, Sort.by(Sort.Direction.DESC, "id"));
 
         // When
@@ -225,8 +226,8 @@ class PostRepositoryTest {
     @DisplayName("카테고리별 Post 조회")
     public void testFindByCategory() {
         // Given
-        String goldenBellCategory = "골든벨";
-        String dutchPayCategory = "N빵";
+        String goldenBellCategory = "GOLDEN_BELL";
+        String dutchPayCategory = "DUTCH_PAY";
         Pageable pageable = PageRequest.of(0, 8, Sort.by(Sort.Direction.DESC, "id"));
 
         // When
@@ -271,7 +272,7 @@ class PostRepositoryTest {
     public void testFindByAddressAndCategory() {
         // Given
         String memberAddress = "서울";
-        String goldenBellCategory = "골든벨";
+        String goldenBellCategory = "GOLDEN_BELL";
         Pageable pageable = PageRequest.of(0, 8, Sort.by(Sort.Direction.DESC, "id"));
 
         // When
