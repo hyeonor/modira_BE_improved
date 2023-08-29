@@ -1,5 +1,6 @@
 package com.example.modiraa.repository;
 
+import com.example.modiraa.dto.ChatParticipantInfo;
 import com.example.modiraa.dto.response.JoinedMembersResponse;
 import com.example.modiraa.dto.response.JoinedPostsResponse;
 import com.example.modiraa.model.Member;
@@ -18,18 +19,22 @@ import static com.example.modiraa.model.QPost.post;
 import static com.example.modiraa.model.QPostImage.postImage;
 import static com.example.modiraa.model.QRoomParticipant.roomParticipant;
 
-@RequiredArgsConstructor
 @Repository
+@RequiredArgsConstructor
 public class RoomParticipantRepositoryImpl implements RoomParticipantRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<RoomParticipant> findByChatRoomId(Long chatroomId) {
-        return queryFactory.selectFrom(roomParticipant)
+    public List<ChatParticipantInfo> findByChatRoomId(Long chatroomId) {
+        return queryFactory
+                .select(Projections.constructor(
+                        ChatParticipantInfo.class,
+                        roomParticipant.id,
+                        member.id))
+                .from(roomParticipant)
+                .join(roomParticipant.member, member)
+                .join(roomParticipant.chatRoom, chatRoom)
                 .where(roomParticipant.chatRoom.id.eq(chatroomId))
-                .join(roomParticipant.member)
-                .join(roomParticipant.chatRoom)
-                .fetchJoin()
                 .fetch();
     }
 

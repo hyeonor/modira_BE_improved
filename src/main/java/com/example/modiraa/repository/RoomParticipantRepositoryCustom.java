@@ -2,6 +2,7 @@ package com.example.modiraa.repository;
 
 import com.example.modiraa.dto.response.JoinedMembersResponse;
 import com.example.modiraa.dto.response.JoinedPostsResponse;
+import com.example.modiraa.dto.ChatParticipantInfo;
 import com.example.modiraa.model.RoomParticipant;
 import com.example.modiraa.model.Member;
 
@@ -9,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RoomParticipantRepositoryCustom {
-    List<RoomParticipant> findByChatRoomId(Long chatroomId);
+    List<ChatParticipantInfo> findByChatRoomId(Long chatroomId);
 
     Optional<RoomParticipant> findTopByMemberOrderByIdDesc(Member member);
 

@@ -13,9 +13,8 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class RoomParticipant {
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "member_room_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -23,7 +22,7 @@ public class RoomParticipant {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chatroom_id")
+    @JoinColumn(name = "chat_room_id")
     private ChatRoom chatRoom;
 
 

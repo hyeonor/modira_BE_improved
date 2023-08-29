@@ -65,7 +65,7 @@ public class ChatMessageService {
         return postSlice.map(p ->
                 ChatMessageResponse.builder()
                         .type(p.getType())
-                        .roomCode(p.getRoomCode())
+                        .roomCode(p.getChatRoom().getRoomCode())
                         .senderId(p.getSender().getId())
                         .senderNickname(p.getSender().getNickname())
                         .profileImage(p.getSender().getProfileImage())

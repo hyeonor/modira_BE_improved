@@ -1,9 +1,11 @@
 package com.example.modiraa.repository;
 
 import com.example.modiraa.config.TestQuerydslConfig;
+import com.example.modiraa.dto.ChatParticipantInfo;
 import com.example.modiraa.dto.request.oauth.OAuthProvider;
 import com.example.modiraa.dto.response.JoinedMembersResponse;
 import com.example.modiraa.dto.response.JoinedPostsResponse;
+import com.example.modiraa.enums.CategoryType;
 import com.example.modiraa.enums.GenderType;
 import com.example.modiraa.model.*;
 import org.junit.jupiter.api.AfterEach;
@@ -50,11 +52,11 @@ class RoomParticipantRepositoryTest {
         ChatRoom chatRoom2 = new ChatRoom(4);
         ChatRoom chatRoom3 = new ChatRoom(5);
 
-        Post post1 = new Post("골든벨", "title1", "contents1", "서울 성동구", 1.1, 1.1,
+        Post post1 = new Post(CategoryType.GOLDEN_BELL, "title1", "contents1", "서울 성동구", 1.1, 1.1,
                 LocalDate.now(), LocalTime.now(), GenderType.MALE, 10, 20, member1, postImage1, chatRoom1);
-        Post post2 = new Post("N빵", "title2", "contents2", "서울 용산구", 2.2, 2.2,
+        Post post2 = new Post(CategoryType.DUTCH_PAY, "title2", "contents2", "서울 용산구", 2.2, 2.2,
                 LocalDate.now(), LocalTime.now(), GenderType.MALE, 20, 30, member2, postImage2, chatRoom2);
-        Post post3 = new Post("N빵", "title3", "contents3", "서울 동대문구", 3.3, 3.3,
+        Post post3 = new Post(CategoryType.DUTCH_PAY, "title3", "contents3", "서울 동대문구", 3.3, 3.3,
                 LocalDate.now(), LocalTime.now(), GenderType.FEMALE, 30, 40, member3, postImage2, chatRoom3);
 
         RoomParticipant roomParticipant1 = new RoomParticipant(member2, chatRoom1);
@@ -113,11 +115,17 @@ class RoomParticipantRepositoryTest {
         RoomParticipant roomParticipant3 = em.find(RoomParticipant.class, 3L);
 
         // When
-        List<RoomParticipant> result = repository.findByChatRoomId(chatRoom1.getId());
+        List<ChatParticipantInfo> result = repository.findByChatRoomId(chatRoom1.getId());
 
         // Then
         assertThat(result.size()).isEqualTo(3);
-        assertThat(result).containsExactly(roomParticipant1, roomParticipant2, roomParticipant3);
+        assertThat(result)
+                .extracting("roomParticipantId")
+                .containsExactly(roomParticipant1.getId(), roomParticipant2.getId(), roomParticipant3.getId());
+        assertThat(result)
+                .extracting("participantId")
+                .containsExactly(roomParticipant1.getMember().getId(), roomParticipant2.getMember().getId(), roomParticipant3.getMember().getId());
+
     }
 
     @Test
