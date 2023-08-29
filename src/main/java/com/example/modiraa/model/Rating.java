@@ -15,7 +15,6 @@ public class Rating {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "rating_id", nullable = false)
     private Long id;
 
     @Enumerated(EnumType.STRING)

@@ -12,8 +12,8 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class PostImage {
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)

@@ -2,8 +2,12 @@ package com.example.modiraa.pubsub;
 
 import com.example.modiraa.dto.request.ChatMessageRequest;
 import com.example.modiraa.dto.response.ChatMessageResponse;
+import com.example.modiraa.exception.CustomException;
+import com.example.modiraa.exception.ErrorCode;
 import com.example.modiraa.model.ChatMessage;
+import com.example.modiraa.model.ChatRoom;
 import com.example.modiraa.repository.ChatMessageRepository;
+import com.example.modiraa.repository.ChatRoomRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +21,7 @@ public class RedisSubscriber {
 
     private final ObjectMapper objectMapper;
     private final SimpMessageSendingOperations messagingTemplate;
+    private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
 
 
@@ -27,9 +32,12 @@ public class RedisSubscriber {
 
             messagingTemplate.convertAndSend("/sub/chat/room/" + chatMessage.getRoomCode(), getPayload(chatMessage));
 
+            ChatRoom chatRoom = chatRoomRepository.findByRoomCode(chatMessage.getRoomCode())
+                    .orElseThrow(() -> new CustomException(ErrorCode.ROOM_CODE_NOT_FOUND));
+
             ChatMessage message = ChatMessage.builder()
                     .type(chatMessage.getType())
-                    .roomCode(chatMessage.getRoomCode())
+                    .chatRoom(chatRoom)
                     .sender(chatMessage.getSender())
                     .message(chatMessage.getMessage())
                     .build();

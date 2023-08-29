@@ -16,7 +16,6 @@ public class ChatRoom implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "chatroom_id")
     private Long id;
 
     @Column(nullable = false)

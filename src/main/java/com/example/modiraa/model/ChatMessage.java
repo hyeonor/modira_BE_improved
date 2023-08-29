@@ -22,17 +22,18 @@ public class ChatMessage extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    @Enumerated(value = EnumType.STRING)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private MessageType type;
-
-    // 채팅방 코드
-    @Column
-    private String roomCode;
 
     // 메시지
     @Column(length = 100000)
     private String message;
+
+    // 채팅방 코드
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "chat_room_id")
+    private ChatRoom chatRoom;
 
     // 메시지 보낸사람
     @ManyToOne(fetch = FetchType.LAZY)
@@ -40,10 +41,10 @@ public class ChatMessage extends Timestamped {
     private Member sender;
 
     @Builder
-    public ChatMessage(MessageType type, String roomCode, Member sender, String message) {
+    public ChatMessage(MessageType type, String message, ChatRoom chatRoom, Member sender) {
         this.type = type;
-        this.roomCode = roomCode;
-        this.sender = sender;
         this.message = message;
+        this.chatRoom = chatRoom;
+        this.sender = sender;
     }
 }
