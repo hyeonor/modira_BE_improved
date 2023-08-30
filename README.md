@@ -85,7 +85,8 @@
 
 
 ## ERD
-![ERD](https://github.com/hyeonor/modira_BE_improved/assets/107676736/fc192dd0-30ab-437d-8353-4d32fc1e130c)
+![ERD](https://github.com/hyeonor/modira_BE_improved/assets/107676736/31ef2634-ec34-4443-8db6-1a7b73bff179)
+
 
 
 <br>
